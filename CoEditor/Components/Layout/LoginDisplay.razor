@@ -1,0 +1,20 @@
+﻿<AuthorizeView>
+    <Authorized>
+        Hello, @context.User.Identity?.Name!
+        <form action="authentication/logout" method="post">
+            <AntiforgeryToken />
+            <button type="submit" class="nav-link btn btn-link">
+                <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+            </button>
+        </form>
+    </Authorized>
+    <NotAuthorized>
+        <form action="authentication/login" method="post">
+            <AntiforgeryToken />
+            <button type="submit" class="nav-link btn btn-link">
+                <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Login
+            </button>
+        </form>
+    </NotAuthorized>
+</AuthorizeView>
+

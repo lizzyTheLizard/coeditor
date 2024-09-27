@@ -1,8 +1,0 @@
-{
-  "dependencies": {
-    "identityapp1": {
-      "connectionInfo": "App registration: CoEditor, Tenant: gutschi.site (gutschi.site - Microsoft Entra ID)",
-      "type": "identityapp.default"
-    }
-  }
-}
