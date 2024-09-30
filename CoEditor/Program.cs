@@ -5,10 +5,12 @@ var app = WebApplication
     .AddAuthentication()
     .AddDatabase()
     .AddRazor()
+    .AddReverseProxyConfig()
     .Build();
 
 app
-    .UseRazor()
+    .UseReverseProxy()
     .UseAuthentication()
     .UseErrorHandling()
+    .UseRazor()
     .Run();
