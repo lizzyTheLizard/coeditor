@@ -24,9 +24,6 @@ public static class AuthenticationWebApplicationExtensions
 
     private static AuthenticationProperties GetAuthProperties()
     {
-        return new AuthenticationProperties
-        {
-            RedirectUri = "/"
-        };
+        return new AuthenticationProperties { RedirectUri = "/" };
     }
 }
