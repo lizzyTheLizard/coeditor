@@ -5,9 +5,11 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-CoEditor-87ddc57d-1b21-4531-b7e6-e87c1de137b2</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/fc3cddb0-91eb-40f1-aafa-fbae8335370c/resourceGroups/gutschi.site/providers/microsoft.insights/components/coeditor-gutschi-site</ApplicationInsightsResourceId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8" />
