@@ -1,7 +1,7 @@
 using CoEditor.Components;
-using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +15,9 @@ builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 
 //Application Insights
-var connectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
-builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions{ ConnectionString = connectionString });
+builder.Services.AddApplicationInsightsTelemetry(c => {
+    c.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]; ;
+});
 
 
 var app = builder.Build();
