@@ -1,16 +1,68 @@
 ﻿@page "/editor"
+@rendermode InteractiveServer
 @attribute [Authorize]
+@inject ILogger<Editor> Logger
+@inject IJSRuntime JSRuntime
+@inject UndoService CommandHandler
 
 <PageTitle>Editor</PageTitle>
 
 <h1>Hello Editor!</h1>
 
-
-
-Welcome to your new app.
+<textarea id="editorTextarea" @bind="Text"></textarea>
+<button class="btn btn-primary" @onclick="@(e => HandleAsync(new Reformulate()))">Reformulate</button>
+<button class="btn btn-primary" @onclick="@(e => HandleAsync(new Shorten()))">Shorten</button>
+<button class="btn btn-primary" @onclick="@(e => HandleAsync(new Prolong()))">Prolong</button>
+<button class="btn btn-primary" @onclick="@(e => HandleAsync(new CheckAndImprove()))">Check and Improve</button>
+<button class="btn btn-primary" @onclick="@(e => HandleAsync(new Propose()))">Propose</button>
+<button class="btn btn-primary" @onclick="Undo">Undo</button>
+<button class="btn btn-primary" @onclick="Redo">Redo</button>
+<button class="btn btn-primary" @onclick="Clean">Clean</button>
 
 @code {
-    // TODO: Write editor code
+	private string _text = "";
+	public string Text { get => _text; set { 
+		CommandHandler.Register(new UndoableTextChange("Edit",_text, value));  
+		_text = value; 
+	} }
 
+	public async Task HandleAsync(IAction action)
+	{
+		//TODO Set and unset Busy indicator
+		var selection = await GetSelectionAsync();
+		//TODO: Get proper context
+		var context = new Context("", "", "English");
+		var textChange = await action.ApplyAsync(context, Text, selection);
+		CommandHandler.Register(textChange);
+		Text = textChange.TextAfter;
+	}
+
+	public void Clean()
+	{
+		CommandHandler.Clean();
+		Text = "";
+		// TODO Clean Context
+	}
+
+	public void Undo()
+	{
+		var textChange = CommandHandler.Undo();
+		Text = textChange.TextBefore;
+	}
+
+	public void Redo()
+	{
+		var textChange = CommandHandler.Redo();
+		Text = textChange.TextAfter;
+	}
+
+	private async Task<Selection?> GetSelectionAsync()
+	{
+		var textareaId = "editorTextarea";
+		var selectionStart = await JSRuntime.InvokeAsync<int>("getSelectionStart", textareaId);
+		var selectionEnd = await JSRuntime.InvokeAsync<int>("getSelectionEnd", textareaId);
+		return (selectionStart == -1 || selectionEnd == -1 || selectionStart == selectionEnd)
+			? null
+			: new Selection(selectionStart, selectionEnd);
+	}
 }
-

@@ -1,34 +1,25 @@
 using CoEditor.Components;
+using CoEditor.Data;
+using CoEditor.Logic;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.Logging.ApplicationInsights;
 using Microsoft.Identity.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Razor
+//Services
+builder.Services.AddScoped<UndoService>();
+//TODO: Use real DB
+builder.Services.AddScoped<UserContext>();
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
-
+builder.AddInsights();
 //Authentication
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration, "AzureAd");
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 
-//Application Insights
-builder.Services.AddApplicationInsightsTelemetry(c => {
-    c.ConnectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]; ;
-});
-
-
 var app = builder.Build();
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
-}
-else
-{
-    app.UseDeveloperExceptionPage();
-}
+app.UseErrorHandler();
 app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedHost });
 app.UseStaticFiles();
 app.UseAuthenticationEndpoints();
@@ -40,6 +31,25 @@ app.Run();
 
 file static class WebApplicationExtensions
 {
+    public static void AddInsights(this WebApplicationBuilder builder)
+    {
+        if (builder.Environment.IsDevelopment()) return;
+        var connectionString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+        builder.Services.AddApplicationInsightsTelemetry(c => c.ConnectionString = connectionString);
+    }
+
+    public static void UseErrorHandler(this WebApplication app)
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseExceptionHandler("/Error");
+        }
+    }
+
     public static void UseAuthenticationEndpoints(this WebApplication app)
     {
         var authProperties = new AuthenticationProperties { RedirectUri = "/" };

@@ -1,19 +1,9 @@
 ﻿@page "/"
 @inject ILogger<Home> Logger
 
-<PageTitle>Home</PageTitle>
+<PageTitle>CoEditor</PageTitle>
 
-<h1>Hello, @message</h1>
+<h1>Welcome</h1>
 
-Welcome to your new app.
-@code {
-    private string? message;
-
-    protected override void OnInitialized()
-    {
-        message = $"Initialized at {DateTime.Now}";
-        Logger.LogInformation("Information from Site");
-        Logger.LogWarning("Warning from Site");
-    }
-}
+Welcome to the CoEditor. You can find all information and source code at <a href="https://github.com/lizzyTheLizard/coeditor">GitHub</a>
 
