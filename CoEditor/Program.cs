@@ -9,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 //Services
 builder.Services.AddScoped<UndoService>();
+builder.Services.AddScoped<AiService>();
+builder.Services.AddScoped<ShortcutService>();
 //TODO: Use real DB
 builder.Services.AddScoped<UserContext>();
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();

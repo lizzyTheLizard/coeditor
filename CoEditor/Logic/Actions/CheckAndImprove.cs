@@ -1,13 +1,8 @@
-﻿using CoEditor.Logic;
+﻿namespace CoEditor.Logic.Actions;
 
-namespace CoEditor.Logic.Actions;
-
-public class CheckAndImprove : IAction
+[EditorActionName("Check & Improve")]
+public class CheckAndImprove: EditorAction
 {
-    public string Name => "Check and Improve";
-    public Task<UndoableTextChange> ApplyAsync(Context context, string Text, Selection? selection)
-    {
-        //TODO: Implement Command
-        throw new NotImplementedException();
-    }
+    //TODO: Implment CheckAndImprove
+    public override string GetCommand(CommandInput commandInput) => throw new NotImplementedException();
 }

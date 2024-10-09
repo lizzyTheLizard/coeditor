@@ -1,13 +1,25 @@
-﻿using CoEditor.Logic;
+﻿using CoEditor.Data;
 
 namespace CoEditor.Logic.Actions;
 
-public class Propose : IAction
+[EditorActionShortCut('p')]
+public class Propose : EditorAction
 {
-    public string Name => "Propose";
-    public Task<UndoableTextChange> ApplyAsync(Context context, string Text, Selection? selection)
+    private const string FullDe = "Mache einen neuen Vorschlag für diesen Text";
+    private const string FullEn = "Make a new proposal for this text";
+
+    public override string GetCommand(CommandInput commandInput)
     {
-        //TODO: Implement Command
-        throw new NotImplementedException();
+        return commandInput.Language switch
+        {
+            Language.DE => FullDe,
+            Language.EN => FullEn,
+            _ => throw new NotImplementedException("Languague " + commandInput.Language + " is not implemented"),
+        };
+    }
+
+    public override TextChange ApplyResponse(CommandInput commandInput, string response)
+    {
+        return new TextChange(commandInput.Text, response);
     }
 }

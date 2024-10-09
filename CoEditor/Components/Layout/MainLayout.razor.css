@@ -4,6 +4,11 @@
     flex-direction: column;
 }
 
+.content {
+    height: calc(100% - 3.5rem);
+    padding-bottom: 1.1rem;
+}
+
 main {
     flex: 1;
 }
@@ -43,6 +48,10 @@ main {
 
     .top-row ::deep a, .top-row ::deep .btn-link {
         margin-left: 0;
+    }
+
+    .content {
+        height: calc(100% - 7.0rem);
     }
 }
 

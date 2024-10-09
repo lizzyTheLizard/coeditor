@@ -5,5 +5,5 @@ public class Template
     public required string Name { get; init; }
     public required string Text { get; init; }
     public required string UserName { get; init; }
-    public required string Language { get; init; }
+    public required  Language Language { get; init; }
 }

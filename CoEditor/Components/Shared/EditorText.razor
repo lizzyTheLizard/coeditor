@@ -1,0 +1,98 @@
+﻿@inject AiService AiService
+@inject UndoService UndoService
+@inject IJSRuntime JSRuntime
+@inject ILogger<EditorText> Logger
+
+<h3>Editor</h3>
+<div class="layout">
+@if (IsBusy)
+{
+    <div class="overlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+</div>
+}
+    <textarea id="editorTextarea" @bind="Text" @bind:event="oninput"></textarea>
+    <div class="buttonBar">
+        <EditorButton OnClick="HandleActionAsync" ActionType="typeof(Propose)"></EditorButton>
+        <EditorButton Enabled="@TextGiven" OnClick="@HandleActionAsync" ActionType="typeof(Reformulate)"></EditorButton>
+        <EditorButton Enabled="@TextGiven" OnClick="@HandleActionAsync" ActionType="typeof(Shorten)"></EditorButton>
+        <EditorButton Enabled="@TextGiven" OnClick="@HandleActionAsync" ActionType="typeof(Prolong)"></EditorButton>
+        <EditorButton Enabled="@TextGiven" OnClick="@HandleActionAsync" ActionType="typeof(CheckAndImprove)"></EditorButton>
+        <EditorButton Enabled="@UndoService.CanUndo" OnClick="@Undo" Name="Undo"></EditorButton>
+        <EditorButton Enabled="@UndoService.CanRedo" OnClick="@Undo" Name="Redo"></EditorButton>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string? Context { get; set;}
+
+    [Parameter, EditorRequired]
+    public Language Language { get; set; }
+
+    public bool TextGiven => !string.IsNullOrWhiteSpace(Text);
+
+    public bool IsBusy { get; set; }
+
+    public string Text { get => _text; set { HandleTextChange(_text, value); _text = value; } }
+    private string _text = "";
+
+    protected override void OnParametersSet()
+    {
+        if (Context == null)
+        {
+            Text = "";
+            UndoService.Clean();
+        }
+    }
+
+    private void HandleTextChange(string oldText, string newText)
+    {
+        if (oldText == newText) return;
+        var change = new UndoableTextChange("Edit", oldText, newText);
+        UndoService.Register(change);
+    }
+
+    public void Undo()
+    {
+        var undoableTextChange = UndoService.Undo();
+        _text = undoableTextChange.TextBefore;
+    }
+
+    public void Redo()
+    {
+        var undoableTextChange = UndoService.Redo();
+        _text = undoableTextChange.TextAfter;
+    }
+
+    public async Task HandleActionAsync(EditorAction action)
+    {
+        IsBusy = true;
+        var selection = await GetSelectionAsync();
+        var parameters = new CommandInput(Language, Text, Context, selection);
+        try
+        {
+            var textChange = await AiService.RunActionAsync(action, parameters);
+            var name = EditorAction.GetName(action.GetType());
+            UndoService.Register(new UndoableTextChange(name, textChange));
+            _text = textChange.TextAfter;
+        } catch (Exception e)
+        {
+            //TODO: Error Handling
+            Logger.LogError("Could not execute command", e);
+        }
+        IsBusy = false;
+    }
+
+    private async Task<Selection?> GetSelectionAsync()
+    {
+        var textareaId = "editorTextarea";
+        var selectionStart = await JSRuntime.InvokeAsync<int>("getSelectionStart", textareaId);
+        var selectionEnd = await JSRuntime.InvokeAsync<int>("getSelectionEnd", textareaId);
+        return (selectionStart == -1 || selectionEnd == -1 || selectionStart == selectionEnd)
+            ? null
+            : new Selection(selectionStart, selectionEnd);
+    }
+}

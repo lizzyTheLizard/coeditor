@@ -1,5 +1,9 @@
-﻿@using CoEditor.Components.Layout
+﻿@rendermode InteractiveServer
+@using CoEditor.Components.Layout
 @using CoEditor.Components.Pages
+@inject ShortcutService ShortcutService
+@inject IJSRuntime JSRuntime
+@inject ILogger<App> Logger
 
 <Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
@@ -16,3 +20,11 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool first)
+    {
+        var objRef = DotNetObjectReference.Create(ShortcutService);
+        await JSRuntime.InvokeVoidAsync("addKeybordListener", objRef);
+    }
+}

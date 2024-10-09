@@ -1,0 +1,47 @@
+﻿<h3>Context</h3>
+<div class="layout">
+    <textarea id="contextTextarea" @bind="Context" @bind:event="oninput"></textarea>
+    <div class="buttonBar">
+        <div class="layout">
+            <select class="form-select" aria-label="Language select"@bind="Language">
+                <option value="EN">English</option>
+                <option value="DE">Deutsch</option>
+            </select>
+        </div>
+        <EditorButton OnClick="@(_ => Context = null)" Name="Clean"></EditorButton>
+    </div>
+</div>
+
+@code {
+    //TODO: Implement different context types
+
+    [Parameter]
+    public EventCallback<Language> OnLanguageChange { get; set; }
+
+    [Parameter]
+    public EventCallback<string?> OnTemplateChange { get; set; }
+
+    public string? Context
+    {
+        get => _context; set
+        {
+            if (_context == value && _context != null) return;
+            OnTemplateChange.InvokeAsync(value);
+            _context = value;
+        }
+    }
+    private string? _context = null;
+
+
+    public Language Language
+    {
+        get => _language; set
+        {
+            if (_language == value) return;
+            Context = null;
+            OnLanguageChange.InvokeAsync(value);
+            _language = value;
+        }
+    }
+    private Language _language = Language.EN;
+}
