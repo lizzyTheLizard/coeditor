@@ -6,15 +6,15 @@ public abstract class EditorAction
 {
     public abstract string GetCommand(CommandInput commandInput);
 
-    public virtual TextChange ApplyResponse(CommandInput commandInput, string response)
+    public virtual string ApplyResponse(CommandInput commandInput, string response)
     {
         var selection = commandInput.Selection;
-        if (selection == null) return new TextChange(commandInput.Text, response);
+        if (selection == null) return  response;
         var newText = string.Concat(
             commandInput.Text.AsSpan(0, selection.Start),
             response,
             commandInput.Text.AsSpan(selection.End));
-        return new TextChange(commandInput.Text, newText);
+        return newText;
     }
 
     public static string GetName(Type type)
@@ -35,7 +35,7 @@ public abstract class EditorAction
 }
 
 
-public record CommandInput(Language Language, string Text, string? Context, Selection? Selection) { }
+public record CommandInput(Language Language, string Text, string Context, Selection? Selection) { }
 
 public record Selection(int Start, int End) { }
 

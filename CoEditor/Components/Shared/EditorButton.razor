@@ -15,7 +15,9 @@
     [Parameter]
     public string? Name { get; set; }
 
-    public string ButtonText { get
+    private string ButtonText
+    {
+        get
         {
             if (Name != null) return Name;
             if (ActionType != null) return EditorAction.GetName(ActionType);
@@ -30,7 +32,7 @@
             .ForEach(k => ShortcutService.RegisterShortcut(k, () => HandleOnClickAsync()));
     }
 
-    public async Task HandleOnClickAsync()
+    private async Task HandleOnClickAsync()
     {
         if(ActionType == null)
         {

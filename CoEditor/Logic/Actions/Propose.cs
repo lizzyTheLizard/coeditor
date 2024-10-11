@@ -18,8 +18,5 @@ public class Propose : EditorAction
         };
     }
 
-    public override TextChange ApplyResponse(CommandInput commandInput, string response)
-    {
-        return new TextChange(commandInput.Text, response);
-    }
+    public override string ApplyResponse(CommandInput commandInput, string response) => response;
 }

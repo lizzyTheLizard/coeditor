@@ -5,6 +5,13 @@
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/microsoft.insights/components/gutschi-site",
       "type": "appInsights.azure",
       "connectionId": "APPLICATIONINSIGHTS_CONNECTION_STRING"
+    },
+    "cosmosdb1": {
+      "serviceConnectorResourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ServiceLinker/locations/switzerlandnorth/connectors/ConnectionStrings_69A3C88BC8",
+      "secretStore": "LocalSecretsFile",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.DocumentDB/databaseAccounts/coeditor-gutschi-site",
+      "type": "cosmosdb.azure",
+      "connectionId": "ConnectionStrings"
     }
   }
 }

@@ -1,47 +1,63 @@
-﻿<h3>Context</h3>
-<div class="layout">
-    <textarea id="contextTextarea" @bind="Context" @bind:event="oninput"></textarea>
+﻿<div class="layout">
+    <textarea @bind="Context" @bind:after="() => ContextChanged.InvokeAsync(Context)"/>
     <div class="buttonBar">
         <div class="layout">
-            <select class="form-select" aria-label="Language select"@bind="Language">
+            <select class="form-select" 
+                    aria-label="Language select" 
+                    @bind="Language" 
+                    @bind:after="() => LanguageChanged.InvokeAsync(Language)">
                 <option value="EN">English</option>
                 <option value="DE">Deutsch</option>
             </select>
         </div>
-        <EditorButton OnClick="@(_ => Context = null)" Name="Clean"></EditorButton>
+        <EditorButton OnClick="@ContextResetAsync" Name="Clean"></EditorButton>
     </div>
 </div>
 
 @code {
+    [Parameter]
+    public EventCallback OnContextReset { get; set; }
+
+    [Parameter]
+    public Language Language { get; set; } = Language.EN;
+
+    [Parameter]
+    public EventCallback<Language> LanguageChanged { get; set; }
+
+    //TODO: Better initial context
+    [Parameter]
+    public string Context { get; set; } = "";
+
+    [Parameter]
+    public EventCallback<string> ContextChanged { get; set; }
+
+
+    private async Task ContextResetAsync()
+    {
+        //TODO: Better initial context
+        Context = "";
+        await OnContextReset.InvokeAsync(null);
+        await ContextChanged.InvokeAsync(Context);
+    }
+
     //TODO: Implement different context types
 
-    [Parameter]
-    public EventCallback<Language> OnLanguageChange { get; set; }
+    /*
 
-    [Parameter]
-    public EventCallback<string?> OnTemplateChange { get; set; }
-
-    public string? Context
-    {
-        get => _context; set
+    public async Task<Template[]> GetTemplatesAsync(Language language)
         {
-            if (_context == value && _context != null) return;
-            OnTemplateChange.InvokeAsync(value);
-            _context = value;
-        }
+        var userName = await GetUserNameAsync();
+        return await Templates
+            .Where(t => t.Language == language)
+            .Where(t => t.UserName == userName)
+    .ToArrayAsync();
     }
-    private string? _context = null;
 
-
-    public Language Language
-    {
-        get => _language; set
+    public Template[] GetSystemTemplates(Language language)
         {
-            if (_language == value) return;
-            Context = null;
-            OnLanguageChange.InvokeAsync(value);
-            _language = value;
-        }
+            return [
+            new Template() { Id = Guid.NewGuid(), Name = "Free", Text = "{context%textarea}", UserName = "", Language = language }
+    ];
     }
-    private Language _language = Language.EN;
+    */
 }
