@@ -19,19 +19,19 @@ jobs:
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '3.1'
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish  .\CoEditor\ -c Release -o ./myapp
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ./myapp
+          path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
     runs-on: windows-latest
@@ -51,9 +51,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1312A5D3FF0649F8937B14FE255C47A0 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_87926D5DDB1C471987F35DB1FB4B8524 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_545053D74C6A461E90FBC7B2EFE8711D }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_977DAB70C62B4B54BFDBE95D8CC0058F }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_B3167AFF4DF440D7A529C999DDC9E074 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_847817F997904801A38EED13D091D2CC }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
