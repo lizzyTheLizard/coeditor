@@ -1,10 +1,8 @@
 using CoEditor.Components;
-using CoEditor.Components.Pages;
 using CoEditor.Data;
 using CoEditor.Logic;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using System.Configuration;
@@ -40,7 +38,7 @@ file static class WebApplicationBuilderExtensions
     public static WebApplicationBuilder AddInsights(this WebApplicationBuilder builder)
     {
         if (builder.Environment.IsDevelopment()) return builder;
-        var connectionString = builder.Configuration.GetConnectionString("insights");
+        var connectionString = builder.Configuration.GetConnectionString("insights") ?? throw new ConfigurationErrorsException("Missing insights connection string");
         builder.Services.AddApplicationInsightsTelemetry(c => c.ConnectionString = connectionString);
         return builder;
     }
