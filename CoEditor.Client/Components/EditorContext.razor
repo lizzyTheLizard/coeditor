@@ -1,0 +1,120 @@
+﻿@inject ITemplateService _templateService
+
+<div class="d-flex flex-wrap mx-n1">
+    <div class="col-6 px-1 pb-1">
+        <label for="language" class="form-label">Language</label>
+        <InputSelect id="language" class="form-select form-select-sm" @bind-Value:get="Language" @bind-Value:set="LanguageChangedAsync">
+            @foreach (var language in Enum.GetValues<Language>())
+            {
+                <option value="@language">@language</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="col-6 px-1 pb-1">
+        <label for="template" class="form-label">Template</label>
+        <InputSelect id="template" class="form-select form-select-sm" @bind-Value:get="TemplateId" @bind-Value:set="TemplateIdChangedAsync">
+            @foreach (var template in Templates)
+            {
+                <option value="@template.Id">@template.Name</option>
+            }
+        </InputSelect>
+    </div>
+    @foreach (var param in TemplateParameters)
+    {
+        @switch (param.Type)
+        {
+            @case TemplateParameterType.String:
+                <div class="col-6 px-1 pb-1">
+                    <label for="@param.Id" class="form-label">@param.Name</label>
+                    <InputText id="@param.Id" 
+                                class="@("form-control form-control-sm mb-1 " + (param.Valid ? "is-valid" : "is-invalid"))" 
+                                @bind-Value="param.Value" 
+                                @bind-Value:after="ParameterChangedAsync"/>
+                    <div class="invalid-feedback">Required</div>
+                </div>
+                break;
+            @case TemplateParameterType.Text:   
+                <div class="col-12 px-1 pb-1">
+                    <label for="@param.Id" class="form-label">@param.Name</label>
+                    <InputTextArea id="@param.Id"
+                                   class="@("form-control form-control-sm mb-1 " + (param.Valid ? "is-valid" : "is-invalid"))"
+                                   @bind-Value="param.Value"
+                                   @bind-Value:after="ParameterChangedAsync" />
+                    <div class="invalid-feedback">Required</div>
+                </div>
+                break;
+            @case TemplateParameterType.Select:
+                <div class="col-6 px-1 pb-1">
+                    <label for="@param.Id" class="form-label">@param.Name</label>
+                    <InputSelect id="@param.Id"
+                                 class="@("form-select form-select-sm mb-1 " + (param.Valid ? "is-valid" : "is-invalid"))"
+                                 @bind-Value="param.Value"
+                                 @bind-Value:after="ParameterChangedAsync">
+                        <option selected disabled>Select</option>
+                        @foreach (var option in param.Options)
+                        {
+                            <option value="@option">@option</option>
+                        }
+                    </InputSelect>
+                    <div class="invalid-feedback">Required</div>
+                </div>
+                break;
+            default:
+                throw new Exception($"Unknown parameter type {param.Type}");
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Language Language { get; set; } = Language.EN;
+
+    [Parameter]
+    public EventCallback<Language> LanguageChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<string> ContextChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> ContextValidChanged { get; set; }
+
+    private Guid TemplateId { get; set; }
+
+    private Template[] Templates { get; set; } = [];
+
+    private TemplateParameter[] TemplateParameters { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        Templates = await _templateService.GetTemplatesAsync(Language);
+        await TemplateIdChangedAsync(Templates[0].Id);
+    }
+
+    private async Task LanguageChangedAsync(Language language)
+    {
+        Language = language;
+        await LanguageChanged.InvokeAsync(language);
+        Templates = await _templateService.GetTemplatesAsync(language);
+        await TemplateIdChangedAsync(Templates[0].Id);
+    }
+
+    private async Task TemplateIdChangedAsync(Guid templateId)
+    {
+        TemplateId = templateId;
+        var template = Templates.Where(t => t.Id == templateId).First();
+        TemplateParameters = template.GetTemplateParameters();
+        await ContextValidChanged.InvokeAsync(false);
+        await ParameterChangedAsync();
+    }
+
+    private async Task ParameterChangedAsync()
+    {
+        var template = Templates.Where(t => t.Id == TemplateId).First();
+        var valid = TemplateParameters.All(p => p.Valid);
+        if (valid)
+        {
+            await ContextChanged.InvokeAsync(template.CalculateText(TemplateParameters));
+        }
+        await ContextValidChanged.InvokeAsync(valid);
+    }
+}

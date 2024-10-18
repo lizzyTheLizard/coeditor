@@ -1,0 +1,87 @@
+﻿@inject UndoService _undoService
+@inject IJSRuntime _jSRuntime
+@inject IEditorActionService _editorActionService
+
+<div class="d-flex flex-column flex-grow-1 overlay-host">
+    @if (!ContextValid)
+    {
+        <div class="overlay"/>
+    }
+    @if (Busy)
+    {
+        <div class="overlay">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    <InputTextArea id="editorTextarea"
+                   class="form-control flex-grow-1"
+                   @bind-Value="Text"
+                   @bind-Value:after="@(() => _undoService.Register(Text))" />
+    <div class="d-flex flex-wrap mx-n1">
+        <EditorButton OnClick="@HandleActionAsync" ActionName="ActionName.Propose" Name="Propose"></EditorButton>
+        <EditorButton Enabled="@HasText" OnClick="@HandleActionAsync" ActionName="ActionName.Improve"></EditorButton>
+        <EditorButton Enabled="HasText" OnClick="@HandleActionAsync" ActionName="ActionName.Summarize"></EditorButton>
+        <EditorButton Enabled="HasText" OnClick="@HandleActionAsync" ActionName="ActionName.Expand"></EditorButton>
+        <EditorButton Enabled="@_undoService.CanUndo" OnClick="@(() => Text = _undoService.Undo())" Name="Undo"></EditorButton>
+        <EditorButton Enabled="@_undoService.CanRedo" OnClick="@(() => Text = _undoService.Redo())" Name="Redo"></EditorButton>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Context { get; set; } = "";
+
+    [Parameter, EditorRequired]
+    public bool ContextValid { get; set; } = false;
+    private bool _oldContextValid = false;
+
+    [Parameter, EditorRequired]
+    public Language Language { get; set; } = Language.EN;
+
+    private string Text { get; set; } = "";
+    private bool Busy { get; set; } = false;
+    private bool HasText => !string.IsNullOrWhiteSpace(Text);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ContextValid == _oldContextValid) return;
+        _oldContextValid = ContextValid;
+        if(!ContextValid)
+        {
+            Text = "";
+            _undoService.Clean();
+        }
+        else
+        {
+            await HandleActionAsync(ActionName.Propose);
+        }
+    }
+
+    private async Task HandleActionAsync(ActionName actionName)
+    {
+        Busy = true;
+        try
+        {
+            var selection = await GetSelectionAsync();
+            var actionInput = new EditorActionInput(actionName, Language, Context, Text, selection);
+            Text = await _editorActionService.HandleEditorActionAsync(actionInput);
+            _undoService.Register(Text);
+        } 
+        finally 
+        {
+            Busy = false;
+        }
+    }
+
+    private async Task<Selection?> GetSelectionAsync()
+    {
+        var textareaId = "editorTextarea";
+        var selectionStart = await _jSRuntime.InvokeAsync<int>("getSelectionStart", textareaId);
+        var selectionEnd = await _jSRuntime.InvokeAsync<int>("getSelectionEnd", textareaId);
+        return (selectionStart == -1 || selectionEnd == -1 || selectionStart == selectionEnd)
+            ? null
+            : new Selection(selectionStart, selectionEnd);
+    }
+}

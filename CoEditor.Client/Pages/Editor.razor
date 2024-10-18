@@ -1,0 +1,20 @@
+﻿@page "/editor"
+@attribute [Authorize]
+
+<PageTitle>Editor</PageTitle>
+<h1>Context</h1>
+<EditorContext ContextChanged="@((c) => Context = c)"
+               ContextValidChanged="@((c) => ContextValid = c)"
+               LanguageChanged="@((l) => Language = l)">
+</EditorContext>
+<h1>Editor</h1>
+<EditorText Context="@Context"
+            ContextValid="@ContextValid"
+            Language="@Language">
+</EditorText>
+
+@code {
+    private string Context { get; set; } = "";
+    private bool ContextValid { get; set; } = false;
+    private Language Language { get; set; } = Language.EN;
+}

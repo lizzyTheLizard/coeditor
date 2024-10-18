@@ -1,0 +1,50 @@
+﻿@implements IDisposable
+@inherits LayoutComponentBase
+@inject NavigationManager _navigationManager
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">CoEditor</a>
+        <span style="flex-grow: 1"/>
+        <AuthorizeView>
+            <Authorized>
+                <NavLink class="nav-link p-1 p-sm-2 px-sm-3" href="editor" Match="NavLinkMatch.All">
+                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Editor
+                </NavLink>
+                <NavLink class="nav-link p-1 p-sm-2 px-sm-3" href="settings" Match="NavLinkMatch.All">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Settings
+                </NavLink>
+                <NavLink class="nav-link p-1 p-sm-2 px-sm-3" href="/MicrosoftIdentity/Account/SignOut">
+                    <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                </NavLink>
+            </Authorized>
+            <NotAuthorized>
+                <NavLink class="nav-link p-1 p-sm-2 px-sm-3" href="/MicrosoftIdentity/Account/SignIn">
+                    <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Login
+                </NavLink>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+</nav>
+
+@code {
+    private string? currentUrl;
+
+    protected override void OnInitialized()
+    {
+        currentUrl = _navigationManager.ToBaseRelativePath(_navigationManager.Uri);
+        _navigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = _navigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _navigationManager.LocationChanged -= OnLocationChanged;
+    }
+}
+
