@@ -11,7 +11,7 @@ public interface ITemplateService
 }
 
 
-public class TemplateRestService(HttpClient _httpClient): ITemplateService
+public class TemplateRestService(HttpClient _httpClient) : ITemplateService
 {
     public async Task<Template[]> GetTemplatesAsync(Language language)
     {

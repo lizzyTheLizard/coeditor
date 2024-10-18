@@ -1,13 +1,11 @@
-using Microsoft.AspNetCore.HttpOverrides;
+using CoEditor.Client;
+using CoEditor.Components;
+using CoEditor.Domain;
 using CoEditor.Integration.Ai;
 using CoEditor.Integration.Cosmos;
-using CoEditor.Integration.Insights;
 using CoEditor.Integration.Identity;
-using CoEditor.Domain;
-using CoEditor.Components;
-using CoEditor.Client;
-using Microsoft.AspNetCore.Components.Authorization;
-using CoEditor;
+using CoEditor.Integration.Insights;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddServerIneractiveClient(builder.Configuration);

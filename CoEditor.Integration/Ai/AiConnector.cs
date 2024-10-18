@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using CoEditor.Domain.Outgoing;
+﻿using CoEditor.Domain.Outgoing;
+using Microsoft.Extensions.Logging;
 
 namespace CoEditor.Integration.Ai;
 
-internal class AiConnector(ILogger<AiConnector> _logger): IAiConnector
+internal class AiConnector(ILogger<AiConnector> _logger) : IAiConnector
 {
     public async Task<string> PromptAsync(string prompt)
     {

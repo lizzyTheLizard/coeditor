@@ -1,15 +1,15 @@
-﻿using System.Diagnostics;
-using CoEditor.Domain.Incomming;
+﻿using CoEditor.Domain.Incomming;
 using CoEditor.Domain.Model;
 using CoEditor.Domain.Outgoing;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace CoEditor.Domain;
 
 internal class EditorActionService(
-    IProfileRepository _profileRepository, 
-    IAiConnector _aiConnector, 
-    IPromptLogRepository _promptLogRepository, 
+    IProfileRepository _profileRepository,
+    IAiConnector _aiConnector,
+    IPromptLogRepository _promptLogRepository,
     ILogger<EditorActionService> _logger) : IEditorActionApi
 {
     public async Task<string> HandleEditorActionAsync(string userName, EditorActionInput input)
@@ -58,7 +58,7 @@ internal class EditorActionService(
             _logger.LogWarning(exception, "Could not prompt ai");
             throw new EditorActionException();
         }
-        if(response == null)
+        if (response == null)
         {
             _logger.LogWarning("Did not get a response from ai");
             throw new EditorActionException();

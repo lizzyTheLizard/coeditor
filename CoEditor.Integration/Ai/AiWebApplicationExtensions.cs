@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CoEditor.Domain.Outgoing;
 using Microsoft.Extensions.Configuration;
-using CoEditor.Domain.Outgoing;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CoEditor.Integration.Ai;
 

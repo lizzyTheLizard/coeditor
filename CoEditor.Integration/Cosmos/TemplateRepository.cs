@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using CoEditor.Domain.Model;
+﻿using CoEditor.Domain.Model;
 using CoEditor.Domain.Outgoing;
+using Microsoft.EntityFrameworkCore;
 
 namespace CoEditor.Integration.Cosmos;
 

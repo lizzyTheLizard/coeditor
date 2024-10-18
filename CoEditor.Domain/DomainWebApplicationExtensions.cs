@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using CoEditor.Domain.Incomming;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using CoEditor.Domain.Incomming;
 
 namespace CoEditor.Domain;
 

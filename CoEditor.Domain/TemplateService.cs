@@ -1,6 +1,6 @@
-﻿using CoEditor.Domain.Outgoing;
-using CoEditor.Domain.Incomming;
+﻿using CoEditor.Domain.Incomming;
 using CoEditor.Domain.Model;
+using CoEditor.Domain.Outgoing;
 
 namespace CoEditor.Domain;
 

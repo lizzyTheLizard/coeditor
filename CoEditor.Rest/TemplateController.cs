@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using CoEditor.Domain.Incomming;
+﻿using CoEditor.Domain.Incomming;
 using CoEditor.Domain.Model;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CoEditor.Rest;
 

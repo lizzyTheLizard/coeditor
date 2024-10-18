@@ -78,6 +78,7 @@
                 "reserved": false,
                 "serverFarmId": "[variables('appServicePlan_ResourceId')]",
                 "siteConfig": {
+                  "location": "Switzerland Nord",
                   "metadata": [
                     {
                       "name": "CURRENT_STACK",
