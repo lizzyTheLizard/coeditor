@@ -42,7 +42,7 @@ internal class AiConnector : IAiConnector
         var chatMessages = new List<ChatMessage>();
         foreach (var message in messages)
         {
-            switch(message.Type)
+            switch (message.Type)
             {
                 case PromptMessageType.System:
                     chatMessages.Add(new SystemChatMessage(message.Prompt));

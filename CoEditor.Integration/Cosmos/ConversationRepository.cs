@@ -1,7 +1,6 @@
 ﻿using CoEditor.Domain.Model;
 using CoEditor.Domain.Outgoing;
 using Microsoft.EntityFrameworkCore;
-using OpenAI.Chat;
 
 namespace CoEditor.Integration.Cosmos;
 
@@ -44,7 +43,7 @@ internal class ConversationRepository(CosmosDbContext _dbContext) : IConversatio
             Language = conversation.Language,
             Text = conversation.Text,
             Context = conversation.Context,
-            Messages = [..conversation.Messages]
+            Messages = [.. conversation.Messages]
         };
     }
 

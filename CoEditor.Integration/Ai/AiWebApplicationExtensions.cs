@@ -1,8 +1,6 @@
 ﻿using CoEditor.Domain.Outgoing;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Configuration;
 
 namespace CoEditor.Integration.Ai;
 

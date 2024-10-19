@@ -1,9 +1,7 @@
 ﻿using CoEditor.Domain.Incomming;
 using CoEditor.Domain.Model;
 using CoEditor.Domain.Outgoing;
-using Microsoft.Extensions.Logging;
 using System.Data;
-using System.Diagnostics;
 
 namespace CoEditor.Domain;
 
@@ -145,7 +143,7 @@ internal class EditorActionService(
         if (existingConversation.UserName != userName) throw new EditorActionException("Wrong username");
         var existingMessages = ToMessages(existingConversation);
         var newMessages = ToNewMessages(existingConversation, input);
-        var result = await _aiConnector.PromptAsync([.. existingMessages, ..newMessages]);
+        var result = await _aiConnector.PromptAsync([.. existingMessages, .. newMessages]);
         var updatedConversation = MergeConversation(existingConversation, newMessages, result, input.CurrentText, input.Context);
         await _conversationRepository.UpdateAsync(updatedConversation);
         return updatedConversation.Text;
@@ -154,7 +152,7 @@ internal class EditorActionService(
     private static PromptMessage[] ToMessages(Conversation conversation)
     {
         var result = new List<PromptMessage>();
-        foreach( var conversationMessage in conversation.Messages)
+        foreach (var conversationMessage in conversation.Messages)
         {
             var type = conversationMessage.Type == ConversationMessageType.System ? PromptMessageType.System : PromptMessageType.User;
             result.Add(new PromptMessage(conversationMessage.Prompt, type));

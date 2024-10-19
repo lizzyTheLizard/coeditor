@@ -1,6 +1,4 @@
-﻿using CoEditor.Domain.Model;
-
-namespace CoEditor.Domain.Outgoing;
+﻿namespace CoEditor.Domain.Outgoing;
 
 public interface IAiConnector
 {
@@ -9,7 +7,7 @@ public interface IAiConnector
 
 public record PromptMessage(string Prompt, PromptMessageType Type);
 
-public record PromptResult(string? Response, Exception? exception, long durationInMs);
+public record PromptResult(string? Response, Exception? Exception, long DurationInMs);
 
 public enum PromptMessageType
 {
