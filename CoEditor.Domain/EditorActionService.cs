@@ -101,9 +101,9 @@ internal class EditorActionService(
             Prompt = lastMessage.Prompt,
             Type = lastMessage.Type == PromptMessageType.User ? ConversationMessageType.User : ConversationMessageType.System,
             Response = result.Response,
-            DurationInMs = result.durationInMs,
-            Exception = result.exception?.Message,
-            StackTrace = result.exception?.StackTrace,
+            DurationInMs = result.DurationInMs,
+            Exception = result.Exception?.Message,
+            StackTrace = result.Exception?.StackTrace,
         };
         return new Conversation()
         {
