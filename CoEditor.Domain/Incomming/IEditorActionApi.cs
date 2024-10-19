@@ -4,14 +4,21 @@ namespace CoEditor.Domain.Incomming;
 
 public interface IEditorActionApi
 {
-    Task<string> HandleEditorActionAsync(string userName, EditorActionInput input);
+    Task<string> InitializeConversationAsync(string userName, InitializeConversationInput input);
+
+    Task<string> HandleEditorCommandAsync(string userName, HandleEditorCommandInput input);
+
+    Task<string> HandleCustomEditorCommandAsync(string userName, HandleCustomEditorCommandInput input);
 }
 
-public record EditorActionInput(ActionName Action, Language Language, string Context, string CurrentText, Selection? Selection);
+public record InitializeConversationInput(Guid ConversationGuid, Language Language, string Context);
 
-public enum ActionName { Improve, Expand, Propose, Reformulate, Summarize }
+public record HandleEditorCommandInput(Guid ConversationGuid, Language Language, ActionName Action, string Context, string CurrentText, Selection? Selection);
+
+public record HandleCustomEditorCommandInput(Guid ConversationGuid, Language Language, string CustomCommand, string Context, string CurrentText, Selection? Selection);
+
+public enum ActionName { Improve, Expand, Reformulate, Summarize }
 
 public record Selection(int Start, int End) { }
 
-public class EditorActionException : Exception { };
-
+public class EditorActionException(string Message) : Exception(Message) { };

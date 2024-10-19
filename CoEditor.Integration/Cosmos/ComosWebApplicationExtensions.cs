@@ -15,7 +15,7 @@ public static class CosmosWebApplicationExtensions
         services.AddDbContext<CosmosDbContext>(c => c.UseCosmos(connectionString, "coeditor"));
         services.AddScoped<ITemplateRepository, TemplateRepository>();
         services.AddScoped<IProfileRepository, ProfileRepository>();
-        services.AddScoped<IPromptLogRepository, PromptLogRepository>();
+        services.AddScoped<IConversationRepository, ConversationRepository>();
 
     }
 

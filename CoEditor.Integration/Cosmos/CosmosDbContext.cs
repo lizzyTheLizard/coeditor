@@ -7,7 +7,7 @@ internal class CosmosDbContext(DbContextOptions<CosmosDbContext> _options) : DbC
 {
     public DbSet<ProfileDocument> Profiles { get; set; }
     public DbSet<TemplateDocument> Templates { get; set; }
-    public DbSet<PromptLogDocument> PromptLog { get; set; }
+    public DbSet<ConversationDocument> Conversations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -19,8 +19,8 @@ internal class CosmosDbContext(DbContextOptions<CosmosDbContext> _options) : DbC
             .ToContainer(nameof(Template))
             .HasPartitionKey(c => c.Id)
             .HasNoDiscriminator();
-        builder.Entity<PromptLogDocument>()
-            .ToContainer(nameof(PromptLog))
+        builder.Entity<ConversationDocument>()
+            .ToContainer(nameof(Conversation))
             .HasPartitionKey(c => c.Id)
             .HasNoDiscriminator();
     }

@@ -1,6 +1,7 @@
 ﻿@inject UndoService _undoService
 @inject IJSRuntime _jSRuntime
 @inject IEditorActionService _editorActionService
+@inject ILogger<EditorText> _logger
 
 <div class="d-flex flex-column flex-grow-1 overlay-host">
     @if (!ContextValid)
@@ -20,7 +21,7 @@
                    @bind-Value="Text"
                    @bind-Value:after="@(() => _undoService.Register(Text))" />
     <div class="d-flex flex-wrap mx-n1">
-        <EditorButton OnClick="@HandleActionAsync" ActionName="ActionName.Propose" Name="Propose"></EditorButton>
+        <EditorButton Enabled="@HasText" OnClick="@HandleActionAsync" ActionName="ActionName.Reformulate"></EditorButton>
         <EditorButton Enabled="@HasText" OnClick="@HandleActionAsync" ActionName="ActionName.Improve"></EditorButton>
         <EditorButton Enabled="HasText" OnClick="@HandleActionAsync" ActionName="ActionName.Summarize"></EditorButton>
         <EditorButton Enabled="HasText" OnClick="@HandleActionAsync" ActionName="ActionName.Expand"></EditorButton>
@@ -43,6 +44,7 @@
     private string Text { get; set; } = "";
     private bool Busy { get; set; } = false;
     private bool HasText => !string.IsNullOrWhiteSpace(Text);
+    private Guid _conversationGuid;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -55,20 +57,40 @@
         }
         else
         {
-            await HandleActionAsync(ActionName.Propose);
+            Busy = true;
+            _conversationGuid = Guid.NewGuid();
+            var actionInput = new InitializeConversationInput(_conversationGuid, Language, Context);
+            try
+            {
+                Text = await _editorActionService.InitializeConversationAsync(actionInput);
+            }
+            catch (Exception e)
+            {
+                //TODO better error handling
+                _logger.LogWarning("Error while executing command " + e.Message);
+            }
+            finally
+            {
+                Busy = false;
+            }
         }
     }
 
     private async Task HandleActionAsync(ActionName actionName)
     {
         Busy = true;
+        var selection = await GetSelectionAsync();
+        var actionInput = new HandleEditorCommandInput(_conversationGuid, Language, actionName, Context, Text, selection);
         try
         {
-            var selection = await GetSelectionAsync();
-            var actionInput = new EditorActionInput(actionName, Language, Context, Text, selection);
-            Text = await _editorActionService.HandleEditorActionAsync(actionInput);
+            Text = await _editorActionService.HandleEditorCommandAsync(actionInput);
             _undoService.Register(Text);
-        } 
+        }
+        catch(Exception e)
+        {
+            //TODO better error handling
+            _logger.LogWarning("Error while executing command " + e.Message);
+        }
         finally 
         {
             Busy = false;
