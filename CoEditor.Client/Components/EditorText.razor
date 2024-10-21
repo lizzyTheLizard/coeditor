@@ -1,6 +1,6 @@
 ﻿@inject UndoService _undoService
 @inject IJSRuntime _jSRuntime
-@inject IEditorActionService _editorActionService
+@inject IConversationService _conversationService
 @inject ILogger<EditorText> _logger
 
 <div class="d-flex flex-column flex-grow-1 overlay-host">
@@ -21,16 +21,19 @@
                    @bind-Value="Text"
                    @bind-Value:after="@(() => _undoService.Register(Text))" />
     <div class="d-flex flex-wrap mx-n1">
-        <EditorButton Enabled="@HasText" OnClick="@HandleActionAsync" ActionName="ActionName.Reformulate"></EditorButton>
-        <EditorButton Enabled="@HasText" OnClick="@HandleActionAsync" ActionName="ActionName.Improve"></EditorButton>
-        <EditorButton Enabled="HasText" OnClick="@HandleActionAsync" ActionName="ActionName.Summarize"></EditorButton>
-        <EditorButton Enabled="HasText" OnClick="@HandleActionAsync" ActionName="ActionName.Expand"></EditorButton>
-        <EditorButton Enabled="@_undoService.CanUndo" OnClick="@(() => Text = _undoService.Undo())" Name="Undo"></EditorButton>
-        <EditorButton Enabled="@_undoService.CanRedo" OnClick="@(() => Text = _undoService.Redo())" Name="Redo"></EditorButton>
+        <EditorButton Enabled="@HasText" OnTriggered="@HandleActionAsync" ActionName="ActionName.Reformulate"></EditorButton>
+        <EditorButton Enabled="@HasText" OnTriggered="@HandleActionAsync" ActionName="ActionName.Improve"></EditorButton>
+        <EditorButton Enabled="HasText" OnTriggered="@HandleActionAsync" ActionName="ActionName.Summarize"></EditorButton>
+        <EditorButton Enabled="HasText" OnTriggered="@HandleActionAsync" ActionName="ActionName.Expand"></EditorButton>
+        <EditorButton Enabled="@_undoService.CanUndo" OnTriggered="@(() => Text = _undoService.Undo())" Name="Undo"></EditorButton>
+        <EditorButton Enabled="@_undoService.CanRedo" OnTriggered="@(() => Text = _undoService.Redo())" Name="Redo"></EditorButton>
     </div>
 </div>
 
 @code {
+    //TODO: Simplyfy and get some logic to ConversationService
+    //TODO: Fix Loading Pattern for Text
+
     [Parameter, EditorRequired]
     public string Context { get; set; } = "";
 
@@ -59,10 +62,17 @@
         {
             Busy = true;
             _conversationGuid = Guid.NewGuid();
-            var actionInput = new InitializeConversationInput(_conversationGuid, Language, Context);
+            var actionInput = new HandleInitialActionInput()
+                {
+                    ConversationGuid = _conversationGuid,
+                    Language = Language,
+                    NewContext = Context,
+                    NewText = "",
+                };
             try
             {
-                Text = await _editorActionService.InitializeConversationAsync(actionInput);
+                var conversation = await _conversationService.InitializeConversationAsync(actionInput);
+                Text = conversation.Text;
             }
             catch (Exception e)
             {
@@ -80,10 +90,19 @@
     {
         Busy = true;
         var selection = await GetSelectionAsync();
-        var actionInput = new HandleEditorCommandInput(_conversationGuid, Language, actionName, Context, Text, selection);
+        var actionInput = new HandleNamedActionInput()
+            {
+                ConversationGuid = _conversationGuid,
+                Language = Language,
+                Action = actionName,
+                NewContext = Context,
+                NewText = Text,
+                Selection = selection,
+            };
         try
         {
-            Text = await _editorActionService.HandleEditorCommandAsync(actionInput);
+            var conversation = await _conversationService.HandleActionAsync(actionInput);
+            Text = conversation.Text;
             _undoService.Register(Text);
         }
         catch(Exception e)

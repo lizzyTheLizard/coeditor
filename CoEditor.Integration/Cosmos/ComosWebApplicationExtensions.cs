@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Configuration;
+using System.Diagnostics;
 
 namespace CoEditor.Integration.Cosmos;
 
@@ -16,6 +17,16 @@ public static class CosmosWebApplicationExtensions
         services.AddScoped<ITemplateRepository, TemplateRepository>();
         services.AddScoped<IProfileRepository, ProfileRepository>();
         services.AddScoped<IConversationRepository, ConversationRepository>();
+
+
+        if (!Debugger.IsAttached)
+        {
+            var defaultTrace = Type.GetType("Microsoft.Azure.Cosmos.Core.Trace.DefaultTrace,Microsoft.Azure.Cosmos.Direct") ?? throw new Exception("Type not found");
+            TraceSource traceSource = (TraceSource)(defaultTrace.GetProperty("TraceSource")?.GetValue(null) ?? throw new Exception("Trace Source not found"));
+            traceSource.Listeners.Remove("Default");
+            // Add your own trace listeners
+        }
+
 
     }
 

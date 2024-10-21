@@ -6,21 +6,21 @@ namespace CoEditor.Client;
 
 public static class ClientWebApplicationExtensions
 {
-    public static void AddServerIneractiveClient(this IServiceCollection services, IConfiguration configuration)
+    public static void AddServerIneractiveClient(this IServiceCollection services)
     {
         services.AddScoped<UndoService>();
         services.AddScoped<ShortcutService>();
-        services.AddScoped<IEditorActionService, EditorActionDomainService>();
+        services.AddScoped<IConversationService, ConversationDomainService>();
         services.AddScoped<ITemplateService, TemplateDomainService>();
 
     }
 
-    public static void AddWebAssemblyClient(this IServiceCollection services, IConfiguration configuration, IWebAssemblyHostEnvironment hostEnvironment)
+    public static void AddWebAssemblyClient(this IServiceCollection services, IWebAssemblyHostEnvironment hostEnvironment)
     {
         services.AddScoped<UndoService>();
         services.AddScoped<ShortcutService>();
         services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(hostEnvironment.BaseAddress) });
-        services.AddScoped<IEditorActionService, EditorActionRestService>();
+        services.AddScoped<IConversationService, ConversationRestService>();
         services.AddScoped<ITemplateService, TemplateRestService>();
         // The authentication is done in the backend, the username is stored in the
         // PersistentComponentState and needs to be read by the client

@@ -8,8 +8,8 @@ using CoEditor.Integration.Insights;
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddServerIneractiveClient(builder.Configuration);
-builder.Services.AddDomain(builder.Configuration);
+builder.Services.AddServerIneractiveClient();
+builder.Services.AddDomain();
 builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIServerIdentity(builder.Configuration);
 builder.Services.AddAi(builder.Configuration);

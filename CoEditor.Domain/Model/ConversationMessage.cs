@@ -9,10 +9,3 @@ public class ConversationMessage
     public string? Exception { get; init; }
     public string? StackTrace { get; init; }
 }
-
-
-public enum ConversationMessageType
-{
-    System,
-    User,
-}

@@ -12,7 +12,7 @@
     public ActionName? ActionName { get; set; }
 
     [Parameter]
-    public EventCallback<ActionName> OnClick { get; set; }
+    public EventCallback<ActionName> OnTriggered { get; set; }
 
     [Parameter]
     public string? Name { get; set; }
@@ -31,7 +31,7 @@
     private Task HandleOnClickAsync()
     {
         var name = ActionName;
-        if (name == null) return OnClick.InvokeAsync();
-        return OnClick.InvokeAsync((ActionName) name);
+        if (name == null) return OnTriggered.InvokeAsync();
+        return OnTriggered.InvokeAsync((ActionName) name);
     }
 }

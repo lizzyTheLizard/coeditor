@@ -37,7 +37,7 @@ internal class AiConnector : IAiConnector
         return new PromptResult(response, exception, elapsedMs);
     }
 
-    private static IEnumerable<ChatMessage> ToChatMessages(PromptMessage[] messages)
+    private static List<ChatMessage> ToChatMessages(PromptMessage[] messages)
     {
         var chatMessages = new List<ChatMessage>();
         foreach (var message in messages)
