@@ -17,6 +17,11 @@ internal sealed class PersistingAuthenticationStateProvider : ServerAuthenticati
         _subscription = _state.RegisterOnPersisting(OnPersistingAsync, RenderMode.InteractiveWebAssembly);
     }
 
+    void IDisposable.Dispose()
+    {
+        _subscription.Dispose();
+    }
+
     private async Task OnPersistingAsync()
     {
         var authenticationState = await GetAuthenticationStateAsync();
@@ -25,10 +30,5 @@ internal sealed class PersistingAuthenticationStateProvider : ServerAuthenticati
         if (!identity.IsAuthenticated) return;
         var userName = identity.Name;
         _state.PersistAsJson("UserName", userName);
-    }
-
-    void IDisposable.Dispose()
-    {
-        _subscription.Dispose();
     }
 }

@@ -6,6 +6,7 @@ using CoEditor.Integration.Cosmos;
 using CoEditor.Integration.Identity;
 using CoEditor.Integration.Insights;
 using Microsoft.AspNetCore.HttpOverrides;
+using _Imports = CoEditor.Client._Imports;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddServerIneractiveClient();
@@ -29,9 +30,8 @@ if (app.Environment.IsDevelopment())
     app.UseWebAssemblyDebugging();
 }
 else
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-}
+    app.UseExceptionHandler("/Error", true);
+
 app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedHost });
 app.UseStaticFiles();
 app.UseAntiforgery();
@@ -41,5 +41,5 @@ app.MapControllers();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(CoEditor.Client._Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(_Imports).Assembly);
 app.Run();

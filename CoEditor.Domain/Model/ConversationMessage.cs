@@ -1,4 +1,5 @@
 ﻿namespace CoEditor.Domain.Model;
+
 public class ConversationMessage
 {
     public required DateTime PromtedAt { get; init; }

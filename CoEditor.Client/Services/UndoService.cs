@@ -2,8 +2,8 @@
 
 public class UndoService
 {
-    private readonly Stack<string> _undo = [];
     private readonly Stack<string> _redo = [];
+    private readonly Stack<string> _undo = [];
     private string _current = "";
     public bool CanUndo => _undo.Count > 0;
     public bool CanRedo => _redo.Count > 0;

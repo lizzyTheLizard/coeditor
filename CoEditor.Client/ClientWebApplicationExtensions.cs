@@ -12,10 +12,10 @@ public static class ClientWebApplicationExtensions
         services.AddScoped<ShortcutService>();
         services.AddScoped<IConversationService, ConversationDomainService>();
         services.AddScoped<ITemplateService, TemplateDomainService>();
-
     }
 
-    public static void AddWebAssemblyClient(this IServiceCollection services, IWebAssemblyHostEnvironment hostEnvironment)
+    public static void AddWebAssemblyClient(this IServiceCollection services,
+        IWebAssemblyHostEnvironment hostEnvironment)
     {
         services.AddScoped<UndoService>();
         services.AddScoped<ShortcutService>();

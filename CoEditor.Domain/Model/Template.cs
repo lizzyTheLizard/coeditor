@@ -20,14 +20,13 @@ public class Template
             var name = parts[0];
             var type = parts.Length > 1 ? parts[1] : "string";
             var options = parts.Length > 2 ? parts[2].Split(",") : [];
-            var parameter = new TemplateParameter()
+            var parameter = new TemplateParameter
             {
-                Name = name,
-                Type = Enum.Parse<TemplateParameterType>(type, true),
-                Options = options
+                Name = name, Type = Enum.Parse<TemplateParameterType>(type, true), Options = options
             };
             parameters.Add(parameter);
         }
+
         return [.. parameters];
     }
 
@@ -39,7 +38,8 @@ public class Template
             var value = match.Groups["value"].Value;
             var parts = value.Split(':');
             var name = parts[0];
-            var parameter = templateParameters.FirstOrDefault(p => p.Name == name) ?? throw new Exception("Parameter not found");
+            var parameter = templateParameters.FirstOrDefault(p => p.Name == name) ??
+                            throw new Exception("Parameter not found");
             return parameter.Value;
         });
     }

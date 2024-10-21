@@ -11,15 +11,17 @@
     </Found>
     <NotFound>
         <LayoutView Layout="@typeof(MainLayout)">
-                <NotFound></NotFound>
+            <NotFound></NotFound>
         </LayoutView>
     </NotFound>
 </Router>
 
 @code {
+
     protected override async Task OnAfterRenderAsync(bool first)
     {
         var objRef = DotNetObjectReference.Create(_shortcutService);
         await _jSRuntime.InvokeVoidAsync("addKeybordListener", objRef);
     }
+
 }

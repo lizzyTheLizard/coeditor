@@ -32,6 +32,7 @@ internal class AiConnector : IAiConnector
             response = completion.Value.Content[0].Text;
         }
         catch (Exception e) { exception = e; }
+
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
         return new PromptResult(response, exception, elapsedMs);
@@ -55,6 +56,7 @@ internal class AiConnector : IAiConnector
                     break;
             }
         }
+
         return chatMessages;
     }
 }

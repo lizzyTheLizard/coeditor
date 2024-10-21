@@ -15,7 +15,7 @@ public class Conversation
 
     public static Conversation InitialConversation(string userName, HandleInitialActionInput input)
     {
-        return new Conversation()
+        return new Conversation
         {
             Guid = input.ConversationGuid,
             UserName = userName,
@@ -39,12 +39,14 @@ public class Conversation
             if (conversationMessage.Response != null)
                 result.Add(new PromptMessage(conversationMessage.Response, PromptMessageType.Assistant));
         }
+
         return [.. result];
     }
 
-    public Conversation UpdateConversation(PromptMessage[] newMessages, PromptResult promptResult, HandleActionInput input)
+    public Conversation UpdateConversation(PromptMessage[] newMessages, PromptResult promptResult,
+        HandleActionInput input)
     {
-        return new Conversation()
+        return new Conversation
         {
             Guid = Guid,
             UserName = UserName,
@@ -59,14 +61,14 @@ public class Conversation
     private static List<ConversationMessage> ConvertNewMessages(PromptMessage[] newMessages, PromptResult promptResult)
     {
         var result = new List<ConversationMessage>();
-        for (int i = 0; i < newMessages.Length; i++)
+        for (var i = 0; i < newMessages.Length; i++)
         {
             var message = newMessages[i];
             var isLast = i + 1 == newMessages.Length;
             var type = message.Type == PromptMessageType.System
                 ? ConversationMessageType.System
                 : ConversationMessageType.User;
-            var conversationMessage = new ConversationMessage()
+            var conversationMessage = new ConversationMessage
             {
                 PromtedAt = DateTime.Now,
                 Prompt = message.Prompt,
@@ -78,6 +80,7 @@ public class Conversation
             };
             result.Add(conversationMessage);
         }
+
         return result;
     }
 }

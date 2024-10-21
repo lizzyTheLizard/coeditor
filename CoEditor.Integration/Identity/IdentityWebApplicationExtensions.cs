@@ -10,7 +10,7 @@ public static class IdentityWebApplicationExtensions
 {
     public static void AddIServerIdentity(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddMicrosoftIdentityWebAppAuthentication(configuration, "AzureAd");
+        services.AddMicrosoftIdentityWebAppAuthentication(configuration);
         services.AddControllersWithViews().AddMicrosoftIdentityUI();
         services.AddAuthorization();
         services.AddCascadingAuthenticationState();

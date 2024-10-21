@@ -3,4 +3,7 @@
 [assembly: InternalsVisibleTo("CoEditor.Domain.Tests")]
 
 namespace CoEditor.Domain;
-class AssemblyInfo { }
+
+internal class AssemblyInfo
+{
+}

@@ -14,7 +14,6 @@ public class ShortcutService
         var action = _shortcuts.GetValueOrDefault(e.Key[0]);
         if (action == null) return;
         await action.Invoke();
-        return;
     }
 
     public void RegisterShortcut(char key, Func<Task> handler)

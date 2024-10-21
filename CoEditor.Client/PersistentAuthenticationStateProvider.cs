@@ -12,7 +12,8 @@ internal class PersistentAuthenticationStateProvider : AuthenticationStateProvid
     {
         if (!state.TryTakeFromJson<string>("UserName", out var username) || username is null)
         {
-            _authenticationStateTask = Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())));
+            _authenticationStateTask =
+                Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())));
             return;
         }
 
@@ -23,6 +24,8 @@ internal class PersistentAuthenticationStateProvider : AuthenticationStateProvid
         _authenticationStateTask = Task.FromResult(authenticationState);
     }
 
-    public override Task<AuthenticationState> GetAuthenticationStateAsync() => _authenticationStateTask;
+    public override Task<AuthenticationState> GetAuthenticationStateAsync()
+    {
+        return _authenticationStateTask;
+    }
 }
-

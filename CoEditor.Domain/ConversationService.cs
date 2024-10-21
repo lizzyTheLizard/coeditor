@@ -25,7 +25,7 @@ internal class ConversationService(
     public async Task<Conversation> HandleActionAsync(string userName, HandleNamedActionInput input)
     {
         var prompt = promptMessageFactory.GetCommandPrompt(input);
-        var customActionInput = new HandleCustomActionInput()
+        var customActionInput = new HandleCustomActionInput
         {
             ConversationGuid = input.ConversationGuid,
             NewContext = input.NewContext,

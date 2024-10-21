@@ -5,20 +5,15 @@
 </div>
 
 @code{
-    [Parameter]
-    public bool Enabled { get; set; } = true;
+    [Parameter] public bool Enabled { get; set; } = true;
 
-    [Parameter]
-    public ActionName? ActionName { get; set; }
+    [Parameter] public ActionName? ActionName { get; set; }
 
-    [Parameter]
-    public EventCallback<ActionName> OnTriggered { get; set; }
+    [Parameter] public EventCallback<ActionName> OnTriggered { get; set; }
 
-    [Parameter]
-    public string? Name { get; set; }
+    [Parameter] public string? Name { get; set; }
 
-    [Parameter]
-    public char? Shortcut { get; set; }
+    [Parameter] public char? Shortcut { get; set; }
 
     private string DisplayName => Name ?? ActionName.ToString() ?? "Undefined";
 
@@ -32,6 +27,7 @@
     {
         var name = ActionName;
         if (name == null) return OnTriggered.InvokeAsync();
-        return OnTriggered.InvokeAsync((ActionName) name);
+        return OnTriggered.InvokeAsync((ActionName)name);
     }
+
 }

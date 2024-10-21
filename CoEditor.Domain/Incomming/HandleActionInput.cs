@@ -9,7 +9,6 @@ public class HandleActionInput
     public required string NewText { get; init; }
 }
 
-
 public class HandleNamedActionInput : HandleActionInput
 {
     public required ActionName Action { get; init; }
@@ -27,6 +26,8 @@ public class HandleInitialActionInput : HandleActionInput
     public required Language Language { get; init; }
 }
 
-public record Selection(int Start, int End) { }
+public record Selection(int Start, int End)
+{
+}
 
 public enum ActionName { Improve, Expand, Reformulate, Summarize }

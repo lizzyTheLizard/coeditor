@@ -4,8 +4,6 @@ namespace CoEditor.Domain.Model;
 
 public enum Language
 {
-    [Description("Deutsch")]
-    DE,
-    [Description("English")]
-    EN
+    [Description("Deutsch")] DE,
+    [Description("English")] EN
 }

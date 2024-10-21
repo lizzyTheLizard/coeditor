@@ -8,7 +8,7 @@ internal class ConversationRepository(CosmosDbContext _dbContext) : IConversatio
 {
     public async Task CreateAsync(Conversation conversation)
     {
-        var document = new ConversationDocument()
+        var document = new ConversationDocument
         {
             Id = conversation.Guid,
             UserName = conversation.UserName,
@@ -32,10 +32,10 @@ internal class ConversationRepository(CosmosDbContext _dbContext) : IConversatio
 
     public async Task<Conversation> GetAsync(Guid conversationGuid)
     {
-        var conversation = (await _dbContext.Conversations
+        var conversation = await _dbContext.Conversations
             .Where(t => t.Id == conversationGuid)
-            .FirstOrDefaultAsync()) ?? throw new Exception("Conversation not found");
-        return new Conversation()
+            .FirstOrDefaultAsync() ?? throw new Exception("Conversation not found");
+        return new Conversation
         {
             Guid = conversation.Id,
             UserName = conversation.UserName,
@@ -49,9 +49,9 @@ internal class ConversationRepository(CosmosDbContext _dbContext) : IConversatio
 
     public async Task UpdateAsync(Conversation conversation)
     {
-        var existing = (await _dbContext.Conversations
+        var existing = await _dbContext.Conversations
             .Where(t => t.Id == conversation.Guid)
-            .FirstOrDefaultAsync()) ?? throw new Exception("Conversation not found");
+            .FirstOrDefaultAsync() ?? throw new Exception("Conversation not found");
         existing.Text = conversation.Text;
         existing.Context = conversation.Context;
         existing.Messages = [.. conversation.Messages];

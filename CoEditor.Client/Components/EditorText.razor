@@ -19,14 +19,19 @@
     <InputTextArea id="editorTextarea"
                    class="form-control flex-grow-1"
                    @bind-Value="Text"
-                   @bind-Value:after="@(() => _undoService.Register(Text))" />
+                   @bind-Value:after="@(() => _undoService.Register(Text))"/>
     <div class="d-flex flex-wrap mx-n1">
-        <EditorButton Enabled="@HasText" OnTriggered="@HandleActionAsync" ActionName="ActionName.Reformulate"></EditorButton>
-        <EditorButton Enabled="@HasText" OnTriggered="@HandleActionAsync" ActionName="ActionName.Improve"></EditorButton>
-        <EditorButton Enabled="HasText" OnTriggered="@HandleActionAsync" ActionName="ActionName.Summarize"></EditorButton>
+        <EditorButton Enabled="@HasText" OnTriggered="@HandleActionAsync"
+                      ActionName="ActionName.Reformulate"></EditorButton>
+        <EditorButton Enabled="@HasText" OnTriggered="@HandleActionAsync"
+                      ActionName="ActionName.Improve"></EditorButton>
+        <EditorButton Enabled="HasText" OnTriggered="@HandleActionAsync"
+                      ActionName="ActionName.Summarize"></EditorButton>
         <EditorButton Enabled="HasText" OnTriggered="@HandleActionAsync" ActionName="ActionName.Expand"></EditorButton>
-        <EditorButton Enabled="@_undoService.CanUndo" OnTriggered="@(() => Text = _undoService.Undo())" Name="Undo"></EditorButton>
-        <EditorButton Enabled="@_undoService.CanRedo" OnTriggered="@(() => Text = _undoService.Redo())" Name="Redo"></EditorButton>
+        <EditorButton Enabled="@_undoService.CanUndo" OnTriggered="@(() => Text = _undoService.Undo())"
+                      Name="Undo"></EditorButton>
+        <EditorButton Enabled="@_undoService.CanRedo" OnTriggered="@(() => Text = _undoService.Redo())"
+                      Name="Redo"></EditorButton>
     </div>
 </div>
 
@@ -34,15 +39,12 @@
     //TODO: Simplyfy and get some logic to ConversationService
     //TODO: Fix Loading Pattern for Text
 
-    [Parameter, EditorRequired]
-    public string Context { get; set; } = "";
+    [Parameter][EditorRequired] public string Context { get; set; } = "";
 
-    [Parameter, EditorRequired]
-    public bool ContextValid { get; set; } = false;
+    [Parameter][EditorRequired] public bool ContextValid { get; set; } = false;
     private bool _oldContextValid = false;
 
-    [Parameter, EditorRequired]
-    public Language Language { get; set; } = Language.EN;
+    [Parameter][EditorRequired] public Language Language { get; set; } = Language.EN;
 
     private string Text { get; set; } = "";
     private bool Busy { get; set; } = false;
@@ -53,7 +55,7 @@
     {
         if (ContextValid == _oldContextValid) return;
         _oldContextValid = ContextValid;
-        if(!ContextValid)
+        if (!ContextValid)
         {
             Text = "";
             _undoService.Clean();
@@ -62,13 +64,13 @@
         {
             Busy = true;
             _conversationGuid = Guid.NewGuid();
-            var actionInput = new HandleInitialActionInput()
-                {
-                    ConversationGuid = _conversationGuid,
-                    Language = Language,
-                    NewContext = Context,
-                    NewText = "",
-                };
+            var actionInput = new HandleInitialActionInput
+            {
+                ConversationGuid = _conversationGuid,
+                Language = Language,
+                NewContext = Context,
+                NewText = ""
+            };
             try
             {
                 var conversation = await _conversationService.InitializeConversationAsync(actionInput);
@@ -90,27 +92,27 @@
     {
         Busy = true;
         var selection = await GetSelectionAsync();
-        var actionInput = new HandleNamedActionInput()
-            {
-                ConversationGuid = _conversationGuid,
-                Language = Language,
-                Action = actionName,
-                NewContext = Context,
-                NewText = Text,
-                Selection = selection,
-            };
+        var actionInput = new HandleNamedActionInput
+        {
+            ConversationGuid = _conversationGuid,
+            Language = Language,
+            Action = actionName,
+            NewContext = Context,
+            NewText = Text,
+            Selection = selection
+        };
         try
         {
             var conversation = await _conversationService.HandleActionAsync(actionInput);
             Text = conversation.Text;
             _undoService.Register(Text);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             //TODO better error handling
             _logger.LogWarning("Error while executing command " + e.Message);
         }
-        finally 
+        finally
         {
             Busy = false;
         }
@@ -121,8 +123,9 @@
         var textareaId = "editorTextarea";
         var selectionStart = await _jSRuntime.InvokeAsync<int>("getSelectionStart", textareaId);
         var selectionEnd = await _jSRuntime.InvokeAsync<int>("getSelectionEnd", textareaId);
-        return (selectionStart == -1 || selectionEnd == -1 || selectionStart == selectionEnd)
+        return selectionStart == -1 || selectionEnd == -1 || selectionStart == selectionEnd
             ? null
             : new Selection(selectionStart, selectionEnd);
     }
+
 }

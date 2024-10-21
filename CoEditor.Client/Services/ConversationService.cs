@@ -5,7 +5,6 @@ using System.Net.Http.Json;
 
 namespace CoEditor.Client.Services;
 
-
 public interface IConversationService
 {
     Task<Conversation> InitializeConversationAsync(HandleInitialActionInput input);
@@ -37,8 +36,10 @@ public class ConversationRestService(HttpClient _httpClient) : IConversationServ
 
     private static async Task<Conversation> GetResponse(HttpResponseMessage response)
     {
-        if (!response.IsSuccessStatusCode) throw new Exception("Error while handling editor action: " + response.StatusCode);
-        return await response.Content.ReadFromJsonAsync<Conversation>() ?? throw new Exception("No response from server");
+        if (!response.IsSuccessStatusCode)
+            throw new Exception("Error while handling editor action: " + response.StatusCode);
+        return await response.Content.ReadFromJsonAsync<Conversation>() ??
+               throw new Exception("No response from server");
     }
 }
 
@@ -72,4 +73,3 @@ public class ConversationDomainService(
         return userName;
     }
 }
-

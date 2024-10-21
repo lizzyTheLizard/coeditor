@@ -10,7 +10,6 @@ public interface ITemplateService
     Task<Template[]> GetTemplatesAsync(Language language);
 }
 
-
 public class TemplateRestService(HttpClient _httpClient) : ITemplateService
 {
     public async Task<Template[]> GetTemplatesAsync(Language language)
@@ -21,7 +20,9 @@ public class TemplateRestService(HttpClient _httpClient) : ITemplateService
     }
 }
 
-public class TemplateDomainService(AuthenticationStateProvider _authenticationStateProvider, ITemplateApi _domainTemplateService) : ITemplateService
+public class TemplateDomainService(
+    AuthenticationStateProvider _authenticationStateProvider,
+    ITemplateApi _domainTemplateService) : ITemplateService
 {
     public async Task<Template[]> GetTemplatesAsync(Language language)
     {
