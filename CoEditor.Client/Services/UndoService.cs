@@ -1,6 +1,6 @@
 ﻿namespace CoEditor.Client.Services;
 
-public class UndoService
+public class UndoService(ILogger<UndoService> logger)
 {
     private readonly Stack<string> _redo = [];
     private readonly Stack<string> _undo = [];
@@ -13,6 +13,7 @@ public class UndoService
         _undo.Push(_current);
         _current = update;
         _redo.Clear();
+        logger.TextChangeRegistered();
     }
 
     public void Clean()
@@ -20,6 +21,7 @@ public class UndoService
         _current = "";
         _undo.Clear();
         _redo.Clear();
+        logger.Cleaned();
     }
 
     public string Undo()
@@ -27,6 +29,7 @@ public class UndoService
         var oldText = _undo.Pop();
         _redo.Push(_current);
         _current = oldText;
+        logger.Undone();
         return oldText;
     }
 
@@ -35,6 +38,7 @@ public class UndoService
         var oldText = _redo.Pop();
         _undo.Push(_current);
         _current = oldText;
+        logger.Redone();
         return oldText;
     }
 }

@@ -1,4 +1,4 @@
-﻿@inject ShortcutService _shortcutService
+﻿@inject ShortcutService ShortcutService
 
 <div class="col-6 col-sm-2 px-1 pb-1">
     <button class="btn btn-primary" disabled="@(!Enabled)" @onclick="HandleOnClickAsync">@DisplayName</button>
@@ -20,14 +20,12 @@
     protected override void OnInitialized()
     {
         var sc = Shortcut ?? DisplayName.FirstOrDefault();
-        _shortcutService.RegisterShortcut(sc, () => HandleOnClickAsync());
+        ShortcutService.RegisterShortcut(sc, HandleOnClickAsync);
     }
 
     private Task HandleOnClickAsync()
     {
-        var name = ActionName;
-        if (name == null) return OnTriggered.InvokeAsync();
-        return OnTriggered.InvokeAsync((ActionName)name);
+        return ActionName == null ? OnTriggered.InvokeAsync() : OnTriggered.InvokeAsync(ActionName.Value);
     }
 
 }

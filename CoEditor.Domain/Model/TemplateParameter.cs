@@ -8,4 +8,10 @@ public class TemplateParameter
     public required string[] Options { get; init; }
     public string Value { get; set; } = "";
     public bool Valid => !string.IsNullOrEmpty(Value);
+
+    public override string ToString()
+    {
+        return
+            $"{base.ToString()}: Id={Id}, Name={Name}, Type={Type}, Options={string.Join(",", Options)}, Value={Value}, Valid={Valid}";
+    }
 }

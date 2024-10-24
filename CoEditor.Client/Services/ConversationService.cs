@@ -1,75 +1,81 @@
-﻿using CoEditor.Domain.Incomming;
+using CoEditor.Domain.Api;
 using CoEditor.Domain.Model;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Net.Http.Json;
 
 namespace CoEditor.Client.Services;
 
-public interface IConversationService
+public class ConversationService(
+    IInitializeConversationApi initializeConversationApi,
+    IHandleActionApi handleActionApi,
+    AuthenticationStateProvider authenticationStateProvider,
+    ILogger<ConversationService> logger)
 {
-    Task<Conversation> InitializeConversationAsync(HandleInitialActionInput input);
+    private readonly List<Action<Conversation?>> _registeredCallbacks = [];
+    public Conversation? Current { get; private set; }
+    public string Text { get; set; } = "";
+    public string Context { get; set; } = "";
 
-    Task<Conversation> HandleActionAsync(HandleNamedActionInput input);
+    public ConversationChangeSubscription RegisterOnConversationChange(Action<Conversation?> callback)
+    {
+        _registeredCallbacks.Add(callback);
+        return new ConversationChangeSubscription(_registeredCallbacks, callback);
+    }
 
-    Task<Conversation> HandleActionAsync(HandleCustomActionInput input);
+    public async Task StartNewConversationAsync(Language language, string context)
+    {
+        Context = context;
+        Text = "";
+        var input = new InitializeConversationInput
+        {
+            Language = language, NewContext = Context, NewText = Text, ConversationGuid = Guid.NewGuid()
+        };
+        var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var userName = authenticationState.User.Identity?.Name ?? "";
+        var newConversation = await initializeConversationApi.InitializeConversationAsync(userName, input);
+        UpdateConversation(newConversation);
+        logger.NewConversationStarted(newConversation);
+    }
+
+    public void EndConversation()
+    {
+        if (Current == null) return;
+        var oldConversation = Current;
+        UpdateConversation(null);
+        logger.ConversationEnded(oldConversation);
+    }
+
+    public async Task ApplyActionAsync(ActionName action, Selection? selection)
+    {
+        if (Current == null) return;
+        var input = new HandleNamedActionInput
+        {
+            ConversationGuid = Current.Id,
+            Action = action,
+            Selection = selection,
+            Language = Current.Language,
+            NewContext = Context,
+            NewText = Text
+        };
+        var newConversation = await handleActionApi.HandleActionAsync(input);
+        UpdateConversation(newConversation);
+        logger.ActionApplied(action, newConversation);
+    }
+
+    private void UpdateConversation(Conversation? newConversation)
+    {
+        Current = newConversation;
+        Text = newConversation?.Text ?? "";
+        Context = newConversation?.Context ?? "";
+        foreach (var callback in _registeredCallbacks) callback(newConversation);
+    }
 }
 
-public class ConversationRestService(HttpClient _httpClient) : IConversationService
+public readonly struct ConversationChangeSubscription(
+    List<Action<Conversation?>> callbacks,
+    Action<Conversation?> callback) : IDisposable
 {
-    public async Task<Conversation> InitializeConversationAsync(HandleInitialActionInput input)
+    public void Dispose()
     {
-        var response = await _httpClient.PostAsJsonAsync("api/Conversation/Initialize", input);
-        return await GetResponse(response);
-    }
-
-    public async Task<Conversation> HandleActionAsync(HandleNamedActionInput input)
-    {
-        var response = await _httpClient.PostAsJsonAsync("api/Conversation/Action", input);
-        return await GetResponse(response);
-    }
-
-    public async Task<Conversation> HandleActionAsync(HandleCustomActionInput input)
-    {
-        var response = await _httpClient.PostAsJsonAsync("api/Conversation/CustomAction", input);
-        return await GetResponse(response);
-    }
-
-    private static async Task<Conversation> GetResponse(HttpResponseMessage response)
-    {
-        if (!response.IsSuccessStatusCode)
-            throw new Exception("Error while handling editor action: " + response.StatusCode);
-        return await response.Content.ReadFromJsonAsync<Conversation>() ??
-               throw new Exception("No response from server");
-    }
-}
-
-public class ConversationDomainService(
-    AuthenticationStateProvider _authenticationStateProvider,
-    IConversationApi _domainEditorActionService) : IConversationService
-{
-    public async Task<Conversation> InitializeConversationAsync(HandleInitialActionInput input)
-    {
-        var userName = await GetUserName();
-        return await _domainEditorActionService.InitializeConversationAsync(userName, input);
-    }
-
-    public async Task<Conversation> HandleActionAsync(HandleNamedActionInput input)
-    {
-        var userName = await GetUserName();
-        return await _domainEditorActionService.HandleActionAsync(userName, input);
-    }
-
-    public async Task<Conversation> HandleActionAsync(HandleCustomActionInput input)
-    {
-        var userName = await GetUserName();
-        return await _domainEditorActionService.HandleActionAsync(userName, input);
-    }
-
-    private async Task<string> GetUserName()
-    {
-        var state = await _authenticationStateProvider.GetAuthenticationStateAsync();
-        var identity = state.User.Identity ?? throw new Exception("Not authenticated");
-        var userName = identity.Name ?? throw new Exception("User has no name");
-        return userName;
+        callbacks.Remove(callback);
     }
 }

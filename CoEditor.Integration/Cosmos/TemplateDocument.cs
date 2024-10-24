@@ -1,7 +1,10 @@
 ﻿using CoEditor.Domain.Model;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CoEditor.Integration.Cosmos;
 
+[SuppressMessage("ReSharper", "EntityFramework.ModelValidation.UnlimitedStringLength",
+    Justification = "Not relevant for CosmosDB")]
 internal class TemplateDocument
 {
     public required Guid Id { get; init; }

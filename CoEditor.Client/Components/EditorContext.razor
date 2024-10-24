@@ -1,10 +1,10 @@
-﻿@inject ITemplateService TemplateService
+﻿@inject TemplateService TemplateService
 
 <div class="d-flex flex-wrap mx-n1">
     <div class="col-6 px-1 pb-1">
         <label for="language" class="form-label">Language</label>
-        <InputSelect id="language" class="form-select form-select-sm" @bind-Value:get="Language"
-                     @bind-Value:set="LanguageChangedAsync">
+        <InputSelect id="language" class="form-select form-select-sm" @bind-Value="Language"
+                     @bind-Value:after="@(() => TemplateService.SetLanguageAsync(Language))">
             @foreach (var language in Enum.GetValues<Language>())
             {
                 <option value="@language">@language</option>
@@ -13,35 +13,35 @@
     </div>
     <div class="col-6 px-1 pb-1">
         <label for="template" class="form-label">Template</label>
-        <InputSelect id="template" class="form-select form-select-sm" @bind-Value:get="TemplateId"
-                     @bind-Value:set="TemplateIdChangedAsync">
-            @foreach (var template in Templates)
+        <InputSelect id="template" class="form-select form-select-sm" @bind-Value="TemplateId"
+                     @bind-Value:after="@(() => TemplateService.TemplateIdChangedAsync(TemplateId))">
+            @foreach (var template in TemplateService.Templates)
             {
                 <option value="@template.Id">@template.Name</option>
             }
         </InputSelect>
     </div>
-    @foreach (var param in TemplateParameters)
+    @foreach (var param in TemplateService.TemplateParameters)
     {
         @switch (param.Type)
         {
-            case TemplateParameterType.String:
+            case TemplateParameterType.Text:
                 <div class="col-6 px-1 pb-1">
                     <label for="@param.Id" class="form-label">@param.Name</label>
                     <InputText id="@param.Id"
                                class="@("form-control form-control-sm mb-1 " + (param.Valid ? "is-valid" : "is-invalid"))"
                                @bind-Value="param.Value"
-                               @bind-Value:after="ParameterChangedAsync"/>
+                               @bind-Value:after="@(() => TemplateService.ParameterChangedAsync())"/>
                     <div class="invalid-feedback">Required</div>
                 </div>
                 break;
-            case TemplateParameterType.Text:
+            case TemplateParameterType.LongText:
                 <div class="col-12 px-1 pb-1">
                     <label for="@param.Id" class="form-label">@param.Name</label>
                     <InputTextArea id="@param.Id"
                                    class="@("form-control form-control-sm mb-1 " + (param.Valid ? "is-valid" : "is-invalid"))"
                                    @bind-Value="param.Value"
-                                   @bind-Value:after="ParameterChangedAsync"/>
+                                   @bind-Value:after="@(() => TemplateService.ParameterChangedAsync())"/>
                     <div class="invalid-feedback">Required</div>
                 </div>
                 break;
@@ -51,7 +51,7 @@
                     <InputSelect id="@param.Id"
                                  class="@("form-select form-select-sm mb-1 " + (param.Valid ? "is-valid" : "is-invalid"))"
                                  @bind-Value="param.Value"
-                                 @bind-Value:after="ParameterChangedAsync">
+                                 @bind-Value:after="@(() => TemplateService.ParameterChangedAsync())">
                         <option selected disabled>Select</option>
                         @foreach (var option in param.Options)
                         {
@@ -68,55 +68,13 @@
 </div>
 
 @code {
-
-    //TODO: Fix Loading Pattern for Context
-    [Parameter] public Language Language { get; set; } = Language.EN;
-
-    [Parameter] public EventCallback<Language> LanguageChanged { get; set; }
-
-    [Parameter] public EventCallback<string> ContextChanged { get; set; }
-
-    [Parameter] public EventCallback<bool> ContextValidChanged { get; set; }
-
+    private Language Language { get; set; } = Language.En;
     private Guid TemplateId { get; set; }
-
-    private Template[] Templates { get; set; } = [];
-
-    private TemplateParameter[] TemplateParameters { get; set; } = [];
 
     protected override async Task OnInitializedAsync()
     {
-        Templates = await TemplateService.GetTemplatesAsync(Language);
-        await TemplateIdChangedAsync(Templates[0].Id);
-    }
-
-    private async Task LanguageChangedAsync(Language language)
-    {
-        Language = language;
-        await LanguageChanged.InvokeAsync(language);
-        Templates = await TemplateService.GetTemplatesAsync(language);
-        await TemplateIdChangedAsync(Templates[0].Id);
-    }
-
-    private async Task TemplateIdChangedAsync(Guid templateId)
-    {
-        TemplateId = templateId;
-        var template = Templates.First(t => t.Id == templateId);
-        TemplateParameters = template.GetTemplateParameters();
-        await ContextValidChanged.InvokeAsync(false);
-        await ParameterChangedAsync();
-    }
-
-    private async Task ParameterChangedAsync()
-    {
-        var template = Templates.First(t => t.Id == TemplateId);
-        var valid = TemplateParameters.All(p => p.Valid);
-        if (valid)
-        {
-            await ContextChanged.InvokeAsync(template.CalculateText(TemplateParameters));
-        }
-
-        await ContextValidChanged.InvokeAsync(valid);
+        //TODO: Fix Loading Pattern for Context
+        await TemplateService.SetLanguageAsync(Language);
     }
 
 }

@@ -1,34 +1,52 @@
-﻿using CoEditor.Domain.Incomming;
+using CoEditor.Domain.Api;
 using CoEditor.Domain.Model;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Net.Http.Json;
 
 namespace CoEditor.Client.Services;
 
-public interface ITemplateService
+public class TemplateService(
+    ConversationService conversationService,
+    IGetTemplatesApi getTemplatesApi,
+    AuthenticationStateProvider authenticationStateProvider,
+    ILogger<TemplateService> logger)
 {
-    Task<Template[]> GetTemplatesAsync(Language language);
-}
+    private Language _language;
+    private Guid _templateId;
+    public Template[] Templates { get; private set; } = [];
+    public TemplateParameter[] TemplateParameters { get; private set; } = [];
 
-public class TemplateRestService(HttpClient _httpClient) : ITemplateService
-{
-    public async Task<Template[]> GetTemplatesAsync(Language language)
+    public async Task SetLanguageAsync(Language language)
     {
-        var response = await _httpClient.GetAsync($"api/Template/Mine/{language}");
-        if (!response.IsSuccessStatusCode) throw new Exception("Error while handling editor action");
-        return await response.Content.ReadFromJsonAsync<Template[]>() ?? throw new Exception("No response from server");
+        _language = language;
+        var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var userName = authenticationState.User.Identity?.Name ?? "";
+        Templates = await getTemplatesApi.GetTemplatesAsync(userName, language);
+        logger.TemplatesLoaded(_language, Templates);
+        await TemplateIdChangedAsync(Templates[0].Id);
     }
-}
 
-public class TemplateDomainService(
-    AuthenticationStateProvider _authenticationStateProvider,
-    ITemplateApi _domainTemplateService) : ITemplateService
-{
-    public async Task<Template[]> GetTemplatesAsync(Language language)
+    public async Task TemplateIdChangedAsync(Guid templateId)
     {
-        var state = await _authenticationStateProvider.GetAuthenticationStateAsync();
-        var identity = state.User.Identity ?? throw new Exception("Not authenticated");
-        var userName = identity.Name ?? throw new Exception("User has no name");
-        return await _domainTemplateService.GetTemplatesAsync(language, userName);
+        _templateId = templateId;
+        var template = Templates.First(t => t.Id == templateId);
+        TemplateParameters = template.GetTemplateParameters();
+        conversationService.EndConversation();
+        await ParameterChangedAsync();
+    }
+
+    public async Task ParameterChangedAsync()
+    {
+        var template = Templates.First(t => t.Id == _templateId);
+        var valid = TemplateParameters.All(p => p.Valid);
+        if (!valid)
+        {
+            logger.ParametersNotValid(TemplateParameters);
+            return;
+        }
+
+        var context = template.CalculateText(TemplateParameters);
+        if (conversationService.Current == null)
+            await conversationService.StartNewConversationAsync(_language, context);
+        else conversationService.Context = context;
     }
 }

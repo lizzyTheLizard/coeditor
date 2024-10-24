@@ -2,7 +2,7 @@
 
 internal class AzureOpenAiConfiguration
 {
-    public required string Endpoint { get; set; }
-    public required string ApiKey { get; set; }
-    public required string Model { get; set; }
+    public required string Endpoint { get; init; }
+    public required string ApiKey { get; init; }
+    public required string Model { get; init; }
 }

@@ -1,12 +1,11 @@
-﻿@inject UndoService _undoService
-@inject IJSRuntime _jSRuntime
-@inject IConversationService _conversationService
-@inject ILogger<EditorText> _logger
+﻿@inject UndoService UndoService
+@inject IJSRuntime JsRuntime
+@inject ConversationService ConversationService
 
 <div class="d-flex flex-column flex-grow-1 overlay-host">
-    @if (!ContextValid)
+    @if (ConversationService.Current == null)
     {
-        <div class="overlay"/>
+        <div class="overlay"></div>
     }
     @if (Busy)
     {
@@ -19,110 +18,60 @@
     <InputTextArea id="editorTextarea"
                    class="form-control flex-grow-1"
                    @bind-Value="Text"
-                   @bind-Value:after="@(() => _undoService.Register(Text))"/>
+                   @bind-Value:after="TextChanged"/>
     <div class="d-flex flex-wrap mx-n1">
-        <EditorButton Enabled="@HasText" OnTriggered="@HandleActionAsync"
-                      ActionName="ActionName.Reformulate"></EditorButton>
-        <EditorButton Enabled="@HasText" OnTriggered="@HandleActionAsync"
-                      ActionName="ActionName.Improve"></EditorButton>
-        <EditorButton Enabled="HasText" OnTriggered="@HandleActionAsync"
-                      ActionName="ActionName.Summarize"></EditorButton>
-        <EditorButton Enabled="HasText" OnTriggered="@HandleActionAsync" ActionName="ActionName.Expand"></EditorButton>
-        <EditorButton Enabled="@_undoService.CanUndo" OnTriggered="@(() => Text = _undoService.Undo())"
-                      Name="Undo"></EditorButton>
-        <EditorButton Enabled="@_undoService.CanRedo" OnTriggered="@(() => Text = _undoService.Redo())"
-                      Name="Redo"></EditorButton>
+        <EditorButton OnTriggered="@HandleActionAsync" ActionName="ActionName.Reformulate"></EditorButton>
+        <EditorButton OnTriggered="@HandleActionAsync" ActionName="ActionName.Improve"></EditorButton>
+        <EditorButton OnTriggered="@HandleActionAsync" ActionName="ActionName.Summarize"></EditorButton>
+        <EditorButton OnTriggered="@HandleActionAsync" ActionName="ActionName.Expand"></EditorButton>
+        <EditorButton OnTriggered="@(() => Text = UndoService.Undo())"
+                      Enabled="@UndoService.CanUndo" Name="Undo"></EditorButton>
+        <EditorButton OnTriggered="@(() => Text = UndoService.Redo())"
+                      Enabled="@UndoService.CanRedo" Name="Redo"></EditorButton>
     </div>
 </div>
 
 @code {
-    //TODO: Simplyfy and get some logic to ConversationService
-    //TODO: Fix Loading Pattern for Text
-
-    [Parameter][EditorRequired] public string Context { get; set; } = "";
-
-    [Parameter][EditorRequired] public bool ContextValid { get; set; } = false;
-    private bool _oldContextValid = false;
-
-    [Parameter][EditorRequired] public Language Language { get; set; } = Language.EN;
-
     private string Text { get; set; } = "";
     private bool Busy { get; set; } = false;
-    private bool HasText => !string.IsNullOrWhiteSpace(Text);
-    private Guid _conversationGuid;
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnInitialized()
     {
-        if (ContextValid == _oldContextValid) return;
-        _oldContextValid = ContextValid;
-        if (!ContextValid)
+        ConversationService.RegisterOnConversationChange(c =>
         {
-            Text = "";
-            _undoService.Clean();
-        }
-        else
-        {
-            Busy = true;
-            _conversationGuid = Guid.NewGuid();
-            var actionInput = new HandleInitialActionInput
+            if (c == null)
             {
-                ConversationGuid = _conversationGuid,
-                Language = Language,
-                NewContext = Context,
-                NewText = ""
-            };
-            try
-            {
-                var conversation = await _conversationService.InitializeConversationAsync(actionInput);
-                Text = conversation.Text;
+                Text = "";
+                UndoService.Clean();
             }
-            catch (Exception e)
+            else
             {
-                //TODO better error handling
-                _logger.LogWarning("Error while executing command " + e.Message);
+                Text = c.Text;
+                UndoService.Register(Text);
             }
-            finally
-            {
-                Busy = false;
-            }
-        }
+        });
+    }
+
+    private void TextChanged()
+    {
+        UndoService.Register(Text);
+        ConversationService.Text = Text;
     }
 
     private async Task HandleActionAsync(ActionName actionName)
     {
+        //TODO: Fix Loading Pattern for Text
         Busy = true;
         var selection = await GetSelectionAsync();
-        var actionInput = new HandleNamedActionInput
-        {
-            ConversationGuid = _conversationGuid,
-            Language = Language,
-            Action = actionName,
-            NewContext = Context,
-            NewText = Text,
-            Selection = selection
-        };
-        try
-        {
-            var conversation = await _conversationService.HandleActionAsync(actionInput);
-            Text = conversation.Text;
-            _undoService.Register(Text);
-        }
-        catch (Exception e)
-        {
-            //TODO better error handling
-            _logger.LogWarning("Error while executing command " + e.Message);
-        }
-        finally
-        {
-            Busy = false;
-        }
+        await ConversationService.ApplyActionAsync(actionName, selection);
+        Busy = false;
     }
 
     private async Task<Selection?> GetSelectionAsync()
     {
-        var textareaId = "editorTextarea";
-        var selectionStart = await _jSRuntime.InvokeAsync<int>("getSelectionStart", textareaId);
-        var selectionEnd = await _jSRuntime.InvokeAsync<int>("getSelectionEnd", textareaId);
+        const string textareaId = "editorTextarea";
+        var selectionStart = await JsRuntime.InvokeAsync<int>("getSelectionStart", textareaId);
+        var selectionEnd = await JsRuntime.InvokeAsync<int>("getSelectionEnd", textareaId);
         return selectionStart == -1 || selectionEnd == -1 || selectionStart == selectionEnd
             ? null
             : new Selection(selectionStart, selectionEnd);

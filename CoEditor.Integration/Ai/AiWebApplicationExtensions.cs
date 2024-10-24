@@ -1,4 +1,4 @@
-﻿using CoEditor.Domain.Outgoing;
+﻿using CoEditor.Domain.Dependencies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

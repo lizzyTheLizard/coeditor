@@ -1,17 +1,26 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace CoEditor.Domain.Model;
 
-public class Template
+public partial class Template
 {
     public required Guid Id { get; init; }
+
+    [StringLength(FieldLengths.NameMaxLength)]
     public required string Name { get; init; }
+
+    [StringLength(FieldLengths.ContextMaxLength)]
     public required string Text { get; init; }
+
+    public override string ToString()
+    {
+        return $"{base.ToString()}: Id={Id}, Name={Name}, Text={Text}";
+    }
 
     public TemplateParameter[] GetTemplateParameters()
     {
-        var parameterPattern = @"\{(?<value>[^\}]+)\}";
-        var matches = Regex.Matches(Text, parameterPattern);
+        var matches = TemplateParameterRegex().Matches(Text);
         var parameters = new List<TemplateParameter>();
         foreach (Match match in matches)
         {
@@ -32,15 +41,17 @@ public class Template
 
     public string CalculateText(TemplateParameter[] templateParameters)
     {
-        var parameterPattern = @"\{(?<value>[^\}]+)\}";
-        return Regex.Replace(Text, parameterPattern, match =>
+        return TemplateParameterRegex().Replace(Text, match =>
         {
             var value = match.Groups["value"].Value;
             var parts = value.Split(':');
             var name = parts[0];
             var parameter = templateParameters.FirstOrDefault(p => p.Name == name) ??
-                            throw new Exception("Parameter not found");
+                            throw new ArgumentOutOfRangeException(name);
             return parameter.Value;
         });
     }
+
+    [GeneratedRegex(@"\{(?<value>[^\}]+)\}")]
+    private static partial Regex TemplateParameterRegex();
 }

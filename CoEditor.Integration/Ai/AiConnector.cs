@@ -1,5 +1,6 @@
 ﻿using Azure.AI.OpenAI;
-using CoEditor.Domain.Outgoing;
+using CoEditor.Domain.Dependencies;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OpenAI.Chat;
 using System.ClientModel;
@@ -7,35 +8,22 @@ using System.Diagnostics;
 
 namespace CoEditor.Integration.Ai;
 
-internal class AiConnector : IAiConnector
+internal class AiConnector(IOptions<AzureOpenAiConfiguration> optionsProvider, ILogger<AiConnector> logger)
+    : IAiConnector
 {
-    private readonly ChatClient _chatClient;
-
-    public AiConnector(IOptions<AzureOpenAiConfiguration> optionsProvider)
-    {
-        var options = optionsProvider.Value;
-        var uri = new Uri(options.Endpoint);
-        var credential = new ApiKeyCredential(options.ApiKey);
-        var openApiClient = new AzureOpenAIClient(uri, credential);
-        _chatClient = openApiClient.GetChatClient(options.Model);
-    }
+    private readonly ChatClient _chatClient = CreateChatClient(optionsProvider.Value);
 
     public async Task<PromptResult> PromptAsync(PromptMessage[] messages)
     {
+        logger.PromptStarted(messages);
         var chatMessages = ToChatMessages(messages);
         var watch = Stopwatch.StartNew();
-        string? response = null;
-        Exception? exception = null;
-        try
-        {
-            var completion = await _chatClient.CompleteChatAsync(chatMessages);
-            response = completion.Value.Content[0].Text;
-        }
-        catch (Exception e) { exception = e; }
-
+        var completion = await _chatClient.CompleteChatAsync(chatMessages);
+        var response = completion.Value.Content[0].Text;
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
-        return new PromptResult(response, exception, elapsedMs);
+        logger.PromptFinished(response, elapsedMs);
+        return new PromptResult(response, elapsedMs);
     }
 
     private static List<ChatMessage> ToChatMessages(PromptMessage[] messages)
@@ -54,9 +42,19 @@ internal class AiConnector : IAiConnector
                 case PromptMessageType.Assistant:
                     chatMessages.Add(new AssistantChatMessage(message.Prompt));
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException($"Unknown message type: {message.Type}");
             }
         }
 
         return chatMessages;
+    }
+
+    private static ChatClient CreateChatClient(AzureOpenAiConfiguration options)
+    {
+        var uri = new Uri(options.Endpoint);
+        var credential = new ApiKeyCredential(options.ApiKey);
+        var openApiClient = new AzureOpenAIClient(uri, credential);
+        return openApiClient.GetChatClient(options.Model);
     }
 }

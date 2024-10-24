@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoEditor.Integration.Cosmos;
 
-internal class CosmosDbContext(DbContextOptions<CosmosDbContext> _options) : DbContext(_options)
+internal class CosmosDbContext(DbContextOptions<CosmosDbContext> options) : DbContext(options)
 {
-    public DbSet<ProfileDocument> Profiles { get; set; }
-    public DbSet<TemplateDocument> Templates { get; set; }
-    public DbSet<ConversationDocument> Conversations { get; set; }
+    public DbSet<ProfileDocument> Profiles { get; init; }
+    public DbSet<TemplateDocument> Templates { get; init; }
+    public DbSet<ConversationDocument> Conversations { get; init; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

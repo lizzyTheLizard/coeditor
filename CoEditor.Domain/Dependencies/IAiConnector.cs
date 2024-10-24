@@ -1,4 +1,4 @@
-﻿namespace CoEditor.Domain.Outgoing;
+﻿namespace CoEditor.Domain.Dependencies;
 
 public interface IAiConnector
 {
@@ -7,7 +7,7 @@ public interface IAiConnector
 
 public record PromptMessage(string Prompt, PromptMessageType Type);
 
-public record PromptResult(string? Response, Exception? Exception, long DurationInMs);
+public record PromptResult(string? Response, long DurationInMs);
 
 public enum PromptMessageType
 {

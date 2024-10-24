@@ -1,6 +1,13 @@
 ﻿using CoEditor.Domain.Model;
 
-namespace CoEditor.Domain.Incomming;
+namespace CoEditor.Domain.Api;
+
+public interface IHandleActionApi
+{
+    Task<Conversation> HandleActionAsync(HandleNamedActionInput input);
+
+    Task<Conversation> HandleActionAsync(HandleCustomActionInput input);
+}
 
 public class HandleActionInput
 {
@@ -21,13 +28,6 @@ public class HandleCustomActionInput : HandleActionInput
     public required string Action { get; init; }
 }
 
-public class HandleInitialActionInput : HandleActionInput
-{
-    public required Language Language { get; init; }
-}
-
-public record Selection(int Start, int End)
-{
-}
+public record Selection(int Start, int End);
 
 public enum ActionName { Improve, Expand, Reformulate, Summarize }

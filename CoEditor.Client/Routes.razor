@@ -1,5 +1,5 @@
-﻿@inject ShortcutService _shortcutService
-@inject IJSRuntime _jSRuntime
+﻿@inject ShortcutService ShortcutService
+@inject IJSRuntime JsRuntime
 
 <Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
@@ -18,10 +18,11 @@
 
 @code {
 
+    //TODO: Loading spinner while navigation?
     protected override async Task OnAfterRenderAsync(bool first)
     {
-        var objRef = DotNetObjectReference.Create(_shortcutService);
-        await _jSRuntime.InvokeVoidAsync("addKeybordListener", objRef);
+        var objRef = DotNetObjectReference.Create(ShortcutService);
+        await JsRuntime.InvokeVoidAsync("addKeybordListener", objRef);
     }
 
 }

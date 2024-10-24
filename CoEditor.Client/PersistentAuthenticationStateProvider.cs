@@ -4,28 +4,40 @@ using System.Security.Claims;
 
 namespace CoEditor.Client;
 
-internal class PersistentAuthenticationStateProvider : AuthenticationStateProvider
+internal partial class PersistentAuthenticationStateProvider(
+    PersistentComponentState state,
+    ILogger<PersistentAuthenticationStateProvider> logger) : AuthenticationStateProvider
 {
-    private readonly Task<AuthenticationState> _authenticationStateTask;
+    public override Task<AuthenticationState> GetAuthenticationStateAsync()
+    {
+        var identity = GetIdentity();
+        var principal = new ClaimsPrincipal(identity);
+        var authenticationState = new AuthenticationState(principal);
+        return Task.FromResult(authenticationState);
+    }
 
-    public PersistentAuthenticationStateProvider(PersistentComponentState state)
+    private ClaimsIdentity GetIdentity()
     {
         if (!state.TryTakeFromJson<string>("UserName", out var username) || username is null)
         {
-            _authenticationStateTask =
-                Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())));
-            return;
+            UserIsNotAuthenticated(logger);
+            return new ClaimsIdentity();
         }
 
+        UserIsAuthenticated(logger, username);
         var claims = new Claim[] { new(ClaimTypes.Name, username) };
-        var identity = new ClaimsIdentity(claims, nameof(PersistentAuthenticationStateProvider));
-        var principal = new ClaimsPrincipal(identity);
-        var authenticationState = new AuthenticationState(principal);
-        _authenticationStateTask = Task.FromResult(authenticationState);
+        return new ClaimsIdentity(claims, nameof(PersistentAuthenticationStateProvider));
     }
 
-    public override Task<AuthenticationState> GetAuthenticationStateAsync()
-    {
-        return _authenticationStateTask;
-    }
+    #region Log
+
+    [LoggerMessage(LogLevel.Debug, EventId = 2000,
+        Message = "Authentication {userName} read from state")]
+    private static partial void UserIsAuthenticated(ILogger logger, string userName);
+
+    [LoggerMessage(LogLevel.Debug, EventId = 2001,
+        Message = "No Authentication read from state, user is not authenticated")]
+    private static partial void UserIsNotAuthenticated(ILogger logger);
+
+    #endregion
 }

@@ -1,11 +1,11 @@
 ﻿@implements IDisposable
 @inherits LayoutComponentBase
-@inject NavigationManager _navigationManager
+@inject NavigationManager NavigationManager
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">CoEditor</a>
-        <span style="flex-grow: 1"/>
+        <span style="flex-grow: 1"></span>
         <AuthorizeView>
             <Authorized>
                 <NavLink class="nav-link p-1 p-sm-2 px-sm-3" href="editor" Match="NavLinkMatch.All">
@@ -28,23 +28,23 @@
 </nav>
 
 @code {
-    private string? currentUrl;
+    private string? _currentUrl;
 
     protected override void OnInitialized()
     {
-        currentUrl = _navigationManager.ToBaseRelativePath(_navigationManager.Uri);
-        _navigationManager.LocationChanged += OnLocationChanged;
+        _currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        currentUrl = _navigationManager.ToBaseRelativePath(e.Location);
+        _currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
         StateHasChanged();
     }
 
     public void Dispose()
     {
-        _navigationManager.LocationChanged -= OnLocationChanged;
+        NavigationManager.LocationChanged -= OnLocationChanged;
     }
 
 }

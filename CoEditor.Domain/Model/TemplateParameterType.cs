@@ -2,7 +2,7 @@
 
 public enum TemplateParameterType
 {
+    LongText,
     Text,
-    String,
     Select
 }

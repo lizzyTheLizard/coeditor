@@ -1,6 +1,6 @@
 ﻿using CoEditor.Domain.Model;
 
-namespace CoEditor.Domain.Outgoing;
+namespace CoEditor.Domain.Dependencies;
 
 public interface IConversationRepository
 {
