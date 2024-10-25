@@ -2,7 +2,37 @@
 @attribute [Authorize]
 
 <PageTitle>Editor</PageTitle>
-<h1>Context</h1>
-<EditorContext></EditorContext>
-<h1>Editor</h1>
-<EditorText></EditorText>
+<div class="d-flex flex-column flex-grow-1 overlay-host">
+    @if (Busy)
+    {
+        <div class="overlay">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    <h1>Context</h1>
+    <EditorContext IsBusyChanged="OnContextBusyChanged"></EditorContext>
+    <h1>Editor</h1>
+    <EditorText IsBusyChanged="OnTextBusyChanged"></EditorText>
+</div>
+
+@code
+
+
+
+{
+    private bool Busy => _contextBusy || _textBusy;
+    private bool _contextBusy = true;
+    private bool _textBusy;
+
+    protected void OnContextBusyChanged(bool busy)
+    {
+        _contextBusy = busy;
+    }
+
+    protected void OnTextBusyChanged(bool busy)
+    {
+        _textBusy = busy;
+    }
+}

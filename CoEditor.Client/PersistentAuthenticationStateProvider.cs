@@ -4,7 +4,7 @@ using System.Security.Claims;
 
 namespace CoEditor.Client;
 
-internal partial class PersistentAuthenticationStateProvider(
+internal class PersistentAuthenticationStateProvider(
     PersistentComponentState state,
     ILogger<PersistentAuthenticationStateProvider> logger) : AuthenticationStateProvider
 {
@@ -20,24 +20,12 @@ internal partial class PersistentAuthenticationStateProvider(
     {
         if (!state.TryTakeFromJson<string>("UserName", out var username) || username is null)
         {
-            UserIsNotAuthenticated(logger);
+            logger.UserIsNotAuthenticated();
             return new ClaimsIdentity();
         }
 
-        UserIsAuthenticated(logger, username);
+        logger.UserIsAuthenticated(username);
         var claims = new Claim[] { new(ClaimTypes.Name, username) };
         return new ClaimsIdentity(claims, nameof(PersistentAuthenticationStateProvider));
     }
-
-    #region Log
-
-    [LoggerMessage(LogLevel.Debug, EventId = 2000,
-        Message = "Authentication {userName} read from state")]
-    private static partial void UserIsAuthenticated(ILogger logger, string userName);
-
-    [LoggerMessage(LogLevel.Debug, EventId = 2001,
-        Message = "No Authentication read from state, user is not authenticated")]
-    private static partial void UserIsNotAuthenticated(ILogger logger);
-
-    #endregion
 }

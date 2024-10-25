@@ -1,55 +1,48 @@
 ﻿@inject UndoService UndoService
 @inject IJSRuntime JsRuntime
 @inject ConversationService ConversationService
+@implements IDisposable
 
 <div class="d-flex flex-column flex-grow-1 overlay-host">
-    @if (ConversationService.Current == null)
-    {
-        <div class="overlay"></div>
-    }
-    @if (Busy)
-    {
-        <div class="overlay">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-    }
     <InputTextArea id="editorTextarea"
+                   disabled="@Disabled"
                    class="form-control flex-grow-1"
                    @bind-Value="Text"
                    @bind-Value:after="TextChanged"/>
     <div class="d-flex flex-wrap mx-n1">
-        <EditorButton OnTriggered="@HandleActionAsync" ActionName="ActionName.Reformulate"></EditorButton>
-        <EditorButton OnTriggered="@HandleActionAsync" ActionName="ActionName.Improve"></EditorButton>
-        <EditorButton OnTriggered="@HandleActionAsync" ActionName="ActionName.Summarize"></EditorButton>
-        <EditorButton OnTriggered="@HandleActionAsync" ActionName="ActionName.Expand"></EditorButton>
-        <EditorButton OnTriggered="@(() => Text = UndoService.Undo())"
-                      Enabled="@UndoService.CanUndo" Name="Undo"></EditorButton>
-        <EditorButton OnTriggered="@(() => Text = UndoService.Redo())"
-                      Enabled="@UndoService.CanRedo" Name="Redo"></EditorButton>
+        <EditorButton Disabled="@Disabled" OnTriggered="@HandleActionAsync"
+                      ActionName="ActionName.Reformulate"></EditorButton>
+        <EditorButton Disabled="@Disabled" OnTriggered="@HandleActionAsync"
+                      ActionName="ActionName.Improve"></EditorButton>
+        <EditorButton Disabled="@Disabled" OnTriggered="@HandleActionAsync"
+                      ActionName="ActionName.Summarize"></EditorButton>
+        <EditorButton Disabled="@Disabled" OnTriggered="@HandleActionAsync"
+                      ActionName="ActionName.Expand"></EditorButton>
+        <EditorButton Disabled="@(Disabled || !UndoService.CanUndo)"
+                      OnTriggered="@(() => Text = UndoService.Undo())" Name="Undo"></EditorButton>
+        <EditorButton Disabled="@(Disabled || !UndoService.CanRedo)"
+                      OnTriggered="@(() => Text = UndoService.Redo())" Name="Redo"></EditorButton>
     </div>
 </div>
 
 @code {
+    [Parameter] public EventCallback<bool> IsBusyChanged { get; set; }
+
     private string Text { get; set; } = "";
-    private bool Busy { get; set; } = false;
+    private bool Disabled => _isBusy || ConversationService.Current == null;
+    private bool _isBusy = false;
+    private ConversationChangeSubscription? _subscription;
 
     protected override void OnInitialized()
     {
-        ConversationService.RegisterOnConversationChange(c =>
-        {
-            if (c == null)
-            {
-                Text = "";
-                UndoService.Clean();
-            }
-            else
-            {
-                Text = c.Text;
-                UndoService.Register(Text);
-            }
-        });
+        _subscription = ConversationService.RegisterOnConversationChange(ConversationChanged);
+    }
+
+    private void ConversationChanged(Conversation? c)
+    {
+        Text = c?.Text ?? "";
+        if (c == null) UndoService.Clean();
+        else UndoService.Register(Text);
     }
 
     private void TextChanged()
@@ -60,11 +53,17 @@
 
     private async Task HandleActionAsync(ActionName actionName)
     {
-        //TODO: Fix Loading Pattern for Text
-        Busy = true;
+        await SetBusyAsync(true);
         var selection = await GetSelectionAsync();
         await ConversationService.ApplyActionAsync(actionName, selection);
-        Busy = false;
+        await SetBusyAsync(false);
+    }
+
+    private async Task SetBusyAsync(bool value)
+    {
+        _isBusy = value;
+        await IsBusyChanged.InvokeAsync(value);
+        StateHasChanged();
     }
 
     private async Task<Selection?> GetSelectionAsync()
@@ -75,6 +74,12 @@
         return selectionStart == -1 || selectionEnd == -1 || selectionStart == selectionEnd
             ? null
             : new Selection(selectionStart, selectionEnd);
+    }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+        _subscription = null;
     }
 
 }

@@ -3,8 +3,8 @@
 <div class="d-flex flex-wrap mx-n1">
     <div class="col-6 px-1 pb-1">
         <label for="language" class="form-label">Language</label>
-        <InputSelect id="language" class="form-select form-select-sm" @bind-Value="Language"
-                     @bind-Value:after="@(() => TemplateService.SetLanguageAsync(Language))">
+        <InputSelect id="language" disabled="@_isBusy" class="form-select form-select-sm" @bind-Value="_language"
+                     @bind-Value:after="AfterLanguageChanged">
             @foreach (var language in Enum.GetValues<Language>())
             {
                 <option value="@language">@language</option>
@@ -13,8 +13,8 @@
     </div>
     <div class="col-6 px-1 pb-1">
         <label for="template" class="form-label">Template</label>
-        <InputSelect id="template" class="form-select form-select-sm" @bind-Value="TemplateId"
-                     @bind-Value:after="@(() => TemplateService.TemplateIdChangedAsync(TemplateId))">
+        <InputSelect id="template" disabled="@_isBusy" class="form-select form-select-sm" @bind-Value="_templateId"
+                     @bind-Value:after="AfterTemplateChanged">
             @foreach (var template in TemplateService.Templates)
             {
                 <option value="@template.Id">@template.Name</option>
@@ -28,30 +28,30 @@
             case TemplateParameterType.Text:
                 <div class="col-6 px-1 pb-1">
                     <label for="@param.Id" class="form-label">@param.Name</label>
-                    <InputText id="@param.Id"
+                    <InputText id="@param.Id" disabled="@_isBusy"
                                class="@("form-control form-control-sm mb-1 " + (param.Valid ? "is-valid" : "is-invalid"))"
                                @bind-Value="param.Value"
-                               @bind-Value:after="@(() => TemplateService.ParameterChangedAsync())"/>
+                               @bind-Value:after="AfterParameterChanged"/>
                     <div class="invalid-feedback">Required</div>
                 </div>
                 break;
             case TemplateParameterType.LongText:
                 <div class="col-12 px-1 pb-1">
                     <label for="@param.Id" class="form-label">@param.Name</label>
-                    <InputTextArea id="@param.Id"
+                    <InputTextArea id="@param.Id" disabled="@_isBusy"
                                    class="@("form-control form-control-sm mb-1 " + (param.Valid ? "is-valid" : "is-invalid"))"
                                    @bind-Value="param.Value"
-                                   @bind-Value:after="@(() => TemplateService.ParameterChangedAsync())"/>
+                                   @bind-Value:after="AfterParameterChanged"/>
                     <div class="invalid-feedback">Required</div>
                 </div>
                 break;
             case TemplateParameterType.Select:
                 <div class="col-6 px-1 pb-1">
                     <label for="@param.Id" class="form-label">@param.Name</label>
-                    <InputSelect id="@param.Id"
+                    <InputSelect id="@param.Id" disabled="@_isBusy"
                                  class="@("form-select form-select-sm mb-1 " + (param.Valid ? "is-valid" : "is-invalid"))"
                                  @bind-Value="param.Value"
-                                 @bind-Value:after="@(() => TemplateService.ParameterChangedAsync())">
+                                 @bind-Value:after="AfterParameterChanged">
                         <option selected disabled>Select</option>
                         @foreach (var option in param.Options)
                         {
@@ -68,13 +68,45 @@
 </div>
 
 @code {
-    private Language Language { get; set; } = Language.En;
-    private Guid TemplateId { get; set; }
+    [Parameter] public EventCallback<bool> IsBusyChanged { get; set; }
+
+    private Language _language = Language.En;
+    private Guid _templateId;
+    private TemplateParameter[] _templateParameters = [];
+    private bool _isBusy = true;
 
     protected override async Task OnInitializedAsync()
     {
-        //TODO: Fix Loading Pattern for Context
-        await TemplateService.SetLanguageAsync(Language);
+        await AfterLanguageChanged();
+    }
+
+    private async Task AfterLanguageChanged()
+    {
+        await SetBusyAsync(true);
+        await TemplateService.SetLanguageAsync(_language);
+        await SetBusyAsync(false);
+    }
+
+    private async Task AfterTemplateChanged()
+    {
+        await SetBusyAsync(true);
+        await TemplateService.TemplateIdChangedAsync(_templateId);
+        await SetBusyAsync(false);
+    }
+
+    private async Task AfterParameterChanged()
+    {
+        await SetBusyAsync(true);
+        await TemplateService.ParameterChangedAsync();
+        await SetBusyAsync(false);
+    }
+
+    private async Task SetBusyAsync(bool value)
+    {
+        _isBusy = value;
+        _templateParameters = value ? [] : TemplateService.TemplateParameters;
+        await IsBusyChanged.InvokeAsync(value);
+        StateHasChanged();
     }
 
 }

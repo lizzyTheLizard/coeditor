@@ -23,17 +23,23 @@ public class ConversationService(
 
     public async Task StartNewConversationAsync(Language language, string context)
     {
-        Context = context;
-        Text = "";
         var input = new InitializeConversationInput
         {
-            Language = language, NewContext = Context, NewText = Text, ConversationGuid = Guid.NewGuid()
+            Language = language, NewContext = context, NewText = "", ConversationGuid = Guid.NewGuid()
         };
-        var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-        var userName = authenticationState.User.Identity?.Name ?? "";
-        var newConversation = await initializeConversationApi.InitializeConversationAsync(userName, input);
-        UpdateConversation(newConversation);
-        logger.NewConversationStarted(newConversation);
+        try
+        {
+            var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
+            var userName = authenticationState.User.Identity?.Name ?? "";
+            var newConversation = await initializeConversationApi.InitializeConversationAsync(userName, input);
+            logger.ConversationStarted(newConversation);
+            UpdateConversation(newConversation);
+        }
+        catch (Exception e)
+        {
+            //TODO: Error Handling: Show error to user!
+            logger.ConversationStartFailed(e);
+        }
     }
 
     public void EndConversation()
@@ -56,9 +62,17 @@ public class ConversationService(
             NewContext = Context,
             NewText = Text
         };
-        var newConversation = await handleActionApi.HandleActionAsync(input);
-        UpdateConversation(newConversation);
-        logger.ActionApplied(action, newConversation);
+        try
+        {
+            var updatedConversation = await handleActionApi.HandleActionAsync(input);
+            UpdateConversation(updatedConversation);
+            logger.ConversationActionApplied(action, updatedConversation);
+        }
+        catch (Exception e)
+        {
+            //TODO: Error Handling: Show error to user!
+            logger.ConversationActionFailed(action, e);
+        }
     }
 
     private void UpdateConversation(Conversation? newConversation)
@@ -70,12 +84,13 @@ public class ConversationService(
     }
 }
 
-public readonly struct ConversationChangeSubscription(
-    List<Action<Conversation?>> callbacks,
-    Action<Conversation?> callback) : IDisposable
+public record ConversationChangeSubscription(
+    List<Action<Conversation?>> Callbacks,
+    Action<Conversation?> Callback) : IDisposable
 {
     public void Dispose()
     {
-        callbacks.Remove(callback);
+        Callbacks.Remove(Callback);
+        GC.SuppressFinalize(this);
     }
 }
