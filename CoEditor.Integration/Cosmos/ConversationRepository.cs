@@ -25,10 +25,12 @@ internal class ConversationRepository(CosmosDbContext dbContext)
 
     public async Task EnsureNotExistingAsync(Guid conversationGuid)
     {
-        var existing = await dbContext.Conversations
+        var conversation = await dbContext.Conversations
             .Where(t => t.Id == conversationGuid)
-            .AnyAsync();
-        if (existing) throw new AlreadyPresentException(typeof(Conversation), conversationGuid);
+            .Include(conversationDocument => conversationDocument.Messages)
+            .SingleOrDefaultAsync();
+        if (conversation == null) return;
+        throw new AlreadyPresentException(typeof(Conversation), conversationGuid);
     }
 
     public async Task<Conversation> GetAsync(Guid conversationGuid)
