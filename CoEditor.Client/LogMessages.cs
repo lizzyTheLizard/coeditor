@@ -111,6 +111,9 @@ internal static partial class LogMessages
     [LoggerMessage(LogLevel.Trace, Message = "Shortcut {s} registered")]
     public static partial void ShortcutRegistered(this ILogger logger, char s);
 
+    [LoggerMessage(LogLevel.Trace, Message = "Shortcut {s} unregistered")]
+    public static partial void ShortcutUnregistered(this ILogger logger, char s);
+    
     [LoggerMessage(LogLevel.Trace, Message = "Key {s} pressed. {hit}")]
     private static partial void KeypressHandled(this ILogger logger, string s, string hit);
 

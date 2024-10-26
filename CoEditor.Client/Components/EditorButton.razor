@@ -28,6 +28,7 @@
 
     private Task HandleOnClickAsync()
     {
+        if (Disabled) return Task.CompletedTask;
         return ActionName == null ? OnTriggered.InvokeAsync() : OnTriggered.InvokeAsync(ActionName.Value);
     }
 

@@ -10,38 +10,34 @@ public class ShortcutService(ILogger<ShortcutService> logger)
     [JSInvokable]
     public async Task HandleKeyboardEventAsync(KeyboardEventArgs e)
     {
-        var key = e.Key[0];
-        if (!e.AltKey)
-        {
-            logger.KeyPress(key, e.AltKey, false);
-            return;
-        }
-
+        var key = char.ToUpper(e.Key[0]);
         var actions = _shortcuts.GetValueOrDefault(key);
-        if (actions == null || actions.Count == 0)
+        if (!e.AltKey || actions == null || actions.Count == 0)
         {
             logger.KeyPress(key, e.AltKey, false);
             return;
         }
-
         logger.KeyPress(key, e.AltKey, true);
-        foreach (var action in actions) await action.Invoke();
+        foreach (var action in actions)
+            await action.Invoke();
     }
 
     public RegisterShortcutSubscription RegisterShortcut(char key, Func<Task> handler)
     {
-        if (!_shortcuts.ContainsKey(key)) _shortcuts[key] = [];
-        _shortcuts[key].Add(handler);
-        logger.ShortcutRegistered(key);
-        return new RegisterShortcutSubscription(_shortcuts, key, handler);
+        var registrationKey = char.ToUpper(key);
+        if (!_shortcuts.ContainsKey(registrationKey)) _shortcuts[registrationKey] = [];
+        _shortcuts[registrationKey].Add(handler);
+        logger.ShortcutRegistered(registrationKey);
+        return new RegisterShortcutSubscription(_shortcuts, registrationKey, handler, logger);
     }
 }
 
-public record RegisterShortcutSubscription(Dictionary<char, List<Func<Task>>> Callbacks, char Key, Func<Task> Callback)
+public record RegisterShortcutSubscription(Dictionary<char, List<Func<Task>>> Callbacks, char Key, Func<Task> Callback, ILogger Logger)
     : IDisposable
 {
     public void Dispose()
     {
+        Logger.ShortcutUnregistered(Key);
         Callbacks[Key].Remove(Callback);
         GC.SuppressFinalize(this);
     }

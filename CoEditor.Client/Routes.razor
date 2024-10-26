@@ -21,7 +21,7 @@
     protected override async Task OnAfterRenderAsync(bool first)
     {
         var objRef = DotNetObjectReference.Create(ShortcutService);
-        await JsRuntime.InvokeVoidAsync("addKeybordListener", objRef);
+        await JsRuntime.InvokeVoidAsync("addKeyboardListener", objRef);
     }
 
 }

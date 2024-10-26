@@ -1,5 +1,5 @@
 ﻿window.getSelectionStart = function (textareaId) {
-    var textarea = document.getElementById(textareaId);
+    const textarea = document.getElementById(textareaId);
     if (textarea) {
         return textarea.selectionStart
     }
@@ -7,14 +7,14 @@
 };
 
 window.getSelectionEnd = function (textareaId) {
-    var textarea = document.getElementById(textareaId);
+    const textarea = document.getElementById(textareaId);
     if (textarea) {
         return textarea.selectionEnd
     }
     return -1;
 };
 
-window.addKeybordListener = function (dotNetHelper) {
+window.addKeyboardListener = function (dotNetHelper) {
     window.document.addEventListener('keydown', async function (e) {
         if (!e) return;
         let cSharpKeyboardEventArgs = {
