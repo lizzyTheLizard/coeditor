@@ -21,7 +21,7 @@
     private bool Busy => _contextBusy || _textBusy;
     private bool _contextBusy = true;
     private bool _textBusy;
-    
+
     protected void OnContextBusyChanged(bool busy)
     {
         _contextBusy = busy;
@@ -31,4 +31,5 @@
     {
         _textBusy = busy;
     }
+
 }
