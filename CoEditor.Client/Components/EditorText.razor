@@ -23,6 +23,7 @@
         <EditorButton Disabled="@(Disabled || !UndoService.CanRedo)"
                       OnTriggered="@Redo" Name="Redo"></EditorButton>
     </div>
+    <DebugWindow></DebugWindow>
 </div>
 
 @code {
@@ -68,7 +69,7 @@
     {
         Text = UndoService.Redo();
     }
-    
+
     private async Task SetBusyAsync(bool value)
     {
         _isBusy = value;
@@ -91,4 +92,5 @@
         _subscription?.Dispose();
         _subscription = null;
     }
+
 }

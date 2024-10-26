@@ -1,4 +1,9 @@
-﻿window.getSelectionStart = function (textareaId) {
+﻿window.showModal = function (modalId) {
+    const myModal = new bootstrap.Modal(document.getElementById(modalId));
+    myModal.show();
+}
+
+window.getSelectionStart = function (textareaId) {
     const textarea = document.getElementById(textareaId);
     if (textarea) {
         return textarea.selectionStart
