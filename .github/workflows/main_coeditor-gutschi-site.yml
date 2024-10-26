@@ -23,15 +23,15 @@ jobs:
 
       - name: Build with dotnet
         run: dotnet build --configuration Release
-
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ./CoEditor
-
+      - name: Test
+        run: dotnet test
+      - name: Publish
+        run: dotnet publish CoEditor -c Release -o ./Output
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: ./CoEditor
+          path: ./Output
 
   deploy:
     runs-on: windows-latest
