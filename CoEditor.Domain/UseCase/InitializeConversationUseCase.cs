@@ -21,7 +21,7 @@ internal class InitializeConversationUseCase(
         var result = await aiConnector.PromptAsync(messages);
         var updatedConversation = conversation.Update(messages, result);
         await conversationRepository.CreateAsync(updatedConversation);
-        logger.ConversationCreated(conversation);
+        logger.ConversationCreated(updatedConversation);
         return updatedConversation;
     }
 }

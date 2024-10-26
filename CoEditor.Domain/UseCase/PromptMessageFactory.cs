@@ -39,20 +39,20 @@ internal class PromptMessageFactory
 
     private readonly CommandPrompt[] ContextChangedMessage =
     [
-        new(Language.De, "Der Kontext hat geändert. Es geht nun um {0}"),
-        new(Language.En, "The context has changed. It is now about {0}")
+        new(Language.De, "Der Kontext hat sich geändert. {0}"),
+        new(Language.En, "The context has changed. {0}")
     ];
 
     private readonly CommandPrompt[] InitialCommand =
     [
         new(Language.De, "Mache einen neuen Vorschlag"),
-        new(Language.En, "Create a proposal")
+        new(Language.En, "Create an initial proposal")
     ];
 
     private readonly CommandPrompt[] InitialContextMessage =
     [
-        new(Language.De, "Der Kontext ist folgender: {0}"),
-        new(Language.En, "The context is: {0}")
+        new(Language.De, "{0}"),
+        new(Language.En, "{0}")
     ];
 
     private readonly CommandPrompt[] SystemChatMessage =
@@ -60,13 +60,13 @@ internal class PromptMessageFactory
         new(Language.De,
             "Du bist ein hilfreicher Assistent der mich beim schreiben von kurzen Texten unterstützt. Ich schreibe einen Text und du ergänzt ihn für mich auf verschiedene Arten. Gib immer den ganzen Text zurück, aber niemals Zusatzinformationen"),
         new(Language.En,
-            "You are a helpful assistant who supports me in writing short texts. I write the text and ask you help me in different ways. Always return the full text, but never any additional informations.")
+            "You are a helpful assistant who supports me in writing short texts. I write the text and ask you help me in different ways. Always return the full text, but never any additional informations. Do not include any explanation")
     ];
 
     private readonly CommandPrompt[] TextChangedMessage =
     [
-        new(Language.De, "Ich habe den Text wie folgt abgeändert: {0}"),
-        new(Language.En, "I have changed the text as follows: {0}")
+        new(Language.De, "Ich habe den Text in folgendes abgeändert: {0}"),
+        new(Language.En, "I have changed the text to the following: {0}")
     ];
 
     public PromptMessage[] GenerateInitialMessages(Conversation conversation, Profile profile)
@@ -79,8 +79,8 @@ internal class PromptMessageFactory
         return
         [
             new PromptMessage(systemChatMessage.Prompt, PromptMessageType.System),
-            new PromptMessage(profile.Text, PromptMessageType.System),
-            new PromptMessage(initialContextPrompt, PromptMessageType.System),
+            new PromptMessage(profile.Text, PromptMessageType.User),
+            new PromptMessage(initialContextPrompt, PromptMessageType.User),
             new PromptMessage(initialCommand.Prompt, PromptMessageType.User)
         ];
     }
@@ -93,7 +93,7 @@ internal class PromptMessageFactory
         {
             var contextChangedMessage = ContextChangedMessage.First(p => p.Language == conversation.Language);
             var contextChangedPrompt = string.Format(formatProvider, contextChangedMessage.Prompt, input.NewContext);
-            result.Add(new PromptMessage(contextChangedPrompt, PromptMessageType.System));
+            result.Add(new PromptMessage(contextChangedPrompt, PromptMessageType.User));
         }
 
         if (conversation.Text != input.NewText)

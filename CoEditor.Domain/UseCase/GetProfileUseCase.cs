@@ -10,7 +10,8 @@ internal class GetProfileUseCase(
 {
     private readonly Dictionary<Language, string> DefaultProfileText = new()
     {
-        { Language.De, "Ich bin ein neuer Benutzer" }, { Language.En, "I am a new user" }
+        { Language.De, "Ich bin ein neuer Benutzer und es sind noch keine Informationen über mich gespeichert. Verwende einfach die Standart-Einstellungen." }, 
+        { Language.En, "I am a new user and there is no information stored about me. Just use default settings." }
     };
 
     public async Task<Profile> GetProfileAsync(string userName, Language language)

@@ -18,6 +18,6 @@ public class ConversationMessage
 
     public override string ToString()
     {
-        return $"{base.ToString()} : Type={Type}, PromptedAt={PromptedAt}, Response={Response}";
+        return $"{base.ToString()} : Type={Type}, Prompt={Prompt}, PromptedAt={PromptedAt}, Response={Response}";
     }
 }
