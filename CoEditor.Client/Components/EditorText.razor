@@ -3,7 +3,7 @@
 @inject ConversationService ConversationService
 @implements IDisposable
 
-<div class="d-flex flex-column flex-grow-1 overlay-host">
+<div class="d-flex flex-column flex-grow-1">
     <InputTextArea id="editorTextarea"
                    disabled="@Disabled"
                    class="form-control flex-grow-1"
@@ -19,9 +19,9 @@
         <EditorButton Disabled="@Disabled" OnTriggered="@HandleActionAsync"
                       ActionName="ActionName.Expand"></EditorButton>
         <EditorButton Disabled="@(Disabled || !UndoService.CanUndo)"
-                      OnTriggered="@(() => Text = UndoService.Undo())" Name="Undo"></EditorButton>
+                      OnTriggered="@Undo" Name="Undo"></EditorButton>
         <EditorButton Disabled="@(Disabled || !UndoService.CanRedo)"
-                      OnTriggered="@(() => Text = UndoService.Redo())" Name="Redo"></EditorButton>
+                      OnTriggered="@Redo" Name="Redo"></EditorButton>
     </div>
 </div>
 
@@ -59,6 +59,16 @@
         await SetBusyAsync(false);
     }
 
+    private void Undo()
+    {
+        Text = UndoService.Undo();
+    }
+
+    private void Redo()
+    {
+        Text = UndoService.Redo();
+    }
+    
     private async Task SetBusyAsync(bool value)
     {
         _isBusy = value;
@@ -81,5 +91,4 @@
         _subscription?.Dispose();
         _subscription = null;
     }
-
 }
