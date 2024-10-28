@@ -1,22 +1,144 @@
 ﻿@page "/settings"
 @attribute [Authorize]
+@inject TemplateService TemplateService
+@inject ProfileService ProfileService
 
-<PageTitle>Editor</PageTitle>
+<PageTitle>Settings</PageTitle>
 
-<h1>Hello, Settings!</h1>
-
-<p role="status">Current count: @_currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
-
-@code {
-
-    //TODO: Implement Settings page
-    private int _currentCount;
-
-    private void IncrementCount()
+<div class="d-flex flex-wrap mx-n1">
+    <div class="col-6 px-1 pb-1">
+        <label for="language" class="form-label">Language</label>
+        <InputSelect id="language" disabled="@_isBusy" class="form-select form-select-sm" @bind-Value="_language"
+                     @bind-Value:after="AfterLanguageChanged">
+            @foreach (var language in Enum.GetValues<Language>())
+            {
+                <option value="@language">@language</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="col-12 px-1 pb-1">
+        <label for="profile" class="form-label">Profile</label>
+        <InputTextArea id="profile" disabled="@_isBusy"
+                       class="@("form-control form-control-sm mb-1 " + (IsValid(_profile) ? "is-valid" : "is-invalid"))"
+                       @bind-Value="_profile"
+                       @bind-Value:after="AfterProfileChanged"/>
+        <div class="invalid-feedback">Required</div>
+    </div>
+    @foreach (var template in _templates)
     {
-        _currentCount++;
+        <div class="col-12 col-md-10 px-1 pb-1">
+            <label for="@template.OriginalTemplate.Id" class="form-label">@template.OriginalTemplate.Name</label>
+            <InputTextArea id="@template.OriginalTemplate.Id" disabled="@_isBusy"
+                           class="@("form-control form-control-sm mb-1 " + (IsValid(template.NewText) ? "is-valid" : "is-invalid"))"
+                           @bind-Value="template.NewText"
+                           @bind-Value:after="() => AfterTemplateChanged(template)"/>
+            <div class="invalid-feedback">Required</div>
+        </div>
+        <div class="col-12 col-md-2 px-1 pb-1 pt-5">
+            <button class="btn btn-danger" disabled="@(_isBusy || !IsValid(template.NewText))" style="width: 100%;"
+                    @onclick="() => DeleteTemplate(template.OriginalTemplate)">Delete
+            </button>
+        </div>
+    }
+    <div class="col-6 col-lg-10 px-1 pb-1">
+        <label for="newTemplateName" class="form-label pt-1">Name</label>
+        <InputText id="newTemplateName" disabled="@_isBusy"
+                   class="@("form-control form-control-sm mb-1 " + (IsValid(_newTemplateName) ? "is-valid" : "is-invalid"))"
+                   @bind-Value="_newTemplateName"/>
+        <div class="invalid-feedback">Required</div>
+    </div>
+    <div class="col-6 col-lg-2 px-1 pt-4">
+        <button class="btn btn-primary" disabled="@(!IsValid(_newTemplateName))" style="width: 100%;"
+                @onclick="AddTemplate">Add New Template
+        </button>
+    </div>
+</div>
+
+@code{
+    private string _profile = "";
+    private Language _language = Language.En;
+    private bool _isBusy = true;
+    private string _newTemplateName = "";
+    private WritableTemplate[] _templates = [];
+
+    protected override Task OnInitializedAsync()
+    {
+        return AfterLanguageChanged();
+    }
+
+    private async Task AfterLanguageChanged()
+    {
+        _isBusy = true;
+        StateHasChanged();
+        await TemplateService.SetLanguageAsync(_language);
+        var serverTemplates = TemplateService.Templates;
+        _templates = serverTemplates
+            .Where(t => !t.DefaultTemplate)
+            .Select(t => new WritableTemplate(t))
+            .ToArray();
+        _profile = await ProfileService.GetProfileAsync(_language);
+        _isBusy = false;
+        StateHasChanged();
+    }
+
+    private async Task AfterProfileChanged()
+    {
+        _isBusy = true;
+        StateHasChanged();
+        await ProfileService.UpdateProfile(_language, _profile);
+        _isBusy = false;
+        StateHasChanged();
+    }
+
+    private async Task AfterTemplateChanged(WritableTemplate writableTemplate)
+    {
+        _isBusy = true;
+        StateHasChanged();
+        await TemplateService.UpdateTemplate(writableTemplate.ToTemplate());
+        _isBusy = false;
+        StateHasChanged();
+    }
+
+    private async Task DeleteTemplate(Template template)
+    {
+        _isBusy = true;
+        StateHasChanged();
+        await TemplateService.DeleteTemplate(template);
+        _isBusy = false;
+        StateHasChanged();
+    }
+
+    private async Task AddTemplate()
+    {
+        var newTemplate = await TemplateService.GenerateEmptyTemplate(_newTemplateName);
+        var newWritableTemplate = new WritableTemplate(newTemplate);
+        _templates = [.._templates, newWritableTemplate];
+        _newTemplateName = "";
+    }
+
+    private static bool IsValid(string text)
+    {
+        return !string.IsNullOrEmpty(text);
+    }
+
+    internal record WritableTemplate(Template OriginalTemplate)
+    {
+        public string NewText { get; set; } = "";
+
+        public Template ToTemplate()
+        {
+            return new Template
+            {
+                Id = OriginalTemplate.Id,
+                UserName = OriginalTemplate.UserName,
+                DefaultTemplate = OriginalTemplate.DefaultTemplate,
+                Language = OriginalTemplate.Language,
+                Name = OriginalTemplate.Name,
+                Text = NewText
+            };
+        }
     }
 
 }
+
+

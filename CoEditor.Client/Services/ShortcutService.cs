@@ -11,7 +11,7 @@ public class ShortcutService(ILogger<ShortcutService> logger)
     [JSInvokable]
     public async Task HandleKeyboardEventAsync(KeyboardEventArgs e)
     {
-        var key = char.ToUpper(e.Key[0], CultureInfo.InvariantCulture );
+        var key = char.ToUpper(e.Key[0], CultureInfo.InvariantCulture);
         var actions = _shortcuts.GetValueOrDefault(key);
         if (!e.AltKey || actions == null || actions.Count == 0)
         {

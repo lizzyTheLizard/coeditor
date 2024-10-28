@@ -5,6 +5,9 @@ namespace CoEditor.Domain.Model;
 public class Profile
 {
     [StringLength(FieldLengths.ProfileMaxLength)]
+    public required string UserName { get; init; }
+
+    [StringLength(FieldLengths.ProfileMaxLength)]
     public required string Text { get; init; }
 
     public required Language Language { get; init; }

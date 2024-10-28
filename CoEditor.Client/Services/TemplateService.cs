@@ -7,6 +7,8 @@ namespace CoEditor.Client.Services;
 public class TemplateService(
     ConversationService conversationService,
     IGetTemplatesApi getTemplatesApi,
+    IUpdateTemplateApi updateTemplateApi,
+    IDeleteTemplateApi deleteTemplateApi,
     AuthenticationStateProvider authenticationStateProvider,
     ILogger<TemplateService> logger)
 {
@@ -84,5 +86,56 @@ public class TemplateService(
             conversationService.Context = context;
             logger.TemplateContextChanged(context);
         }
+    }
+
+    public async Task UpdateTemplate(Template template)
+    {
+        try
+        {
+            var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
+            var userName = authenticationState.User.Identity?.Name ?? "";
+            await updateTemplateApi.UpdateTemplateAsync(userName, template);
+            logger.TemplateUpdated(template);
+        }
+        catch (Exception e)
+        {
+            //TODO: Error Handling: Show error to user!
+            logger.TemplateUpdateFailed(e, template);
+        }
+
+        await LoadTemplatesAsync();
+    }
+
+    public async Task DeleteTemplate(Template template)
+    {
+        try
+        {
+            var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
+            var userName = authenticationState.User.Identity?.Name ?? "";
+            await deleteTemplateApi.DeleteTemplateAsync(userName, template.Id);
+            logger.TemplateDeleted(template);
+        }
+        catch (Exception e)
+        {
+            //TODO: Error Handling: Show error to user!
+            logger.TemplateDeleteFailed(e, template);
+        }
+
+        await LoadTemplatesAsync();
+    }
+
+    public async Task<Template> GenerateEmptyTemplate(string name)
+    {
+        var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var userName = authenticationState.User.Identity?.Name ?? "";
+        return new Template
+        {
+            DefaultTemplate = false,
+            Id = Guid.NewGuid(),
+            Language = _language,
+            Name = name,
+            Text = "",
+            UserName = userName
+        };
     }
 }

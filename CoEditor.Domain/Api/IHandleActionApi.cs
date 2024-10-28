@@ -4,9 +4,9 @@ namespace CoEditor.Domain.Api;
 
 public interface IHandleActionApi
 {
-    Task<Conversation> HandleActionAsync(HandleNamedActionInput input);
+    Task<Conversation> HandleActionAsync(string userName, HandleNamedActionInput input);
 
-    Task<Conversation> HandleActionAsync(HandleCustomActionInput input);
+    Task<Conversation> HandleActionAsync(string userName, HandleCustomActionInput input);
 }
 
 public class HandleActionInput

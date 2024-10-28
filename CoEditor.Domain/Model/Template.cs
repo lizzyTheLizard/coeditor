@@ -7,11 +7,18 @@ public partial class Template
 {
     public required Guid Id { get; init; }
 
+    public required Language Language { get; init; }
+
+    [StringLength(FieldLengths.NameMaxLength)]
+    public required string UserName { get; init; }
+
     [StringLength(FieldLengths.NameMaxLength)]
     public required string Name { get; init; }
 
     [StringLength(FieldLengths.ContextMaxLength)]
     public required string Text { get; init; }
+
+    public required bool DefaultTemplate { get; init; }
 
     public override string ToString()
     {

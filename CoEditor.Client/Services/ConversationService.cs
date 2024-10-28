@@ -64,7 +64,9 @@ public class ConversationService(
         };
         try
         {
-            var updatedConversation = await handleActionApi.HandleActionAsync(input);
+            var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
+            var userName = authenticationState.User.Identity?.Name ?? "";
+            var updatedConversation = await handleActionApi.HandleActionAsync(userName, input);
             UpdateConversation(updatedConversation);
             logger.ConversationActionApplied(action, updatedConversation);
         }

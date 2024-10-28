@@ -13,6 +13,7 @@ public static class ClientWebApplicationExtensions
         services.AddScoped<UndoService>();
         services.AddScoped<ShortcutService>();
         services.AddScoped<TemplateService>();
+        services.AddScoped<ProfileService>();
         services.AddScoped<ConversationService>();
     }
 
@@ -21,9 +22,13 @@ public static class ClientWebApplicationExtensions
     {
         services.AddServerInteractiveClient();
         services.AddScoped(_ => new HttpClient { BaseAddress = new Uri(hostEnvironment.BaseAddress) });
-        services.AddScoped<IGetTemplatesApi, GetTemplatesRestCaller>();
-        services.AddScoped<IInitializeConversationApi, InitializeConversationRestCaller>();
-        services.AddScoped<IHandleActionApi, HandleActionRestCaller>();
+        services.AddScoped<IGetTemplatesApi, TemplateRestCaller>();
+        services.AddScoped<IUpdateTemplateApi, TemplateRestCaller>();
+        services.AddScoped<IDeleteTemplateApi, TemplateRestCaller>();
+        services.AddScoped<IInitializeConversationApi, ConversationRestCaller>();
+        services.AddScoped<IHandleActionApi, ConversationRestCaller>();
+        services.AddScoped<IGetProfileApi, ProfileRestCaller>();
+        services.AddScoped<IUpdateProfileApi, ProfileRestCaller>();
         // The authentication is done in the backend, the username is stored in the
         // PersistentComponentState and needs to be read by the client
         services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();

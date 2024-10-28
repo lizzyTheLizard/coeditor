@@ -9,14 +9,14 @@ internal class InitializeConversationUseCase(
     IAiConnector aiConnector,
     PromptMessageFactory promptMessageFactory,
     IConversationRepository conversationRepository,
-    GetProfileUseCase getProfileUseCase,
+    IGetProfileApi getProfileApi,
     ILogger<InitializeConversationUseCase> logger) : IInitializeConversationApi
 {
     public async Task<Conversation> InitializeConversationAsync(string userName, InitializeConversationInput input)
     {
         var conversation = Conversation.InitialConversation(userName, input);
         await conversationRepository.EnsureNotExistingAsync(conversation.Id);
-        var profile = await getProfileUseCase.GetProfileAsync(userName, input.Language);
+        var profile = await getProfileApi.GetProfileAsync(userName, input.Language);
         var messages = promptMessageFactory.GenerateInitialMessages(conversation, profile);
         var result = await aiConnector.PromptAsync(messages);
         var updatedConversation = conversation.Update(messages, result);

@@ -25,6 +25,25 @@ internal static partial class LogMessages
         logger.ProfileTrace(profile);
     }
 
+
+    [LoggerMessage(LogLevel.Information, EventId = 1301, Message = "Created profile of user {userName} in {language}")]
+    private static partial void ProfileCreated(this ILogger logger, string userName, Language language);
+
+    public static void ProfileCreated(this ILogger logger, Profile profile)
+    {
+        logger.ProfileCreated(profile.UserName, profile.Language);
+        logger.ProfileTrace(profile);
+    }
+
+    [LoggerMessage(LogLevel.Information, EventId = 1302, Message = "Updated template of user {userName} in {language}")]
+    private static partial void ProfileUpdated(this ILogger logger, string userName, Language language);
+
+    public static void ProfileUpdated(this ILogger logger, Profile profile)
+    {
+        logger.ProfileUpdated(profile.UserName, profile.Language);
+        logger.ProfileTrace(profile);
+    }
+
     #endregion
 
     #region Template
@@ -42,6 +61,39 @@ internal static partial class LogMessages
         if (!logger.IsEnabled(LogLevel.Trace)) return;
         foreach (var t in templates)
             logger.TemplateTrace(t);
+    }
+
+    [LoggerMessage(LogLevel.Information, EventId = 1201,
+        Message = "Deleted template {id} of user {userName} in {language}")]
+    private static partial void TemplateDeleted(this ILogger logger, Guid id, string userName, Language language);
+
+    public static void TemplateDeleted(this ILogger logger, Template template)
+    {
+        logger.TemplateDeleted(template.Id, template.UserName, template.Language);
+        logger.TemplateTrace(template);
+    }
+
+    [LoggerMessage(LogLevel.Information, EventId = 1202, Message = "Template {id} is already deleted")]
+    public static partial void TemplateAlreadyDeleted(this ILogger logger, Guid id);
+
+    [LoggerMessage(LogLevel.Information, EventId = 1203,
+        Message = "Created template {id} of user {userName} in {language}")]
+    private static partial void TemplateCreated(this ILogger logger, Guid id, string userName, Language language);
+
+    public static void TemplateCreated(this ILogger logger, Template template)
+    {
+        logger.TemplateCreated(template.Id, template.UserName, template.Language);
+        logger.TemplateTrace(template);
+    }
+
+    [LoggerMessage(LogLevel.Information, EventId = 1204,
+        Message = "Updated template {id} of user {userName} in {language}")]
+    private static partial void TemplateUpdated(this ILogger logger, Guid id, string userName, Language language);
+
+    public static void TemplateUpdated(this ILogger logger, Template template)
+    {
+        logger.TemplateUpdated(template.Id, template.UserName, template.Language);
+        logger.TemplateTrace(template);
     }
 
     #endregion

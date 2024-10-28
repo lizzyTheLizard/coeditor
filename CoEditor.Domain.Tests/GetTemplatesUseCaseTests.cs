@@ -2,6 +2,7 @@ using CoEditor.Domain.Dependencies;
 using CoEditor.Domain.Model;
 using CoEditor.Domain.UseCase;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 
 namespace CoEditor.Domain.Tests;
@@ -12,8 +13,16 @@ public class GetTemplatesUseCaseTests
     public async Task GetTemplatesAsync()
     {
         // Arrange
-        var loggerStub = new Microsoft.Extensions.Logging.Abstractions.NullLoggerFactory().CreateLogger<GetTemplatesUseCase>();
-        var templatesStub = new Template() { Id = Guid.NewGuid(), Name = "Name", Text = "Text" };
+        var loggerStub = new NullLoggerFactory().CreateLogger<GetTemplatesUseCase>();
+        var templatesStub = new Template
+        {
+            Id = Guid.NewGuid(),
+            UserName = "testUser",
+            Language = Language.En,
+            DefaultTemplate = false,
+            Name = "Name",
+            Text = "Text"
+        };
         var templateRepositoryMock = new Mock<ITemplateRepository>();
         templateRepositoryMock
             .Setup(x => x.GetTemplatesAsync("testUser", Language.De))

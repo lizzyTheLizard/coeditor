@@ -2,6 +2,7 @@
 using CoEditor.Domain.Dependencies;
 using CoEditor.Domain.Model;
 using Microsoft.Extensions.Logging;
+using System.Security.Authentication;
 
 namespace CoEditor.Domain.UseCase;
 
@@ -11,7 +12,7 @@ internal class HandleActionUseCase(
     IConversationRepository conversationRepository,
     ILogger<HandleActionUseCase> logger) : IHandleActionApi
 {
-    public async Task<Conversation> HandleActionAsync(HandleNamedActionInput input)
+    public async Task<Conversation> HandleActionAsync(string userName, HandleNamedActionInput input)
     {
         var prompt = promptMessageFactory.GetCommandPrompt(input);
         var customActionInput = new HandleCustomActionInput
@@ -21,21 +22,21 @@ internal class HandleActionUseCase(
             NewText = input.NewText,
             Action = prompt
         };
-        var result = await HandleActionInternalAsync(customActionInput);
+        var result = await HandleActionInternalAsync(userName, customActionInput);
         logger.ConversationUpdated(input.Action, result);
         return result;
     }
 
-    public async Task<Conversation> HandleActionAsync(HandleCustomActionInput input)
+    public async Task<Conversation> HandleActionAsync(string userName, HandleCustomActionInput input)
     {
-        var result = await HandleActionInternalAsync(input);
+        var result = await HandleActionInternalAsync(userName, input);
         logger.ConversationUpdated(null, result);
         return result;
     }
 
-    public async Task<Conversation> HandleActionInternalAsync(HandleCustomActionInput input)
+    public async Task<Conversation> HandleActionInternalAsync(string userName, HandleCustomActionInput input)
     {
-        var conversation = await GetExistingConversation(input.ConversationGuid);
+        var conversation = await GetExistingConversation(userName, input.ConversationGuid);
         var existingMessages = conversation.ToPromptMessages();
         var newMessages = promptMessageFactory.GenerateActionMessages(conversation, input);
         var result = await aiConnector.PromptAsync([.. existingMessages, .. newMessages]);
@@ -44,9 +45,11 @@ internal class HandleActionUseCase(
         return updatedConversation;
     }
 
-    private async Task<Conversation> GetExistingConversation(Guid conversationGuid)
+    private async Task<Conversation> GetExistingConversation(string userName, Guid conversationGuid)
     {
         var conversation = await conversationRepository.GetAsync(conversationGuid);
+        if (conversation.UserName != userName)
+            throw new AuthenticationException($"Wrong user {userName} for conversation {conversationGuid}");
         logger.ConversationLoaded(conversation);
         return conversation;
     }

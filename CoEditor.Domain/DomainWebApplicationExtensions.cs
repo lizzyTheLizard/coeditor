@@ -8,10 +8,13 @@ public static class DomainWebApplicationExtensions
 {
     public static void AddDomain(this IServiceCollection services)
     {
-        services.AddScoped<IInitializeConversationApi, InitializeConversationUseCase>();
-        services.AddScoped<IHandleActionApi, HandleActionUseCase>();
+        services.AddScoped<IDeleteTemplateApi, DeleteTemplateUseCase>();
+        services.AddScoped<IGetProfileApi, GetProfileUseCase>();
         services.AddScoped<IGetTemplatesApi, GetTemplatesUseCase>();
-        services.AddScoped<GetProfileUseCase>();
+        services.AddScoped<IHandleActionApi, HandleActionUseCase>();
+        services.AddScoped<IInitializeConversationApi, InitializeConversationUseCase>();
+        services.AddScoped<IUpdateProfileApi, UpdateProfileUseCase>();
+        services.AddScoped<IUpdateTemplateApi, UpdateTemplateUseCase>();
         services.AddSingleton<PromptMessageFactory>();
     }
 }

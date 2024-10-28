@@ -28,9 +28,8 @@ public class ConversationController(
     [Route("Action")]
     public async Task<ActionResult<Conversation>> HandleActionAsync([FromBody] HandleNamedActionInput input)
     {
-        var conversation = await handleActionApi.HandleActionAsync(input);
         var userName = User.Identity?.Name ?? throw new AuthenticationException("User not authenticated");
-        if (conversation.UserName != userName) throw new AuthenticationException("Wrong user " + userName);
+        var conversation = await handleActionApi.HandleActionAsync(userName, input);
         return conversation;
     }
 
@@ -38,9 +37,8 @@ public class ConversationController(
     [Route("CustomAction")]
     public async Task<Conversation> HandleActionAsync([FromBody] HandleCustomActionInput input)
     {
-        var conversation = await handleActionApi.HandleActionAsync(input);
         var userName = User.Identity?.Name ?? throw new AuthenticationException("User not authenticated");
-        if (conversation.UserName != userName) throw new AuthenticationException("Wrong user " + userName);
+        var conversation = await handleActionApi.HandleActionAsync(userName, input);
         return conversation;
     }
 }

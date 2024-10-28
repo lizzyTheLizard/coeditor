@@ -8,12 +8,15 @@ internal class PersistentAuthenticationStateProvider(
     PersistentComponentState state,
     ILogger<PersistentAuthenticationStateProvider> logger) : AuthenticationStateProvider
 {
+    private AuthenticationState? _authenticationState;
+
     public override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
+        if (_authenticationState != null) return Task.FromResult(_authenticationState);
         var identity = GetIdentity();
         var principal = new ClaimsPrincipal(identity);
-        var authenticationState = new AuthenticationState(principal);
-        return Task.FromResult(authenticationState);
+        _authenticationState = new AuthenticationState(principal);
+        return Task.FromResult(_authenticationState);
     }
 
     private ClaimsIdentity GetIdentity()
