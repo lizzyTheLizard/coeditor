@@ -23,9 +23,13 @@ internal class TemplateRepository(CosmosDbContext dbContext) : ITemplateReposito
             .ToArrayAsync();
     }
 
-    public Task DeleteTemplateAsync(Guid id)
+    public async Task DeleteTemplateAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var existingDocument = await dbContext.Templates
+            .Where(t => t.Id == id)
+            .FirstAsync();
+        dbContext.Remove(existingDocument);
+        await dbContext.SaveChangesAsync();
     }
 
     public Task<Template?> FindTemplateAsync(Guid id)

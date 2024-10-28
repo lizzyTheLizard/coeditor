@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 namespace CoEditor.Client.Services;
 
+//TODO: Clean up the servies => What shall be here and what shall be in component?
 public class ConversationService(
     IInitializeConversationApi initializeConversationApi,
     IHandleActionApi handleActionApi,
