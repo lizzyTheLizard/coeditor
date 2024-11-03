@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "name": "Server",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}\\CoEditor\\CoEditor.csproj",
+            "launchConfigurationId": "TargetFramework=;noBrowser"
+        },        
+        {
+            "name": "Client",
+            "type": "blazorwasm",
+            "request": "attach",
+            "cwd": "${workspaceFolder}",
+            "url": "http://localhost:5199",  // Tell launch where to find site
+            "timeout": 120000, // Allows time for the site to launch
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug with Frontend",
+            "configurations": [ "Server", "Client" ]
+        }
+
+}
+
+    ],
+    ]
+}

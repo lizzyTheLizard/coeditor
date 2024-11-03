@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "ms-dotnettools.vscode-dotnet-pack",
+        "ms-dotnettools.blazorwasm-companion",
+        "ms-azuretools.vscode-azureappservice",
+        "ms-azuretools.vscode-cosmosdb",
+        "formulahendry.dotnet-test-explorer",
+        "ms-dotnettools.csdevkit",
+        "adrianwilczynski.user-secrets",
+        "github.vscode-github-actions"
+    ]
+}
