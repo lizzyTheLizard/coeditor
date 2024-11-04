@@ -13,7 +13,7 @@ internal class GetTemplatesUseCase(
     public async Task<Template[]> GetTemplatesAsync(string userName, Language language)
     {
         var userTemplates = await templateRepository.GetTemplatesAsync(userName, language);
-        Template[] templates = [..userTemplates, .. GetSystemTemplates(userName, language)];
+        Template[] templates = [.. GetSystemTemplates(userName, language), ..userTemplates];
         logger.TemplatesLoaded(templates, userName, language);
         return templates;
     }

@@ -10,15 +10,16 @@ public class UndoService(ILogger<UndoService> logger)
 
     public void Register(string update)
     {
+        if (update == _current) return;
         _undo.Push(_current);
         _current = update;
         _redo.Clear();
         logger.TextChangeRegistered();
     }
 
-    public void Clean()
+    public void Reset(string current)
     {
-        _current = "";
+        _current = current;
         _undo.Clear();
         _redo.Clear();
         logger.Cleaned();
@@ -41,4 +42,19 @@ public class UndoService(ILogger<UndoService> logger)
         logger.Redone();
         return oldText;
     }
+}
+
+internal static partial class UndoServiceLogMessages
+{
+    [LoggerMessage(LogLevel.Debug, Message = "Text-Change registered into Undo chain")]
+    public static partial void TextChangeRegistered(this ILogger logger);
+
+    [LoggerMessage(LogLevel.Debug, Message = "Undo/Redo chains cleaned")]
+    public static partial void Cleaned(this ILogger logger);
+
+    [LoggerMessage(LogLevel.Debug, Message = "Undone last command")]
+    public static partial void Undone(this ILogger logger);
+
+    [LoggerMessage(LogLevel.Debug, Message = "Redone last command")]
+    public static partial void Redone(this ILogger logger);
 }

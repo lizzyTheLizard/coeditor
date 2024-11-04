@@ -1,0 +1,55 @@
+@inject AuthenticationStateProvider AuthenticationStateProvider
+<div class="row pt-3">
+    <h1>New Template</h1>
+</div>
+<div class="row">
+    <InputText id="newTemplateName"
+               class="@("form-control form-control-sm mb-1 " + (IsNameValid ? "is-valid" : "is-invalid"))"
+               @bind-Value="_name"/>
+</div>
+<div class="row">
+    <InputTextArea class="@("form-control form-control-sm mb-1 " + (IsTextValid ? "is-valid" : "is-invalid"))"
+                   @bind-Value="_text"/>
+</div>
+<div class="row justify-content-end">
+    <div class="col-12 col-sm-4 col-md-2 p-0">
+        <button class="btn btn-primary" disabled="@(!IsTextValid || !IsNameValid)" style="width: 100%;"
+                @onclick="AddTemplate">Add New Template
+        </button>
+    </div>
+</div>
+
+@code {
+
+    [Parameter][EditorRequired]
+    public Language Language { get; set; }
+
+    [Parameter][EditorRequired]
+    public EventCallback<Template> TemplateAdded { get; set; }
+
+    private bool IsNameValid => !string.IsNullOrEmpty(_name);
+
+    private bool IsTextValid => !string.IsNullOrEmpty(_text);
+
+    private string _name = "";
+    private string _text = "";
+
+    private async Task AddTemplate()
+    {
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userName = authenticationState.User.Identity?.Name ?? "";
+        var newTemplate = new Template
+        {
+            DefaultTemplate = false,
+            Id = Guid.NewGuid(),
+            Language = Language,
+            Name = _name,
+            Text = _text,
+            UserName = userName
+        };
+        await TemplateAdded.InvokeAsync(newTemplate);
+        _name = "";
+        _text = "";
+    }
+
+}

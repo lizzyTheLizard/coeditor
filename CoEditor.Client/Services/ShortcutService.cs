@@ -48,3 +48,22 @@ public record RegisterShortcutSubscription(
         GC.SuppressFinalize(this);
     }
 }
+
+internal static partial class ShortcutServiceLogMessages
+{
+    [LoggerMessage(LogLevel.Trace, Message = "Shortcut {s} registered")]
+    public static partial void ShortcutRegistered(this ILogger logger, char s);
+
+    [LoggerMessage(LogLevel.Trace, Message = "Shortcut {s} unregistered")]
+    public static partial void ShortcutUnregistered(this ILogger logger, char s);
+
+    [LoggerMessage(LogLevel.Trace, Message = "Key {s} pressed. {hit}")]
+    private static partial void KeypressHandled(this ILogger logger, string s, string hit);
+
+    public static void KeyPress(this ILogger logger, char key, bool alt, bool hit)
+    {
+        var s = (alt ? "Alt+" : "") + key;
+        var hitStr = hit ? "This is a shortcut" : "This is not a shortcut";
+        logger.KeypressHandled(s, hitStr);
+    }
+}

@@ -1,0 +1,22 @@
+<div class="row justify-content-end pb-0">
+    <div class="col-12 col-sm-6 col-md-2">
+        <InputSelect id="language" class="form-select form-select-sm"
+                     @bind-Value="Language"
+                     @bind-Value:after="() => LanguageChanged.InvokeAsync(Language)">
+            @foreach (var language in Enum.GetValues<Language>())
+            {
+                <option value="@language">@language</option>
+            }
+        </InputSelect>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public Language Language { get; set; }
+
+    [Parameter]
+    public EventCallback<Language> LanguageChanged { get; set; }
+
+}

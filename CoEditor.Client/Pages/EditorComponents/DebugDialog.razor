@@ -1,26 +1,25 @@
 @inject IJSRuntime JsRuntime
-@inject ConversationService ConversationService
 @inject ShortcutService ShortcutService
-@inject ILogger<DebugWindow> Logger
+@inject ILogger<DebugDialog> Logger
 @implements IDisposable
 
 <div class="modal" id="debugModal">
     <div class="modal-dialog modal-dialog-scrollable modal-lg modal-fullscreen-md-down">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Debug Conversation @ConversationService.Current?.Id</h4>
+                <h4 class="modal-title">Debug Conversation @Conversation?.Id</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
             <div class="modal-body">
-                @if (ConversationService.Current == null)
+                @if (Conversation == null)
                 {
                     <p>No conversation running</p>
                 }
                 else
                 {
                     <ul class="list-group">
-                        @foreach (var message in ConversationService.Current.Messages)
+                        @foreach (var message in Conversation?.Messages ?? [])
                         {
                             <li class="@GetClassesForType(message.Type)">@message.Prompt</li>
                             if (message.Response != null)
@@ -41,6 +40,10 @@
 </div>
 
 @code{
+
+    [Parameter][EditorRequired]
+    public Conversation? Conversation { get; set; }
+
     private IDisposable? _subscription;
 
     protected override void OnInitialized()
@@ -50,16 +53,12 @@
 
     private async Task OpenDebugWindow()
     {
-        Logger.LogInformation("Open debug window, conversation is {c}", ConversationService.Current);
-        StateHasChanged();
+        Logger.LogInformation("Open debug window, conversation is {c}", Conversation?.Id);
         const string modalId = "debugModal";
         await JsRuntime.InvokeVoidAsync("showModal", modalId);
     }
 
-    private string GetClassesForType(ConversationMessageType type)
-    {
-        return type == ConversationMessageType.System ? "list-group-item list-group-item-primary" : "list-group-item";
-    }
+    private string GetClassesForType(ConversationMessageType type) => type == ConversationMessageType.System ? "list-group-item list-group-item-primary" : "list-group-item";
 
     public void Dispose()
     {

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoEditor.Integration;
 
+//TODO: General: remove LoggerMessage for direct calls?
 internal static partial class LogMessages
 {
     [LoggerMessage(LogLevel.Debug, Message = "Persisting authentication state for user {userName}")]

@@ -1,0 +1,30 @@
+<div class="row">
+    <h1>Profile</h1>
+</div>
+<div class="row">
+    <InputTextArea id="profile" class="@("form-control form-control-sm mb-1 " + (IsValid ? "is-valid" : "is-invalid"))"
+                   @bind-Value="ProfileText"/>
+    <div class="invalid-feedback">Required</div>
+</div>
+<div class="row justify-content-end pb-4">
+    <div class="col-12 col-sm-4 col-md-2 p-0">
+        <button class="btn btn-primary" disabled="@(!IsValid)"
+                style="width: 100%;"
+                @onclick="() => ProfileChanged.InvokeAsync(ProfileText)">Save
+        </button>
+    </div>
+</div>
+
+@code {
+
+    [Parameter][EditorRequired]
+    public Language Language { get; set; }
+
+    [Parameter][EditorRequired]
+    public string ProfileText { get; set; } = "";
+
+    [Parameter][EditorRequired]
+    public EventCallback<string> ProfileChanged { get; set; }
+
+    public bool IsValid => !string.IsNullOrEmpty(ProfileText);
+}

@@ -1,8 +1,16 @@
-.mx-n1 {
-    margin-right: -.25rem !important;
-    margin-left: -.25rem !important;
-}
-
 h1 {
     font-size: 1rem;
+}
+
+.form-label {
+    font-size: 0.7rem;
+    margin: 0px;
+}
+
+.invalid-feedback {
+    font-size: 0.7rem;
+}
+
+.min-col-width {
+    min-width: 200px;
 }
