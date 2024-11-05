@@ -52,8 +52,8 @@ internal class PromptMessageFactory
 
     private readonly CommandPrompt[] systemChatMessageTemplates =
     [
-        new(Language.De, "Du bist ein hilfreicher Assistent der mich beim schreiben von kurzen Texten unterstützt. Ich schreibe einen Text und du ergänzt ihn für mich auf verschiedene Arten. Gib immer den ganzen Text zurück, aber niemals Zusatzinformationen"),
-        new(Language.En, "You are a helpful assistant who supports me in writing short texts. I write the text and ask you help me in different ways. Always return the full text, but never any additional informations. Do not include any explanation")
+        new(Language.De, "Du bist ein hilfreicher Assistent, der mich beim Schreiben von kurzen Texten unterstützt. Ich schreibe einen Text und du ergänzt ihn für mich auf verschiedene Arten. Gib immer nur die Antwort zurück, aber niemals Zusatzinformationen oder Erklärungen"),
+        new(Language.En, "You are a helpful assistant who supports me in writing short texts. I write the text and ask you help me in different ways. Always return the text, but never any additional informations. Do not include any explanation")
     ];
 
     private readonly CommandPrompt[] textChangedMessageTemplates =
