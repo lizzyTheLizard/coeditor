@@ -1,9 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿namespace CoEditor.Domain.Tests;
 
-namespace CoEditor.Domain.Tests;
-
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
+#pragma warning disable S2094 // Test to be implemented
 public class PromptMessageFactoryTests
 {
-    //TODO Test PromptMessageFactory
+    // TODO Test PromptMessageFactory
 }

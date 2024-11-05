@@ -5,15 +5,16 @@ using Microsoft.Extensions.Logging;
 
 namespace CoEditor.Integration.Identity;
 
-//For each authentication, the userName is persisted in the browser's
-//local storage so it can be used from WebAssembly and Server
+// For each authentication, the userName is persisted in the browser's
+// local storage so it can be used from WebAssembly and Server
 internal sealed class PersistingAuthenticationStateProvider : ServerAuthenticationStateProvider, IDisposable
 {
     private readonly ILogger<PersistingAuthenticationStateProvider> _logger;
     private readonly PersistentComponentState _state;
     private readonly PersistingComponentStateSubscription _subscription;
 
-    public PersistingAuthenticationStateProvider(PersistentComponentState state,
+    public PersistingAuthenticationStateProvider(
+        PersistentComponentState state,
         ILogger<PersistingAuthenticationStateProvider> logger)
     {
         _logger = logger;
@@ -30,8 +31,16 @@ internal sealed class PersistingAuthenticationStateProvider : ServerAuthenticati
     {
         var authenticationState = await GetAuthenticationStateAsync();
         var identity = authenticationState.User.Identity;
-        if (identity == null) return;
-        if (!identity.IsAuthenticated) return;
+        if (identity == null)
+        {
+            return;
+        }
+
+        if (!identity.IsAuthenticated)
+        {
+            return;
+        }
+
         var userName = identity.Name;
         if (userName == null)
         {

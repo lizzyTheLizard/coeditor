@@ -21,7 +21,7 @@ public class GetTemplatesUseCaseTests
             Language = Language.En,
             DefaultTemplate = false,
             Name = "Name",
-            Text = "Text"
+            Text = "Text",
         };
         var templateRepositoryMock = new Mock<ITemplateRepository>();
         templateRepositoryMock
@@ -29,16 +29,15 @@ public class GetTemplatesUseCaseTests
             .ReturnsAsync([templatesStub]);
         var templateService = new GetTemplatesUseCase(
             templateRepositoryMock.Object,
-            loggerStub
-        );
+            loggerStub);
 
         // Act
         var result = await templateService.GetTemplatesAsync("testUser", Language.De);
 
         // Assert
+        // TODO: Check System templates as well
         templateRepositoryMock.Verify(x => x.GetTemplatesAsync("testUser", Language.De), Times.Once);
         Assert.Equal(3, result.Length);
         Assert.Equal(templatesStub, result[0]);
-        //TODO: Check System templates as well
     }
 }

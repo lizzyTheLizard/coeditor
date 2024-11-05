@@ -12,7 +12,10 @@ internal class UpdateProfileUseCase(
     public async Task<Profile> UpdateProfileAsync(string userName, Profile profile)
     {
         if (profile.UserName != userName)
+        {
             throw new ArgumentException("Wrong user name in body");
+        }
+
         var originalProfile = await profileRepository.FindProfileAsync(userName, profile.Language);
         if (originalProfile == null)
         {

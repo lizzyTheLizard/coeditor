@@ -3,7 +3,8 @@ using Microsoft.Extensions.Logging;
 
 namespace CoEditor.Integration;
 
-//TODO: General: remove LoggerMessage for direct calls?
+// TODO: General: remove LoggerMessage for direct calls?
+#pragma warning disable SA1202 // Access musst be checked afterwards
 internal static partial class LogMessages
 {
     [LoggerMessage(LogLevel.Debug, Message = "Persisting authentication state for user {userName}")]
@@ -27,18 +28,37 @@ internal static partial class LogMessages
 
     public static void PromptStarted(this ILogger logger, PromptMessage[] messages)
     {
-        if (!logger.IsEnabled(LogLevel.Debug)) return;
+        if (!logger.IsEnabled(LogLevel.Debug))
+        {
+            return;
+        }
+
         var promptSize = messages.Select(m => m.Prompt.Length).Sum();
         PromptStartedDebug(logger, promptSize);
-        if (!logger.IsEnabled(LogLevel.Trace)) return;
-        foreach (var message in messages) PromptStartedTrace(logger, message.Type, message.Prompt);
+        if (!logger.IsEnabled(LogLevel.Trace))
+        {
+            return;
+        }
+
+        foreach (var message in messages)
+        {
+            PromptStartedTrace(logger, message.Type, message.Prompt);
+        }
     }
 
     public static void PromptFinished(this ILogger logger, string response, long elapsedMs)
     {
-        if (!logger.IsEnabled(LogLevel.Debug)) return;
+        if (!logger.IsEnabled(LogLevel.Debug))
+        {
+            return;
+        }
+
         PromptFinished(logger, elapsedMs);
-        if (!logger.IsEnabled(LogLevel.Trace)) return;
+        if (!logger.IsEnabled(LogLevel.Trace))
+        {
+            return;
+        }
+
         PromptFinishedTrace(logger, response);
     }
 }

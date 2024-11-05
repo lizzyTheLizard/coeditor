@@ -4,6 +4,7 @@ using CoEditor.Domain;
 using CoEditor.Integration.Ai;
 using CoEditor.Integration.Cosmos;
 using CoEditor.Integration.Identity;
+
 using CoEditor.Integration.Insights;
 using CoEditor.Rest;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -28,7 +29,9 @@ if (app.Environment.IsDevelopment())
     app.UseWebAssemblyDebugging();
 }
 else
+{
     app.UseExceptionHandler("/Error", true);
+}
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedHost });
 app.UseStaticFiles();
@@ -40,4 +43,4 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(_Imports).Assembly);
-app.Run();
+await app.RunAsync();

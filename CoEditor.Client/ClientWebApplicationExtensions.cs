@@ -18,7 +18,8 @@ public static class ClientWebApplicationExtensions
         services.AddScoped<ExceptionService>();
     }
 
-    public static void AddWebAssemblyClient(this IServiceCollection services,
+    public static void AddWebAssemblyClient(
+        this IServiceCollection services,
         IWebAssemblyHostEnvironment hostEnvironment)
     {
         services.AddServerInteractiveClient();
@@ -30,8 +31,6 @@ public static class ClientWebApplicationExtensions
         services.AddScoped<IHandleActionApi, ConversationRestCaller>();
         services.AddScoped<IGetProfileApi, ProfileRestCaller>();
         services.AddScoped<IUpdateProfileApi, ProfileRestCaller>();
-        // The authentication is done in the backend, the username is stored in the
-        // PersistentComponentState and needs to be read by the client
         services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
         services.AddAuthorizationCore();
         services.AddCascadingAuthenticationState();

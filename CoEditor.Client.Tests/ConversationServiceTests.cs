@@ -1,8 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿namespace CoEditor.Client.Tests;
 
-namespace CoEditor.Client.Tests;
-
-[SuppressMessage("ReSharper", "UnusedMember.Global")]
+#pragma warning disable S2094 // Test to be implemented
 public class ConversationServiceTests
 {
     // TODO: Write tests for ConversationService

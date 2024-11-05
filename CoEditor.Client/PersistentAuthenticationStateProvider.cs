@@ -1,9 +1,10 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Security.Claims;
 
 namespace CoEditor.Client;
 
+// The authentication is done in the backend, the username is stored in the PersistentComponentState and needs to be read by the client
 internal class PersistentAuthenticationStateProvider(
     PersistentComponentState state,
     ILogger<PersistentAuthenticationStateProvider> logger) : AuthenticationStateProvider
@@ -12,7 +13,11 @@ internal class PersistentAuthenticationStateProvider(
 
     public override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        if (_authenticationState != null) return Task.FromResult(_authenticationState);
+        if (_authenticationState != null)
+        {
+            return Task.FromResult(_authenticationState);
+        }
+
         var identity = GetIdentity();
         var principal = new ClaimsPrincipal(identity);
         _authenticationState = new AuthenticationState(principal);
@@ -33,6 +38,7 @@ internal class PersistentAuthenticationStateProvider(
     }
 }
 
+#pragma warning disable SA1402, SA1204 // LogMessages are only used in this file
 internal static partial class PersistentAuthenticationStateProviderLogMessages
 {
     [LoggerMessage(LogLevel.Information, EventId = 2301, Message = "Authentication {userName} read from state")]

@@ -1,6 +1,6 @@
+using System.Net.Http.Json;
 using CoEditor.Domain.Api;
 using CoEditor.Domain.Model;
-using System.Net.Http.Json;
 
 namespace CoEditor.Client.Rest;
 
@@ -11,7 +11,10 @@ public class ProfileRestCaller(HttpClient httpClient) : IGetProfileApi, IUpdateP
         var url = $"api/Profile/Mine/{language}";
         var response = await httpClient.GetAsync(url);
         if (!response.IsSuccessStatusCode)
+        {
             throw new ServiceCallFailedException(HttpMethod.Get, url, response.StatusCode);
+        }
+
         return await response.Content.ReadFromJsonAsync<Profile>() ??
                throw new ServiceCallFailedException(HttpMethod.Get, url);
     }
@@ -21,7 +24,10 @@ public class ProfileRestCaller(HttpClient httpClient) : IGetProfileApi, IUpdateP
         var url = $"api/Profile/Mine/{profile.Language}";
         var response = await httpClient.PutAsJsonAsync(url, profile);
         if (!response.IsSuccessStatusCode)
+        {
             throw new ServiceCallFailedException(HttpMethod.Get, url, response.StatusCode);
+        }
+
         return await response.Content.ReadFromJsonAsync<Profile>() ??
                throw new ServiceCallFailedException(HttpMethod.Put, url);
     }

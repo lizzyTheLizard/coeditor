@@ -18,7 +18,7 @@ internal class TemplateRepository(CosmosDbContext dbContext) : ITemplateReposito
                 UserName = t.UserName,
                 Text = t.Text,
                 Name = t.Name,
-                DefaultTemplate = false
+                DefaultTemplate = false,
             })
             .ToArrayAsync();
     }
@@ -43,7 +43,7 @@ internal class TemplateRepository(CosmosDbContext dbContext) : ITemplateReposito
                 UserName = t.UserName,
                 Text = t.Text,
                 Name = t.Name,
-                DefaultTemplate = false
+                DefaultTemplate = false,
             })
             .FirstOrDefaultAsync();
     }
@@ -67,7 +67,7 @@ internal class TemplateRepository(CosmosDbContext dbContext) : ITemplateReposito
             Language = tmpl.Language,
             Name = tmpl.Name,
             UserName = tmpl.UserName,
-            Text = tmpl.Text
+            Text = tmpl.Text,
         };
         dbContext.Add(document);
         await dbContext.SaveChangesAsync();

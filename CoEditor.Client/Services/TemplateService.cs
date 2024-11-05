@@ -17,7 +17,7 @@ public class TemplateService(
         try
         {
             var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var userName = authenticationState.User.Identity?.Name ?? "";
+            var userName = authenticationState.User.Identity?.Name ?? string.Empty;
             await updateTemplateApi.UpdateTemplateAsync(userName, template);
             logger.TemplateUpdated(template);
         }
@@ -33,7 +33,7 @@ public class TemplateService(
         try
         {
             var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var userName = authenticationState.User.Identity?.Name ?? "";
+            var userName = authenticationState.User.Identity?.Name ?? string.Empty;
             await deleteTemplateApi.DeleteTemplateAsync(userName, template.Id);
             logger.TemplateDeleted(template);
         }
@@ -65,7 +65,7 @@ public class TemplateService(
         try
         {
             var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var userName = authenticationState.User.Identity?.Name ?? "";
+            var userName = authenticationState.User.Identity?.Name ?? string.Empty;
             var templates = await getTemplatesApi.GetTemplatesAsync(userName, language);
             logger.TemplatesLoaded(language, templates);
             return templates;
@@ -93,81 +93,62 @@ public class TemplateService(
     }
 }
 
+#pragma warning disable SA1402 // LogMessages are only used in this file
 internal static partial class TemplateServiceLogMessages
 {
     public static void TemplatesLoaded(this ILogger logger, Language language, Template[] templates)
     {
-        logger.TemplatesLoaded(templates.Length, language);
-        if (!logger.IsEnabled(LogLevel.Trace)) return;
+        logger.LogDebug("Loaded {NbrTemplates} templates ({Language}) for the current user ", templates.Length, language);
+        if (!logger.IsEnabled(LogLevel.Trace))
+        {
+            return;
+        }
+
         foreach (var template in templates)
-            logger.TraceTemplate(template);
+        {
+            logger.LogTrace("{Template}", template);
+        }
     }
-
-    [LoggerMessage(LogLevel.Debug, Message = "Loaded {nbrTemplates} templates ({language}) for the current user ")]
-    private static partial void TemplatesLoaded(this ILogger logger, int nbrTemplates, Language language);
-
-    [LoggerMessage(LogLevel.Trace, Message = "{template}")]
-    private static partial void TraceTemplate(this ILogger logger, Template template);
 
     [LoggerMessage(LogLevel.Warning, EventId = 2101, Message = "Could not load templates")]
     public static partial void TemplatesLoadedFailed(this ILogger logger, Exception e);
 
-    public static void TemplateParametersInvalid(this ILogger logger, Exception e, Template t)
+    public static void TemplateParametersInvalid(this ILogger logger, Exception e, Template template)
     {
-        logger.TemplateParametersInvalid(e);
-        logger.TraceTemplate(t);
+        logger.LogWarning(2102, e, "Could not load template parameters. Template seems to be invalid.");
+        logger.LogTrace("{Template}", template);
     }
-
-    [LoggerMessage(LogLevel.Warning, EventId = 2102,
-        Message = "Could not load template parameters. Template seems to be invalid.")]
-    private static partial void TemplateParametersInvalid(this ILogger logger, Exception e);
 
     public static void TemplateUpdated(this ILogger logger, Template template)
     {
-        logger.TemplateUpdated(template.Id);
-        logger.TraceTemplate(template);
+        logger.LogInformation("Updated template {Id}.", template.Id);
+        logger.LogTrace("{Template}", template);
     }
-
-    [LoggerMessage(LogLevel.Information, EventId = 2103, Message = "Updated template {id}.")]
-    private static partial void TemplateUpdated(this ILogger logger, Guid id);
 
     public static void TemplateUpdateFailed(this ILogger logger, Exception e, Template template)
     {
-        logger.TemplateUpdateFailed(e, template.Id);
-        logger.TraceTemplate(template);
+        logger.LogWarning(2104, "Could not update template {Id}.", template.Id);
+        logger.LogTrace("{Template}", template);
     }
-
-    [LoggerMessage(LogLevel.Warning, EventId = 2104, Message = "Could not update template {id}")]
-    private static partial void TemplateUpdateFailed(this ILogger logger, Exception e, Guid id);
 
     public static void TemplateDeleted(this ILogger logger, Template template)
     {
-        logger.TemplateDeleted(template.Id);
-        logger.TraceTemplate(template);
+        logger.LogInformation(2105, "Deleted template {Id}.", template.Id);
+        logger.LogTrace("{Template}", template);
     }
-
-    [LoggerMessage(LogLevel.Information, EventId = 2105, Message = "Deleted template {id}")]
-    private static partial void TemplateDeleted(this ILogger logger, Guid id);
 
     public static void TemplateDeleteFailed(this ILogger logger, Exception e, Template template)
     {
-        logger.TemplateDeleteFailed(e, template.Id);
-        logger.TraceTemplate(template);
+        logger.LogWarning(2106, e, "Could not delete template {Id}.", template.Id);
+        logger.LogTrace("{Template}", template);
     }
-
-    [LoggerMessage(LogLevel.Warning, EventId = 2106, Message = "Could not delete template {id}")]
-    private static partial void TemplateDeleteFailed(this ILogger logger, Exception e, Guid id);
 
     [LoggerMessage(LogLevel.Warning, EventId = 2107, Message = "Could not create template")]
     public static partial void TemplateCreationFailed(this ILogger logger, Exception e);
 
-
-    [LoggerMessage(LogLevel.Information, EventId = 2108, Message = "Updated template {id}.")]
-    private static partial void TemplateCreated(this ILogger logger, Guid id);
-
     public static void TemplateCreated(this ILogger logger, Template template)
     {
-        logger.TemplateCreated(template.Id);
-        logger.TraceTemplate(template);
+        logger.LogInformation(2108, "Updated template {Id}.", template.Id);
+        logger.LogTrace("{Template}", template);
     }
 }

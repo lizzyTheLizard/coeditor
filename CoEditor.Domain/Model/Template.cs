@@ -38,7 +38,7 @@ public partial class Template
             var options = parts.Length > 2 ? parts[2].Split(",") : [];
             var parameter = new TemplateParameter
             {
-                Name = name, Type = Enum.Parse<TemplateParameterType>(type, true), Options = options
+                Name = name, Type = Enum.Parse<TemplateParameterType>(type, true), Options = options,
             };
             parameters.Add(parameter);
         }
@@ -53,8 +53,7 @@ public partial class Template
             var value = match.Groups["value"].Value;
             var parts = value.Split(':');
             var name = parts[0];
-            var parameter = templateParameters.FirstOrDefault(p => p.Name == name) ??
-                            throw new ArgumentOutOfRangeException(name);
+            var parameter = Array.Find(templateParameters, p => p.Name == name) ?? throw new ArgumentOutOfRangeException(name);
             return parameter.Value;
         });
     }

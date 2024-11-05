@@ -1,8 +1,8 @@
-﻿using CoEditor.Domain.Api;
+﻿using System.Security.Authentication;
+using CoEditor.Domain.Api;
 using CoEditor.Domain.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Authentication;
 
 namespace CoEditor.Rest;
 
@@ -10,20 +10,8 @@ namespace CoEditor.Rest;
 [ApiController]
 [ServiceFilter(typeof(LoggingFilter))]
 [Authorize]
-public class ConversationController(
-    IInitializeConversationApi initializeConversationApi,
-    IHandleActionApi handleActionApi) : ControllerBase
+public class HandleActionController(IHandleActionApi handleActionApi) : ControllerBase
 {
-    [HttpPost]
-    [Route("Initialize")]
-    public async Task<ActionResult<Conversation>> InitializeConversationAsync(
-        [FromBody] InitializeConversationInput input)
-    {
-        var userName = User.Identity?.Name;
-        if (string.IsNullOrEmpty(userName)) throw new AuthenticationException();
-        return await initializeConversationApi.InitializeConversationAsync(userName, input);
-    }
-
     [HttpPost]
     [Route("Action")]
     public async Task<ActionResult<Conversation>> HandleActionAsync([FromBody] HandleNamedActionInput input)

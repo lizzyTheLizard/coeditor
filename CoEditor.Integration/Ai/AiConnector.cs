@@ -1,10 +1,10 @@
-﻿using Azure.AI.OpenAI;
+﻿using System.ClientModel;
+using System.Diagnostics;
+using Azure.AI.OpenAI;
 using CoEditor.Domain.Dependencies;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OpenAI.Chat;
-using System.ClientModel;
-using System.Diagnostics;
 
 namespace CoEditor.Integration.Ai;
 
@@ -13,10 +13,10 @@ internal class AiConnector(IOptions<AzureOpenAiConfiguration> optionsProvider, I
 {
     private readonly ChatClient _chatClient = CreateChatClient(optionsProvider.Value);
 
-    public async Task<PromptResult> PromptAsync(PromptMessage[] messages)
+    public async Task<PromptResult> PromptAsync(PromptMessage[] newMessages)
     {
-        logger.PromptStarted(messages);
-        var chatMessages = ToChatMessages(messages);
+        logger.PromptStarted(newMessages);
+        var chatMessages = ToChatMessages(newMessages);
         var watch = Stopwatch.StartNew();
         var completion = await _chatClient.CompleteChatAsync(chatMessages);
         var response = completion.Value.Content[0].Text;

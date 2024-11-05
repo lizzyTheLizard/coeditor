@@ -1,7 +1,7 @@
-﻿using CoEditor.Domain.Api;
+﻿using System.Security.Authentication;
+using CoEditor.Domain.Api;
 using CoEditor.Domain.Dependencies;
 using Microsoft.Extensions.Logging;
-using System.Security.Authentication;
 
 namespace CoEditor.Domain.UseCase;
 
@@ -19,7 +19,10 @@ internal class DeleteTemplateUseCase(
         }
 
         if (template.UserName != userName)
+        {
             throw new AuthenticationException($"Wrong user {userName} for template {templateId}");
+        }
+
         await templateRepository.DeleteTemplateAsync(templateId);
         logger.TemplateDeleted(template);
     }

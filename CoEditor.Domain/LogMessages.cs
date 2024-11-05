@@ -4,7 +4,8 @@ using Microsoft.Extensions.Logging;
 
 namespace CoEditor.Domain;
 
-//TODO: General: remove LoggerMessage for direct calls?
+// TODO: General: remove LoggerMessage for direct calls?
+#pragma warning disable SA1202 // Access musst be checked afterwards
 internal static partial class LogMessages
 {
     #region Profile
@@ -17,15 +18,17 @@ internal static partial class LogMessages
     [LoggerMessage(LogLevel.Trace, Message = "{profile}")]
     private static partial void ProfileTrace(this ILogger logger, Profile profile);
 
-    public static void ProfileLoaded(this ILogger logger, Profile profile, bool defaultProfile, string userName,
-        Language language)
+    public static void ProfileLoaded(this ILogger logger, Profile profile, bool defaultProfile, string userName, Language language)
     {
         var type = defaultProfile ? "default" : "user";
         logger.ProfileLoaded(type, userName, language, profile.Text.Length);
-        if (!logger.IsEnabled(LogLevel.Trace)) return;
+        if (!logger.IsEnabled(LogLevel.Trace))
+        {
+            return;
+        }
+
         logger.ProfileTrace(profile);
     }
-
 
     [LoggerMessage(LogLevel.Information, EventId = 1301, Message = "Created profile of user {userName} in {language}")]
     private static partial void ProfileCreated(this ILogger logger, string userName, Language language);
@@ -59,9 +62,15 @@ internal static partial class LogMessages
     public static void TemplatesLoaded(this ILogger logger, Template[] templates, string userName, Language language)
     {
         logger.TemplatesLoaded(templates.Length, userName, language);
-        if (!logger.IsEnabled(LogLevel.Trace)) return;
+        if (!logger.IsEnabled(LogLevel.Trace))
+        {
+            return;
+        }
+
         foreach (var t in templates)
+        {
             logger.TemplateTrace(t);
+        }
     }
 
     [LoggerMessage(LogLevel.Information, EventId = 1201,
@@ -117,15 +126,26 @@ internal static partial class LogMessages
     public static void ConversationLoaded(this ILogger logger, Conversation conversation)
     {
         logger.ConversationLoaded(conversation.Id, conversation.StartedAt, conversation.Messages.Length);
-        if (!logger.IsEnabled(LogLevel.Trace)) return;
+        if (!logger.IsEnabled(LogLevel.Trace))
+        {
+            return;
+        }
+
         ConversationTrace(logger, conversation);
     }
 
     public static void ConversationUpdated(this ILogger logger, ActionName? actionName, Conversation conversation)
     {
-        logger.ConversationUpdated(conversation.Id, actionName?.ToString() ?? "custom action", conversation.StartedAt,
+        logger.ConversationUpdated(
+            conversation.Id,
+            actionName?.ToString() ?? "custom action",
+            conversation.StartedAt,
             conversation.Messages.Length);
-        if (!logger.IsEnabled(LogLevel.Trace)) return;
+        if (!logger.IsEnabled(LogLevel.Trace))
+        {
+            return;
+        }
+
         ConversationTrace(logger, conversation);
     }
 
@@ -136,7 +156,11 @@ internal static partial class LogMessages
     public static void ConversationCreated(this ILogger logger, Conversation conversation)
     {
         logger.ConversationCreated(conversation.UserName, conversation.Id, conversation.Messages.Length);
-        if (!logger.IsEnabled(LogLevel.Trace)) return;
+        if (!logger.IsEnabled(LogLevel.Trace))
+        {
+            return;
+        }
+
         logger.ConversationTrace(conversation);
     }
 

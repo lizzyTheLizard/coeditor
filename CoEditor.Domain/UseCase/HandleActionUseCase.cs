@@ -1,8 +1,8 @@
-﻿using CoEditor.Domain.Api;
+﻿using System.Security.Authentication;
+using CoEditor.Domain.Api;
 using CoEditor.Domain.Dependencies;
 using CoEditor.Domain.Model;
 using Microsoft.Extensions.Logging;
-using System.Security.Authentication;
 
 namespace CoEditor.Domain.UseCase;
 
@@ -20,7 +20,7 @@ internal class HandleActionUseCase(
             ConversationGuid = input.ConversationGuid,
             NewContext = input.NewContext,
             NewText = input.NewText,
-            Action = prompt
+            Action = prompt,
         };
         var result = await HandleActionInternalAsync(userName, customActionInput);
         logger.ConversationUpdated(input.Action, result);
@@ -49,7 +49,10 @@ internal class HandleActionUseCase(
     {
         var conversation = await conversationRepository.GetAsync(conversationGuid);
         if (conversation.UserName != userName)
+        {
             throw new AuthenticationException($"Wrong user {userName} for conversation {conversationGuid}");
+        }
+
         logger.ConversationLoaded(conversation);
         return conversation;
     }

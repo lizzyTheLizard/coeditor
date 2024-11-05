@@ -4,5 +4,5 @@ public enum TemplateParameterType
 {
     LongText,
     Text,
-    Select
+    Select,
 }

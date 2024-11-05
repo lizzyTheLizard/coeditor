@@ -1,8 +1,8 @@
+namespace CoEditor.Client.Services;
+
 using CoEditor.Domain.Api;
 using CoEditor.Domain.Model;
 using Microsoft.AspNetCore.Components.Authorization;
-
-namespace CoEditor.Client.Services;
 
 public class ProfileService(
     IGetProfileApi getProfileApi,
@@ -16,7 +16,7 @@ public class ProfileService(
         try
         {
             var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var userName = authenticationState.User.Identity?.Name ?? "";
+            var userName = authenticationState.User.Identity?.Name ?? string.Empty;
             var profile = await getProfileApi.GetProfileAsync(userName, language);
             logger.ProfileLoaded(profile);
             return profile.Text;
@@ -25,14 +25,14 @@ public class ProfileService(
         {
             logger.ProfileLoadingFailed(e, language);
             await exceptionService.HandleException(e);
-            return "";
+            return string.Empty;
         }
     }
 
     public async Task UpdateProfile(Language language, string text)
     {
         var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-        var userName = authenticationState.User.Identity?.Name ?? "";
+        var userName = authenticationState.User.Identity?.Name ?? string.Empty;
         var profile = new Profile { Language = language, Text = text, UserName = userName };
         try
         {
@@ -47,38 +47,27 @@ public class ProfileService(
     }
 }
 
+#pragma warning disable SA1402 // LogMessages are only used in this file
 internal static partial class ProfileServiceLogMessages
 {
     public static void ProfileLoaded(this ILogger logger, Profile profile)
     {
-        logger.ProfileLoaded(profile.Language);
-        logger.TraceProfile(profile);
+        logger.LogDebug("Profile for language {Language} loaded", profile.Language);
+        logger.LogTrace("{Profile}", profile);
     }
-
-    [LoggerMessage(LogLevel.Trace, Message = "{profile}")]
-    private static partial void TraceProfile(this ILogger logger, Profile profile);
-
-    [LoggerMessage(LogLevel.Debug, Message = "Profile for language {language} loaded")]
-    private static partial void ProfileLoaded(this ILogger logger, Language language);
 
     [LoggerMessage(LogLevel.Warning, EventId = 2401, Message = "Could not load profile for language {language}")]
     public static partial void ProfileLoadingFailed(this ILogger logger, Exception e, Language language);
 
     public static void ProfileUpdated(this ILogger logger, Profile profile)
     {
-        logger.ProfileUpdated(profile.Language);
-        logger.TraceProfile(profile);
+        logger.LogInformation(2402, "Updated profile for language {Language}", profile.Language);
+        logger.LogTrace("{Profile}", profile);
     }
-
-    [LoggerMessage(LogLevel.Information, EventId = 2402, Message = "Updated profile for language {language}")]
-    private static partial void ProfileUpdated(this ILogger logger, Language language);
 
     public static void ProfileUpdateFailed(this ILogger logger, Exception e, Profile profile)
     {
-        logger.ProfileUpdateFailed(profile.Language);
-        logger.TraceProfile(profile);
+        logger.LogWarning(2403, "Updated profile for language {Language} failed", profile.Language);
+        logger.LogTrace("{Profile}", profile);
     }
-
-    [LoggerMessage(LogLevel.Warning, EventId = 2403, Message = "Updated profile for language {language} failed")]
-    private static partial void ProfileUpdateFailed(this ILogger logger, Language language);
 }

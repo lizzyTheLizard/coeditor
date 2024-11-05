@@ -4,13 +4,19 @@ public class UndoService(ILogger<UndoService> logger)
 {
     private readonly Stack<string> _redo = [];
     private readonly Stack<string> _undo = [];
-    private string _current = "";
+    private string _current = string.Empty;
+
     public bool CanUndo => _undo.Count > 0;
+
     public bool CanRedo => _redo.Count > 0;
 
     public void Register(string update)
     {
-        if (update == _current) return;
+        if (update == _current)
+        {
+            return;
+        }
+
         _undo.Push(_current);
         _current = update;
         _redo.Clear();
@@ -44,6 +50,7 @@ public class UndoService(ILogger<UndoService> logger)
     }
 }
 
+#pragma warning disable SA1402 // LogMessages are only used in this file
 internal static partial class UndoServiceLogMessages
 {
     [LoggerMessage(LogLevel.Debug, Message = "Text-Change registered into Undo chain")]

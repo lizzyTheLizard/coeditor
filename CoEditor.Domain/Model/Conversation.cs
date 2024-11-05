@@ -1,6 +1,6 @@
-﻿using CoEditor.Domain.Api;
+﻿using System.ComponentModel.DataAnnotations;
+using CoEditor.Domain.Api;
 using CoEditor.Domain.Dependencies;
-using System.ComponentModel.DataAnnotations;
 
 namespace CoEditor.Domain.Model;
 
@@ -12,6 +12,7 @@ public class Conversation
     public required string UserName { get; init; }
 
     public required DateTime StartedAt { get; init; }
+
     public required Language Language { get; init; }
 
     [StringLength(FieldLengths.TextMaxLength)]
@@ -32,7 +33,7 @@ public class Conversation
             Language = input.Language,
             Text = input.NewText,
             Context = input.NewContext,
-            Messages = []
+            Messages = [],
         };
     }
 
@@ -46,7 +47,9 @@ public class Conversation
                 : PromptMessageType.User;
             result.Add(new PromptMessage(conversationMessage.Prompt, type));
             if (conversationMessage.Response != null)
+            {
                 result.Add(new PromptMessage(conversationMessage.Response, PromptMessageType.Assistant));
+            }
         }
 
         return [.. result];
@@ -62,7 +65,7 @@ public class Conversation
             Language = Language,
             Text = input.NewText,
             Context = input.NewContext,
-            Messages = Messages
+            Messages = Messages,
         };
     }
 
@@ -76,8 +79,14 @@ public class Conversation
             Language = Language,
             Text = promptResult.Response ?? Text,
             Context = Context,
-            Messages = [.. Messages, .. ConvertNewMessages(newMessages, promptResult)]
+            Messages = [.. Messages, .. ConvertNewMessages(newMessages, promptResult)],
         };
+    }
+
+    public override string ToString()
+    {
+        return
+            $"{base.ToString()}: Id={Id}, UserName={UserName}, StartedAt={StartedAt}, Language={Language}, TextLength={Text.Length}, ContextLegth={Context.Length}, NumberOfMessages={Messages.Length}, Text={Text}, Context={Context}, Messags=[{string.Join<ConversationMessage>(",", Messages)}]";
     }
 
     private static List<ConversationMessage> ConvertNewMessages(PromptMessage[] newMessages, PromptResult promptResult)
@@ -96,17 +105,11 @@ public class Conversation
                 Prompt = message.Prompt,
                 Type = type,
                 Response = isLast ? promptResult.Response : null,
-                DurationInMs = isLast ? promptResult.DurationInMs : null
+                DurationInMs = isLast ? promptResult.DurationInMs : null,
             };
             result.Add(conversationMessage);
         }
 
         return result;
-    }
-
-    public override string ToString()
-    {
-        return
-            $"{base.ToString()}: Id={Id}, UserName={UserName}, StartedAt={StartedAt}, Language={Language}, TextLength={Text.Length}, ContextLegth={Context.Length}, NumberOfMessages={Messages.Length}, Text={Text}, Context={Context}, Messags=[{string.Join<ConversationMessage>(",", Messages)}]";
     }
 }

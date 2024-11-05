@@ -19,7 +19,7 @@ internal class ProfileRepository(CosmosDbContext dbContext) : IProfileRepository
     {
         var document = new ProfileDocument
         {
-            Id = Guid.NewGuid(), Language = profile.Language, UserName = userName, Text = profile.Text
+            Id = Guid.NewGuid(), Language = profile.Language, UserName = userName, Text = profile.Text,
         };
         dbContext.Add(document);
         await dbContext.SaveChangesAsync();

@@ -22,7 +22,7 @@
     [Parameter]
     public char? Shortcut { get; set; }
 
-    private RegisterShortcutSubscription? _subscription;
+    private ShortcutSubscription? _subscription;
 
     private string DisplayName => Name ?? ActionName.ToString() ?? "Undefined";
 

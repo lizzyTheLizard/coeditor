@@ -1,8 +1,8 @@
-﻿using CoEditor.Domain.Dependencies;
+using System.Configuration;
+using CoEditor.Domain.Dependencies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Configuration;
 
 namespace CoEditor.Integration.Cosmos;
 

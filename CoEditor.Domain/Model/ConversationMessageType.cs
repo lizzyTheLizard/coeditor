@@ -3,5 +3,5 @@
 public enum ConversationMessageType
 {
     System,
-    User
+    User,
 }
