@@ -32,3 +32,12 @@ internal class PersistentAuthenticationStateProvider(
         return new ClaimsIdentity(claims, nameof(PersistentAuthenticationStateProvider));
     }
 }
+
+internal static partial class PersistentAuthenticationStateProviderLogMessages
+{
+    [LoggerMessage(LogLevel.Information, EventId = 2301, Message = "Authentication {userName} read from state")]
+    public static partial void UserIsAuthenticated(this ILogger logger, string userName);
+
+    [LoggerMessage(LogLevel.Debug, Message = "No Authentication read from state, user is not authenticated")]
+    public static partial void UserIsNotAuthenticated(this ILogger logger);
+}

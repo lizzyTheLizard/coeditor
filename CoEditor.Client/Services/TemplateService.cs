@@ -4,91 +4,14 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 namespace CoEditor.Client.Services;
 
-//TODO: Clean up the servies => What shall be here and what shall be in component?
 public class TemplateService(
-    ConversationService conversationService,
     IGetTemplatesApi getTemplatesApi,
     IUpdateTemplateApi updateTemplateApi,
     IDeleteTemplateApi deleteTemplateApi,
+    ExceptionService exceptionService,
     AuthenticationStateProvider authenticationStateProvider,
     ILogger<TemplateService> logger)
 {
-    private Language _language;
-    private Guid _templateId;
-    public Template[] Templates { get; private set; } = [];
-    public Template Current => Templates.First(t => t.Id == _templateId);
-    public TemplateParameter[] TemplateParameters { get; private set; } = [];
-
-    public async Task SetLanguageAsync(Language language)
-    {
-        _language = language;
-        logger.TemplateLanguageChanged(language);
-        await LoadTemplatesAsync();
-        await TemplateIdChangedAsync(Templates[0].Id);
-    }
-
-    public async Task LoadTemplatesAsync()
-    {
-        try
-        {
-            var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var userName = authenticationState.User.Identity?.Name ?? "";
-            Templates = await getTemplatesApi.GetTemplatesAsync(userName, _language);
-            logger.TemplatesLoaded(_language, Templates);
-        }
-        catch (Exception e)
-        {
-            Templates = [];
-            //TODO: Error Handling: Show error to user!
-            logger.TemplatesLoadedFailed(e);
-        }
-    }
-
-    public async Task TemplateIdChangedAsync(Guid templateId)
-    {
-        _templateId = templateId;
-        logger.TemplateChanged(Current);
-        conversationService.EndConversation();
-        LoadTemplateParameters();
-        await ParameterChangedAsync();
-    }
-
-    private void LoadTemplateParameters()
-    {
-        try
-        {
-            TemplateParameters = Current.GetTemplateParameters();
-        }
-        catch (Exception e)
-        {
-            //TODO: Error Handling: Show error to user!
-            logger.TemplateParametersInvalid(e, Current);
-            TemplateParameters = [];
-        }
-    }
-
-    public async Task ParameterChangedAsync()
-    {
-        var valid = TemplateParameters.All(p => p.Valid);
-        if (!valid)
-        {
-            logger.TemplateParametersNotValid(TemplateParameters);
-            return;
-        }
-
-        var context = Current.CalculateText(TemplateParameters);
-        if (conversationService.Current == null)
-        {
-            await conversationService.StartNewConversationAsync(_language, context);
-            logger.TemplateInitiallyValid(context);
-        }
-        else
-        {
-            conversationService.Context = context;
-            logger.TemplateContextChanged(context);
-        }
-    }
-
     public async Task UpdateTemplate(Template template)
     {
         try
@@ -100,11 +23,9 @@ public class TemplateService(
         }
         catch (Exception e)
         {
-            //TODO: Error Handling: Show error to user!
             logger.TemplateUpdateFailed(e, template);
+            await exceptionService.HandleException(e);
         }
-
-        await LoadTemplatesAsync();
     }
 
     public async Task DeleteTemplate(Template template)
@@ -118,25 +39,135 @@ public class TemplateService(
         }
         catch (Exception e)
         {
-            //TODO: Error Handling: Show error to user!
             logger.TemplateDeleteFailed(e, template);
+            await exceptionService.HandleException(e);
         }
-
-        await LoadTemplatesAsync();
     }
 
-    public async Task<Template> GenerateEmptyTemplate(string name)
+    public async Task<Template?> CreateTemplate(Template template)
     {
-        var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-        var userName = authenticationState.User.Identity?.Name ?? "";
-        return new Template
+        try
         {
-            DefaultTemplate = false,
-            Id = Guid.NewGuid(),
-            Language = _language,
-            Name = name,
-            Text = "",
-            UserName = userName
-        };
+            await updateTemplateApi.UpdateTemplateAsync(template.UserName, template);
+            logger.TemplateCreated(template);
+            return template;
+        }
+        catch (Exception e)
+        {
+            logger.TemplateCreationFailed(e);
+            await exceptionService.HandleException(e);
+            return null;
+        }
+    }
+
+    public async Task<Template[]> GetTemplatesAsync(Language language)
+    {
+        try
+        {
+            var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
+            var userName = authenticationState.User.Identity?.Name ?? "";
+            var templates = await getTemplatesApi.GetTemplatesAsync(userName, language);
+            logger.TemplatesLoaded(language, templates);
+            return templates;
+        }
+        catch (Exception e)
+        {
+            logger.TemplatesLoadedFailed(e);
+            await exceptionService.HandleException(e);
+            return [];
+        }
+    }
+
+    public async Task<TemplateParameter[]> GetTemplateParameters(Template template)
+    {
+        try
+        {
+            return template.GetTemplateParameters();
+        }
+        catch (Exception e)
+        {
+            logger.TemplateParametersInvalid(e, template);
+            await exceptionService.HandleException(e);
+            return [];
+        }
+    }
+}
+
+internal static partial class TemplateServiceLogMessages
+{
+    public static void TemplatesLoaded(this ILogger logger, Language language, Template[] templates)
+    {
+        logger.TemplatesLoaded(templates.Length, language);
+        if (!logger.IsEnabled(LogLevel.Trace)) return;
+        foreach (var template in templates)
+            logger.TraceTemplate(template);
+    }
+
+    [LoggerMessage(LogLevel.Debug, Message = "Loaded {nbrTemplates} templates ({language}) for the current user ")]
+    private static partial void TemplatesLoaded(this ILogger logger, int nbrTemplates, Language language);
+
+    [LoggerMessage(LogLevel.Trace, Message = "{template}")]
+    private static partial void TraceTemplate(this ILogger logger, Template template);
+
+    [LoggerMessage(LogLevel.Warning, EventId = 2101, Message = "Could not load templates")]
+    public static partial void TemplatesLoadedFailed(this ILogger logger, Exception e);
+
+    public static void TemplateParametersInvalid(this ILogger logger, Exception e, Template t)
+    {
+        logger.TemplateParametersInvalid(e);
+        logger.TraceTemplate(t);
+    }
+
+    [LoggerMessage(LogLevel.Warning, EventId = 2102,
+        Message = "Could not load template parameters. Template seems to be invalid.")]
+    private static partial void TemplateParametersInvalid(this ILogger logger, Exception e);
+
+    public static void TemplateUpdated(this ILogger logger, Template template)
+    {
+        logger.TemplateUpdated(template.Id);
+        logger.TraceTemplate(template);
+    }
+
+    [LoggerMessage(LogLevel.Information, EventId = 2103, Message = "Updated template {id}.")]
+    private static partial void TemplateUpdated(this ILogger logger, Guid id);
+
+    public static void TemplateUpdateFailed(this ILogger logger, Exception e, Template template)
+    {
+        logger.TemplateUpdateFailed(e, template.Id);
+        logger.TraceTemplate(template);
+    }
+
+    [LoggerMessage(LogLevel.Warning, EventId = 2104, Message = "Could not update template {id}")]
+    private static partial void TemplateUpdateFailed(this ILogger logger, Exception e, Guid id);
+
+    public static void TemplateDeleted(this ILogger logger, Template template)
+    {
+        logger.TemplateDeleted(template.Id);
+        logger.TraceTemplate(template);
+    }
+
+    [LoggerMessage(LogLevel.Information, EventId = 2105, Message = "Deleted template {id}")]
+    private static partial void TemplateDeleted(this ILogger logger, Guid id);
+
+    public static void TemplateDeleteFailed(this ILogger logger, Exception e, Template template)
+    {
+        logger.TemplateDeleteFailed(e, template.Id);
+        logger.TraceTemplate(template);
+    }
+
+    [LoggerMessage(LogLevel.Warning, EventId = 2106, Message = "Could not delete template {id}")]
+    private static partial void TemplateDeleteFailed(this ILogger logger, Exception e, Guid id);
+
+    [LoggerMessage(LogLevel.Warning, EventId = 2107, Message = "Could not create template")]
+    public static partial void TemplateCreationFailed(this ILogger logger, Exception e);
+
+
+    [LoggerMessage(LogLevel.Information, EventId = 2108, Message = "Updated template {id}.")]
+    private static partial void TemplateCreated(this ILogger logger, Guid id);
+
+    public static void TemplateCreated(this ILogger logger, Template template)
+    {
+        logger.TemplateCreated(template.Id);
+        logger.TraceTemplate(template);
     }
 }

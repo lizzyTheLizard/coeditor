@@ -1,11 +1,9 @@
-﻿.overlay-host {
-    position: relative;
-}
-
-.overlay {
+﻿.overlay {
     opacity: 0.5;
     background: grey;
-    position: absolute;
+    position: fixed;
+    top: 0;
+    left: 0;
     height: 100%;
     width: 100%;
     display: flex;

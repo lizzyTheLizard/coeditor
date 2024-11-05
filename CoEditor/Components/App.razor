@@ -1,5 +1,8 @@
 ﻿@* ReSharper disable Html.PathError *@
 <!--suppress HtmlRequiredTitleElement -->
+@using System.Configuration
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,14 +14,33 @@
     <link rel="stylesheet" href="app.css"/>
     <link rel="stylesheet" href="CoEditor.styles.css"/>
     <link rel="icon" type="image/png" href="favicon.png"/>
-    <HeadOutlet @rendermode="InteractiveAuto"/>
+    <HeadOutlet @rendermode="ComponentRenderMode"/>
 </head>
 
 <body>
-<Routes @rendermode="InteractiveAuto"/>
+<Routes @rendermode="ComponentRenderMode"/>
 <script src="_framework/blazor.web.js"></script>
 <script src="bootstrap/bootstrap.bundle.min.js"></script>
 <script src="interop.js"></script>
 </body>
 
 </html>
+
+@code {
+    public IComponentRenderMode ComponentRenderMode
+    {
+        get
+        {
+            var input = Configuration.GetValue<string?>("RenderMode") ?? "Auto";
+            return input switch
+            {
+                "Auto" => RenderMode.InteractiveAuto,
+                "Server" => RenderMode.InteractiveServer,
+                "WebAssembly" => RenderMode.InteractiveWebAssembly,
+                _ => throw new ConfigurationErrorsException("Invalid render mode " + input),
+            };
+        }
+    }
+
+
+}

@@ -1,0 +1,21 @@
+<div class="col min-col-width">
+    <label for="language" class="form-label">Language</label>
+    <InputSelect id="language" class="form-select form-select-sm"
+                 @bind-Value="Language"
+                 @bind-Value:after="() => LanguageChanged.InvokeAsync(Language)">
+        @foreach (var language in Enum.GetValues<Language>())
+        {
+            <option value="@language">@language</option>
+        }
+    </InputSelect>
+</div>
+
+@code {
+
+    [Parameter]
+    public Language Language { get; set; }
+
+    [Parameter]
+    public EventCallback<Language> LanguageChanged { get; set; }
+
+}

@@ -4,25 +4,14 @@ using Microsoft.AspNetCore.Components.Authorization;
 
 namespace CoEditor.Client.Services;
 
-//TODO: Clean up the servies => What shall be here and what shall be in component?
 public class ConversationService(
     IInitializeConversationApi initializeConversationApi,
     IHandleActionApi handleActionApi,
     AuthenticationStateProvider authenticationStateProvider,
+    ExceptionService exceptionService,
     ILogger<ConversationService> logger)
 {
-    private readonly List<Action<Conversation?>> _registeredCallbacks = [];
-    public Conversation? Current { get; private set; }
-    public string Text { get; set; } = "";
-    public string Context { get; set; } = "";
-
-    public ConversationChangeSubscription RegisterOnConversationChange(Action<Conversation?> callback)
-    {
-        _registeredCallbacks.Add(callback);
-        return new ConversationChangeSubscription(_registeredCallbacks, callback);
-    }
-
-    public async Task StartNewConversationAsync(Language language, string context)
+    public async Task<Conversation?> InitializeConversationAsync(Language language, string context)
     {
         var input = new InitializeConversationInput
         {
@@ -34,66 +23,63 @@ public class ConversationService(
             var userName = authenticationState.User.Identity?.Name ?? "";
             var newConversation = await initializeConversationApi.InitializeConversationAsync(userName, input);
             logger.ConversationStarted(newConversation);
-            UpdateConversation(newConversation);
+            return newConversation;
         }
         catch (Exception e)
         {
-            //TODO: Error Handling: Show error to user!
             logger.ConversationStartFailed(e);
+            await exceptionService.HandleException(e);
+            return null;
         }
     }
 
-    public void EndConversation()
+    public async Task<Conversation?> ApplyActionAsync(HandleNamedActionInput input)
     {
-        if (Current == null) return;
-        var oldConversation = Current;
-        UpdateConversation(null);
-        logger.ConversationEnded(oldConversation);
-    }
-
-    public async Task ApplyActionAsync(ActionName action, Selection? selection)
-    {
-        if (Current == null) return;
-        var input = new HandleNamedActionInput
-        {
-            ConversationGuid = Current.Id,
-            Action = action,
-            Selection = selection,
-            Language = Current.Language,
-            NewContext = Context,
-            NewText = Text
-        };
         try
         {
             var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
             var userName = authenticationState.User.Identity?.Name ?? "";
             var updatedConversation = await handleActionApi.HandleActionAsync(userName, input);
-            UpdateConversation(updatedConversation);
-            logger.ConversationActionApplied(action, updatedConversation);
+            logger.ConversationActionApplied(input.Action, updatedConversation);
+            return updatedConversation;
         }
         catch (Exception e)
         {
-            //TODO: Error Handling: Show error to user!
-            logger.ConversationActionFailed(action, e);
+            logger.ConversationActionFailed(input.Action, e);
+            await exceptionService.HandleException(e);
+            return null;
         }
-    }
-
-    private void UpdateConversation(Conversation? newConversation)
-    {
-        Current = newConversation;
-        Text = newConversation?.Text ?? "";
-        Context = newConversation?.Context ?? "";
-        foreach (var callback in _registeredCallbacks) callback(newConversation);
     }
 }
 
-public record ConversationChangeSubscription(
-    List<Action<Conversation?>> Callbacks,
-    Action<Conversation?> Callback) : IDisposable
+internal static partial class ConversationServiceLogMessages
 {
-    public void Dispose()
+    public static void ConversationStarted(this ILogger logger, Conversation conversation)
     {
-        Callbacks.Remove(Callback);
-        GC.SuppressFinalize(this);
+        ConversationStarted(logger, conversation.Id);
+        if (!logger.IsEnabled(LogLevel.Trace)) return;
+        TraceConversation(logger, conversation);
     }
+
+    [LoggerMessage(LogLevel.Information, EventId = 2201, Message = "New Conversation {id} started")]
+    private static partial void ConversationStarted(ILogger logger, Guid id);
+
+    [LoggerMessage(LogLevel.Trace, Message = "{conversation}")]
+    private static partial void TraceConversation(ILogger logger, Conversation conversation);
+
+    [LoggerMessage(LogLevel.Warning, EventId = 2202, Message = "Could not start conversation")]
+    public static partial void ConversationStartFailed(this ILogger logger, Exception e);
+
+    public static void ConversationActionApplied(this ILogger logger, ActionName action, Conversation conversation)
+    {
+        ConversationActionApplied(logger, action, conversation.Id);
+        if (!logger.IsEnabled(LogLevel.Trace)) return;
+        TraceConversation(logger, conversation);
+    }
+
+    [LoggerMessage(LogLevel.Information, EventId = 2204, Message = "Action {action} on conversation {id} applied")]
+    private static partial void ConversationActionApplied(ILogger logger, ActionName action, Guid id);
+
+    [LoggerMessage(LogLevel.Warning, EventId = 2205, Message = "Action {action} could not be applied")]
+    public static partial void ConversationActionFailed(this ILogger logger, ActionName action, Exception e);
 }

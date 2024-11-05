@@ -1,35 +1,88 @@
 ﻿@page "/editor"
+@using CoEditor.Client.Pages.EditorComponents
 @attribute [Authorize]
+@inject TemplateService TemplateService
+@inject ConversationService ConversationService
 
 <PageTitle>Editor</PageTitle>
-<div class="d-flex flex-column flex-grow-1 overlay-host">
-    @if (Busy)
-    {
-        <div class="overlay">
-            <div class="spinner-border" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-    }
-    <h1>Context</h1>
-    <EditorContext IsBusyChanged="OnContextBusyChanged"></EditorContext>
-    <h1>Editor</h1>
-    <EditorText IsBusyChanged="OnTextBusyChanged"></EditorText>
+<div class="container-fluid p-0">
+    <div class="row">
+        <LanguageSelector
+            @bind-Language="_language"
+            @bind-Language:after="() => RunWithSpinner(ReloadTemplates)"/>
+        <TemplateSelector
+            Templates="@_templates"
+            @bind-Template="_template"/>
+        <ContextEditor
+            Template="@_template"
+            @bind-Context="_context"
+            @bind-Context:after="() => RunWithSpinner(UpdateConversation)"/>
+    </div>
 </div>
+<TextEditor
+    @bind-Text="_text"
+    ActionCalled="value => RunWithSpinner(() => ExecuteAction(value))"/>
+<DebugDialog Conversation="_conversation"></DebugDialog>
+<ErrorDialog/>
+<BusyDialog Busy="@_busy"/>
 
 @code {
-    private bool Busy => _contextBusy || _textBusy;
-    private bool _contextBusy = true;
-    private bool _textBusy;
+    private Language _language = Language.En;
+    private Template[] _templates = [];
+    private Template? _template;
+    private string? _context;
+    private string? _text;
+    private Conversation? _conversation;
+    private bool _busy = true;
 
-    protected void OnContextBusyChanged(bool busy)
+    protected override Task OnInitializedAsync() => RunWithSpinner(ReloadTemplates);
+
+    private async Task ReloadTemplates()
     {
-        _contextBusy = busy;
+        _templates = await TemplateService.GetTemplatesAsync(_language);
+        _template = _templates.FirstOrDefault();
     }
 
-    protected void OnTextBusyChanged(bool busy)
+    private async Task UpdateConversation()
     {
-        _textBusy = busy;
+        if (_context == null)
+        {
+            _conversation = null;
+            _text = null;
+            return;
+        }
+
+        if (_conversation == null)
+        {
+            _conversation = await ConversationService.InitializeConversationAsync(_language, _context!);
+            if (_conversation == null) return;
+            _text = _conversation.Text;
+        }
+    }
+
+    private async Task ExecuteAction(ActionEvent actionEvent)
+    {
+        var input = new HandleNamedActionInput
+        {
+            ConversationGuid = _conversation!.Id,
+            Action = actionEvent.ActionName,
+            Selection = actionEvent.Selection,
+            Language = _conversation.Language,
+            NewContext = _context!,
+            NewText = _text!
+        };
+        var updatedConversation = await ConversationService.ApplyActionAsync(input);
+        if (updatedConversation == null) return;
+        _conversation = updatedConversation;
+        _text = updatedConversation.Text;
+    }
+
+    private async Task RunWithSpinner(Func<Task> action)
+    {
+        _busy = true;
+        StateHasChanged();
+        await action.Invoke();
+        _busy = false;
     }
 
 }

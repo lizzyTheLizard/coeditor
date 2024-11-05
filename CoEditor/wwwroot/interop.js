@@ -19,6 +19,14 @@ window.getSelectionEnd = function (textareaId) {
     return -1;
 };
 
+window.setFocus = function (inputId) {
+    const input = document.getElementById(inputId);
+    if (input) {
+        console.log('Set focus to ' + inputId);
+        window.setTimeout(() => input.focus(), 0);
+    }
+};
+
 window.addKeyboardListener = function (dotNetHelper) {
     window.document.addEventListener('keydown', async function (e) {
         if (!e) return;

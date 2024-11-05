@@ -15,6 +15,7 @@ public static class ClientWebApplicationExtensions
         services.AddScoped<TemplateService>();
         services.AddScoped<ProfileService>();
         services.AddScoped<ConversationService>();
+        services.AddScoped<ExceptionService>();
     }
 
     public static void AddWebAssemblyClient(this IServiceCollection services,

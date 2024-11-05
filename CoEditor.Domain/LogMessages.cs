@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoEditor.Domain;
 
+//TODO: General: remove LoggerMessage for direct calls?
 internal static partial class LogMessages
 {
     #region Profile

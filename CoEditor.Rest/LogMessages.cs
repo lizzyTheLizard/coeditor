@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoEditor.Rest;
 
+//TODO: General: remove LoggerMessage for direct calls?
 internal static partial class LogMessages
 {
     [LoggerMessage(Level = LogLevel.Debug, Message = "Incoming API-Request {method} {url} for {controller}")]
