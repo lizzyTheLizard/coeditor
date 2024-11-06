@@ -29,3 +29,19 @@ internal class UpdateProfileUseCase(
         return updateResult;
     }
 }
+
+#pragma warning disable SA1402,SA1204 // LogMessages are only used in this file
+internal static partial class UpdateProfileLogMessages
+{
+    public static void ProfileCreated(this ILogger logger, Profile profile)
+    {
+        logger.LogInformation(1301, "Created profile of user {UserName} in {Language}", profile.UserName, profile.Language);
+        logger.LogTrace("{Profile}", profile);
+    }
+
+    public static void ProfileUpdated(this ILogger logger, Profile profile)
+    {
+        logger.LogInformation(1302, "Updated profile of user {UserName} in {Language}", profile.UserName, profile.Language);
+        logger.LogTrace("{Profile}", profile);
+    }
+}

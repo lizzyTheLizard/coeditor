@@ -35,3 +35,19 @@ internal class UpdateTemplateUseCase(
         return updateResult;
     }
 }
+
+#pragma warning disable SA1402,SA1204 // LogMessages are only used in this file
+internal static partial class UpdateTemplateLogMessages
+{
+    public static void TemplateUpdated(this ILogger logger, Template template)
+    {
+        logger.LogInformation(1204, "Updated template {Id} of user {UserName} in {Language}", template.Id, template.UserName, template.Language);
+        logger.LogTrace("{Template}", template);
+    }
+
+    public static void TemplateCreated(this ILogger logger, Template template)
+    {
+       logger.LogInformation(1203, "Created template {Id} of user {UserName} in {Language}", template.Id, template.UserName, template.Language);
+       logger.LogTrace("{Template}", template);
+    }
+}

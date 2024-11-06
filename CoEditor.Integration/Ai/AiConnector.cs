@@ -58,3 +58,33 @@ internal class AiConnector(IOptions<AzureOpenAiConfiguration> optionsProvider, I
         return openApiClient.GetChatClient(options.Model);
     }
 }
+
+#pragma warning disable SA1402, SA1204 // LogMessages are only used in this file
+internal static partial class AiConnectorLogMessages
+{
+    public static void PromptStarted(this ILogger logger, PromptMessage[] newMessages)
+    {
+        if (!logger.IsEnabled(LogLevel.Debug))
+        {
+            return;
+        }
+
+        var promptSize = newMessages.Select(m => m.Prompt.Length).Sum();
+        logger.LogInformation(4101, "Start prompting AI with a prompt size of {PromptSize}", promptSize);
+        if (!logger.IsEnabled(LogLevel.Trace))
+        {
+            return;
+        }
+
+        foreach (var message in newMessages)
+        {
+            logger.LogTrace(4101, "{Actor}: {Message}", message.Type, message.Prompt);
+        }
+    }
+
+    public static void PromptFinished(this ILogger logger, string response, long elapsedMs)
+    {
+        logger.LogDebug("Finished prompting AI in {TimeInMs} ms successfully", elapsedMs);
+        logger.LogTrace("{Response}", response);
+    }
+}

@@ -24,6 +24,7 @@ internal class HandleActionUseCase(
         {
             updatedConversation = updatedConversation.Update(input.Selection, input.NewText);
         }
+
         await conversationRepository.UpdateAsync(updatedConversation);
         logger.ConversationUpdated(input.Action, updatedConversation);
         return updatedConversation;
@@ -51,5 +52,33 @@ internal class HandleActionUseCase(
 
         logger.ConversationLoaded(conversation);
         return conversation;
+    }
+}
+
+#pragma warning disable SA1402,SA1204 // LogMessages are only used in this file
+internal static partial class InitializeConversationLogMessages
+{
+    public static void ConversationLoaded(this ILogger logger, Conversation conversation)
+    {
+        logger.LogDebug(
+            "User {UserName} has loaded conversation {Id} started as {StartedAt}. It has {NbrMessages} messages",
+            conversation.UserName,
+            conversation.Id,
+            conversation.StartedAt,
+            conversation.Messages.Length);
+        logger.LogTrace("{Conversation}", conversation);
+    }
+
+    public static void ConversationUpdated(this ILogger logger, ActionName? actionName, Conversation conversation)
+    {
+        logger.LogInformation(
+            1101,
+            "User {UserName} has updated conversation {Id} started as {StartedAt} with {Action}. It has now {NbrMessages} messages",
+            conversation.UserName,
+            conversation.Id,
+            conversation.StartedAt,
+            actionName?.ToString() ?? "a custom action",
+            conversation.Messages.Length);
+        logger.LogTrace("{Conversation}", conversation);
     }
 }

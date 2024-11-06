@@ -24,3 +24,24 @@ internal class GetProfileUseCase(
         return profile;
     }
 }
+
+#pragma warning disable SA1402,SA1204 // LogMessages are only used in this file
+internal static partial class GetProfileLogMessages
+{
+    public static void ProfileLoaded(this ILogger logger, Profile profile, bool defaultProfile, string userName, Language language)
+    {
+        if (!logger.IsEnabled(LogLevel.Debug))
+        {
+            return;
+        }
+
+        var type = defaultProfile ? "default" : "user";
+        logger.LogDebug("Loaded {Type} profile of {UserName} in {Language}. Text size is {TextSize}", type, userName, language, profile.Text.Length);
+        if (!logger.IsEnabled(LogLevel.Trace))
+        {
+            return;
+        }
+
+        logger.LogTrace("{Profile}", profile);
+    }
+}

@@ -63,3 +63,21 @@ internal class GetTemplatesUseCase(
 
 #pragma warning disable SA1402 // This is a purely internal class and should not be split into multiple files
 internal record SystemTemplate(Guid Id, string Name, string Text);
+
+#pragma warning disable SA1402,SA1204 // LogMessages are only used in this file
+internal static partial class GetTemplatesLogMessages
+{
+    public static void TemplatesLoaded(this ILogger logger, Template[] templates, string userName, Language language)
+    {
+        logger.LogDebug("Loaded {NbrTemplates} templates in {Language} for {UserName}", templates.Length, language, userName);
+        if (!logger.IsEnabled(LogLevel.Trace))
+        {
+            return;
+        }
+
+        foreach (var t in templates)
+        {
+        logger.LogTrace("{Template}", t);
+        }
+    }
+}

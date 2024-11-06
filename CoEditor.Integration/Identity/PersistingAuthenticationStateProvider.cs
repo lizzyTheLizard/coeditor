@@ -52,3 +52,13 @@ internal sealed class PersistingAuthenticationStateProvider : ServerAuthenticati
         _state.PersistAsJson("UserName", userName);
     }
 }
+
+#pragma warning disable SA1402, SA1204 // LogMessages are only used in this file
+internal static partial class PersistingAuthenticationStateProviderLogMessages
+{
+    [LoggerMessage(LogLevel.Debug, Message = "Persisting authentication state for user {userName}")]
+    public static partial void UserPersisted(this ILogger logger, string userName);
+
+    [LoggerMessage(LogLevel.Debug, Message = "Persisting non authentication state")]
+    public static partial void NoUserPersisted(this ILogger logger);
+}
