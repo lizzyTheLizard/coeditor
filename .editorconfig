@@ -10,15 +10,21 @@ end_of_line = crlf
 insert_final_newline = true
 charset = utf-8-bom
 
-
 # StyleCorp Custom Rules
 [*.cs]
-dotnet_diagnostic.SA0001.severity = None # SA0001XmlCommentAnalysisDisabled
-dotnet_diagnostic.SA1101.severity = None # SA1101PrefixLocalCallsWithThis
-dotnet_diagnostic.SA1200.severity = None # SA1200UsingDirectivesMustBePlacedCorrectly
-dotnet_diagnostic.SA1309.severity = None # SA1309FieldNamesMustNotBeginWithUnderscore
-dotnet_diagnostic.SA1600.severity = None # SA1600ElementsMustBeDocumented
-dotnet_diagnostic.SA1601.severity = None # SA1601PartialElementsMustBeDocumented
-dotnet_diagnostic.SA1602.severity = None # SA1602EnumerationItemsMustBeDocumented
-dotnet_diagnostic.SA1633.severity = None # SA1633FileMustHaveHeader
-
+# SA0001XmlCommentAnalysisDisabled
+dotnet_diagnostic.SA0001.severity = None
+# SA1101PrefixLocalCallsWithThis
+dotnet_diagnostic.SA1101.severity = None
+# SA1200UsingDirectivesMustBePlacedCorrectly
+dotnet_diagnostic.SA1200.severity = None
+# SA1309FieldNamesMustNotBeginWithUnderscore
+dotnet_diagnostic.SA1309.severity = None
+# SA1600ElementsMustBeDocumented
+dotnet_diagnostic.SA1600.severity = None
+# SA1601PartialElementsMustBeDocumented
+dotnet_diagnostic.SA1601.severity = None
+# SA1602EnumerationItemsMustBeDocumented
+dotnet_diagnostic.SA1602.severity = None
+# SA1633FileMustHaveHeader
+dotnet_diagnostic.SA1633.severity = None

@@ -10,6 +10,7 @@ public static class ClientWebApplicationExtensions
 {
     public static void AddServerInteractiveClient(this IServiceCollection services)
     {
+        services.AddScoped<UserService>();
         services.AddScoped<UndoService>();
         services.AddScoped<ShortcutService>();
         services.AddScoped<TemplateService>();

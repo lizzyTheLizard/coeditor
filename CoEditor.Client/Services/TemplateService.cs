@@ -1,6 +1,5 @@
 using CoEditor.Domain.Api;
 using CoEditor.Domain.Model;
-using Microsoft.AspNetCore.Components.Authorization;
 
 namespace CoEditor.Client.Services;
 
@@ -9,15 +8,14 @@ public class TemplateService(
     IUpdateTemplateApi updateTemplateApi,
     IDeleteTemplateApi deleteTemplateApi,
     ExceptionService exceptionService,
-    AuthenticationStateProvider authenticationStateProvider,
+    UserService userService,
     ILogger<TemplateService> logger)
 {
     public async Task UpdateTemplate(Template template)
     {
         try
         {
-            var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var userName = authenticationState.User.Identity?.Name ?? string.Empty;
+            var userName = await userService.GetUserNameAsync();
             await updateTemplateApi.UpdateTemplateAsync(userName, template);
             logger.TemplateUpdated(template);
         }
@@ -32,8 +30,7 @@ public class TemplateService(
     {
         try
         {
-            var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var userName = authenticationState.User.Identity?.Name ?? string.Empty;
+            var userName = await userService.GetUserNameAsync();
             await deleteTemplateApi.DeleteTemplateAsync(userName, template.Id);
             logger.TemplateDeleted(template);
         }
@@ -64,8 +61,7 @@ public class TemplateService(
     {
         try
         {
-            var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var userName = authenticationState.User.Identity?.Name ?? string.Empty;
+            var userName = await userService.GetUserNameAsync();
             var templates = await getTemplatesApi.GetTemplatesAsync(userName, language);
             logger.TemplatesLoaded(language, templates);
             return templates;

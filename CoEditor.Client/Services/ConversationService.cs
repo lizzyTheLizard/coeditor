@@ -1,3 +1,4 @@
+using System.Security.Authentication;
 using CoEditor.Domain.Api;
 using CoEditor.Domain.Model;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -7,7 +8,7 @@ namespace CoEditor.Client.Services;
 public class ConversationService(
     IInitializeConversationApi initializeConversationApi,
     IHandleActionApi handleActionApi,
-    AuthenticationStateProvider authenticationStateProvider,
+    UserService userService,
     ExceptionService exceptionService,
     ILogger<ConversationService> logger)
 {
@@ -19,8 +20,7 @@ public class ConversationService(
         };
         try
         {
-            var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var userName = authenticationState.User.Identity?.Name ?? string.Empty;
+            var userName = await userService.GetUserNameAsync();
             var newConversation = await initializeConversationApi.InitializeConversationAsync(userName, input);
             logger.ConversationStarted(newConversation);
             return newConversation;
@@ -37,8 +37,7 @@ public class ConversationService(
     {
         try
         {
-            var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var userName = authenticationState.User.Identity?.Name ?? string.Empty;
+            var userName = await userService.GetUserNameAsync();
             var updatedConversation = await handleActionApi.HandleActionAsync(userName, input);
             logger.ConversationActionApplied(input.Action, updatedConversation);
             return updatedConversation;

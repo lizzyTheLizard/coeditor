@@ -98,7 +98,6 @@ public class Conversation
         };
     }
 
-
     public override string ToString()
     {
         return

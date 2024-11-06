@@ -2,12 +2,11 @@ namespace CoEditor.Client.Services;
 
 using CoEditor.Domain.Api;
 using CoEditor.Domain.Model;
-using Microsoft.AspNetCore.Components.Authorization;
 
 public class ProfileService(
     IGetProfileApi getProfileApi,
     IUpdateProfileApi updateProfileApi,
-    AuthenticationStateProvider authenticationStateProvider,
+    UserService userService,
     ExceptionService exceptionService,
     ILogger<ProfileService> logger)
 {
@@ -15,8 +14,7 @@ public class ProfileService(
     {
         try
         {
-            var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var userName = authenticationState.User.Identity?.Name ?? string.Empty;
+            var userName = await userService.GetUserNameAsync();
             var profile = await getProfileApi.GetProfileAsync(userName, language);
             logger.ProfileLoaded(profile);
             return profile.Text;
@@ -31,8 +29,7 @@ public class ProfileService(
 
     public async Task UpdateProfile(Language language, string text)
     {
-        var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
-        var userName = authenticationState.User.Identity?.Name ?? string.Empty;
+        var userName = await userService.GetUserNameAsync();
         var profile = new Profile { Language = language, Text = text, UserName = userName };
         try
         {

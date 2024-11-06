@@ -1,7 +1,7 @@
 ﻿namespace CoEditor.Client.Tests;
 
 #pragma warning disable S2094 // Test to be implemented
-public class ConversationServiceTests
+internal class IntegrationTests
 {
-    // TODO: Write tests for ConversationService
+    // TODO: Add some tests for all REST components
 }
