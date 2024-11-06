@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CoEditor.Rest;
 
-[Route("api/[controller]")]
+[Route("api/Conversation")]
 [ApiController]
 [ServiceFilter(typeof(LoggingFilter))]
 [Authorize]

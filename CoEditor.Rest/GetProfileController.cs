@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CoEditor.Rest;
 
-[Route("api/[controller]")]
+[Route("api/Profile")]
 [ApiController]
 [Authorize]
 [ServiceFilter(typeof(LoggingFilter))]
