@@ -83,6 +83,22 @@ public class Conversation
         };
     }
 
+    public Conversation Update(Selection selection, string newText)
+    {
+        var text = newText[..selection.Start] + Text + newText[selection.End..];
+        return new Conversation
+        {
+            Id = Id,
+            UserName = UserName,
+            StartedAt = StartedAt,
+            Language = Language,
+            Text = text,
+            Context = Context,
+            Messages = Messages,
+        };
+    }
+
+
     public override string ToString()
     {
         return

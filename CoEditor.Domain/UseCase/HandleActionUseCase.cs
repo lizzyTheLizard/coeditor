@@ -14,34 +14,30 @@ internal class HandleActionUseCase(
 {
     public async Task<Conversation> HandleActionAsync(string userName, HandleNamedActionInput input)
     {
+        var conversation = await GetExistingConversation(userName, input.ConversationGuid);
+        var existingMessages = conversation.ToPromptMessages();
         var prompt = promptMessageFactory.GetCommandPrompt(input);
-        var customActionInput = new HandleCustomActionInput
+        var newMessages = promptMessageFactory.GenerateActionMessages(conversation, input, prompt);
+        var result = await aiConnector.PromptAsync([.. existingMessages, .. newMessages]);
+        var updatedConversation = conversation.Update(input).Update(newMessages, result);
+        if (input.Selection != null)
         {
-            ConversationGuid = input.ConversationGuid,
-            NewContext = input.NewContext,
-            NewText = input.NewText,
-            Action = prompt,
-        };
-        var result = await HandleActionInternalAsync(userName, customActionInput);
-        logger.ConversationUpdated(input.Action, result);
-        return result;
+            updatedConversation = updatedConversation.Update(input.Selection, input.NewText);
+        }
+        await conversationRepository.UpdateAsync(updatedConversation);
+        logger.ConversationUpdated(input.Action, updatedConversation);
+        return updatedConversation;
     }
 
     public async Task<Conversation> HandleActionAsync(string userName, HandleCustomActionInput input)
     {
-        var result = await HandleActionInternalAsync(userName, input);
-        logger.ConversationUpdated(null, result);
-        return result;
-    }
-
-    public async Task<Conversation> HandleActionInternalAsync(string userName, HandleCustomActionInput input)
-    {
         var conversation = await GetExistingConversation(userName, input.ConversationGuid);
         var existingMessages = conversation.ToPromptMessages();
-        var newMessages = promptMessageFactory.GenerateActionMessages(conversation, input);
+        var newMessages = promptMessageFactory.GenerateActionMessages(conversation, input, input.Action);
         var result = await aiConnector.PromptAsync([.. existingMessages, .. newMessages]);
         var updatedConversation = conversation.Update(input).Update(newMessages, result);
         await conversationRepository.UpdateAsync(updatedConversation);
+        logger.ConversationUpdated(null, updatedConversation);
         return updatedConversation;
     }
 

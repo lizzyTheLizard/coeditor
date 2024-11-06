@@ -16,20 +16,20 @@ internal class PromptMessageFactory
     [
         new(Language.De, ActionName.Improve, true, "Verbessere den gesammten Text"),
         new(Language.En, ActionName.Improve, true, "Improve the whole text"),
-        new(Language.De, ActionName.Improve, false, "Verbessere den folgenden Teil und lasse den Rest wie bisher: {0}"),
-        new(Language.En, ActionName.Improve, false, "Improve the following part and let the rest untouched: {0}"),
+        new(Language.De, ActionName.Improve, false, "Verbessere den folgenden Teil und gib nur den verbesserten Text zurück: {0}"),
+        new(Language.En, ActionName.Improve, false, "Improve the following part and return only the improved text: {0}"),
         new(Language.De, ActionName.Expand, true, "Erweitere den gesammten Text mit zusätzlichen Erklärungen"),
         new(Language.En, ActionName.Expand, true, "Expand the whole text with additional explanations"),
-        new(Language.De, ActionName.Expand, false, "Erweitere den folgenden Teil mit zusätzlichen Erklärungen und lasse den Rest wie bisher: {0}"),
-        new(Language.En, ActionName.Expand, false, "Expand the following part with additional explanations and let the rest untouched: {0}"),
+        new(Language.De, ActionName.Expand, false, "Erweitere den folgenden Teil mit zusätzlichen Erklärungen und gib nur den verbesserten Text zurück: {0}"),
+        new(Language.En, ActionName.Expand, false, "Expand the following part with additional explanations and return only the improved text: {0}"),
         new(Language.De, ActionName.Summarize, true, "Fasse den gesammten Text zusammen"),
         new(Language.En, ActionName.Summarize, true, "Summarize the whole text"),
-        new(Language.De, ActionName.Summarize, false, "Fasse den folgenden Teil zusammen und lasse den Rest wie bisher: {0}"),
-        new(Language.En, ActionName.Summarize, false, "Summarize the following part and let the rest untouched: {0}"),
+        new(Language.De, ActionName.Summarize, false, "Fasse den folgenden Teil zusammen und gib nur den verbesserten Text zurück: {0}"),
+        new(Language.En, ActionName.Summarize, false, "Summarize the following part and return only the improved text: {0}"),
         new(Language.De, ActionName.Reformulate, true, "Formuliere den gesammten Text um"),
         new(Language.En, ActionName.Reformulate, true, "Reformulate the whole text"),
-        new(Language.De, ActionName.Reformulate, false, "Formuliere den folgenden Teil und lasse den Rest wie bisher: {0}"),
-        new(Language.En, ActionName.Reformulate, false, "Reformulate the following part and let the rest untouched: {0}")
+        new(Language.De, ActionName.Reformulate, false, "Formuliere den folgenden Teil um und gib nur den verbesserten Text zurück: {0}"),
+        new(Language.En, ActionName.Reformulate, false, "Reformulate the following part and return only the improved text: {0}")
     ];
 
     private readonly CommandPrompt[] contextChangedMessageTemplates =
@@ -78,7 +78,7 @@ internal class PromptMessageFactory
         ];
     }
 
-    public PromptMessage[] GenerateActionMessages(Conversation conversation, HandleCustomActionInput input)
+    public PromptMessage[] GenerateActionMessages(Conversation conversation, HandleActionInput input, string prompt)
     {
         var result = new List<PromptMessage>();
         var formatProvider = _formatProviders[conversation.Language];
@@ -96,7 +96,7 @@ internal class PromptMessageFactory
             result.Add(new PromptMessage(textChangedPrompt, PromptMessageType.User));
         }
 
-        result.Add(new PromptMessage(input.Action, PromptMessageType.User));
+        result.Add(new PromptMessage(prompt, PromptMessageType.User));
         return [.. result];
     }
 
