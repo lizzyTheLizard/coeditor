@@ -38,6 +38,6 @@ public class GetTemplatesUseCaseTests
         // TODO: Check System templates as well
         templateRepositoryMock.Verify(x => x.GetTemplatesAsync("testUser", Language.De), Times.Once);
         Assert.Equal(3, result.Length);
-        Assert.Equal(templatesStub, result[0]);
+        Assert.Equal(templatesStub, result[2]);
     }
 }
