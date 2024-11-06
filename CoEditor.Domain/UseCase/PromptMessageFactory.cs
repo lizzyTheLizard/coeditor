@@ -14,22 +14,22 @@ internal class PromptMessageFactory
 
     private readonly CommandPrompt[] commandPrompts =
     [
-        new(Language.De, ActionName.Improve, true, "Verbessere den gesammten Text"),
-        new(Language.En, ActionName.Improve, true, "Improve the whole text"),
-        new(Language.De, ActionName.Improve, false, "Verbessere den folgenden Teil und gib nur den verbesserten Text zurück: {0}"),
-        new(Language.En, ActionName.Improve, false, "Improve the following part and return only the improved text: {0}"),
+        new(Language.De, ActionName.Improve, true, "Verbessere den ganzen Text. Korriegiere Rechtschreibfehler und verbessere die Grammatik im ganzen Text. Korrigiere Stilfehler aber ändere nicht die Bedeutung."),
+        new(Language.En, ActionName.Improve, true, "Improve the entire text. Correct spelling mistakes and enhance the grammar throughout the text. Correct stylistic errors but do not change the meaning."),
+        new(Language.De, ActionName.Improve, false, "Verbessere den folgenden Teil und gib nur den verbesserten Text zurück. Korriegiere Rechtschreibfehler und verbessere die Grammatik im ganzen Text. Korrigiere Stilfehler aber ändere nicht die Bedeutung\n\n{0}"),
+        new(Language.En, ActionName.Improve, false, "Improve the following part and return only the improved text.Correct spelling mistakes and enhance the grammar throughout the text. Correct stylistic errors but do not change the meaning.\n\n{0}"),
         new(Language.De, ActionName.Expand, true, "Erweitere den gesammten Text mit zusätzlichen Erklärungen"),
         new(Language.En, ActionName.Expand, true, "Expand the whole text with additional explanations"),
-        new(Language.De, ActionName.Expand, false, "Erweitere den folgenden Teil mit zusätzlichen Erklärungen und gib nur den verbesserten Text zurück: {0}"),
-        new(Language.En, ActionName.Expand, false, "Expand the following part with additional explanations and return only the improved text: {0}"),
-        new(Language.De, ActionName.Summarize, true, "Fasse den gesammten Text zusammen"),
-        new(Language.En, ActionName.Summarize, true, "Summarize the whole text"),
-        new(Language.De, ActionName.Summarize, false, "Fasse den folgenden Teil zusammen und gib nur den verbesserten Text zurück: {0}"),
-        new(Language.En, ActionName.Summarize, false, "Summarize the following part and return only the improved text: {0}"),
+        new(Language.De, ActionName.Expand, false, "Erweitere den folgenden Teil mit zusätzlichen Erklärungen und gib nur den verbesserten Text zurück\n\n{0}"),
+        new(Language.En, ActionName.Expand, false, "Expand the following part with additional explanations and return only the improved text\n\n{0}"),
+        new(Language.De, ActionName.Summarize, true, "Fasse den gesammten Text zusammen und kürze ihn"),
+        new(Language.En, ActionName.Summarize, true, "Summarize the entire text and shorten it"),
+        new(Language.De, ActionName.Summarize, false, "Fasse den folgenden Teil zusammen und gib nur den verbesserten Text zurück\n\n{0}"),
+        new(Language.En, ActionName.Summarize, false, "Summarize the following part and shorten it. Return only the improved text\n\n{0}"),
         new(Language.De, ActionName.Reformulate, true, "Formuliere den gesammten Text um"),
         new(Language.En, ActionName.Reformulate, true, "Reformulate the whole text"),
-        new(Language.De, ActionName.Reformulate, false, "Formuliere den folgenden Teil um und gib nur den verbesserten Text zurück: {0}"),
-        new(Language.En, ActionName.Reformulate, false, "Reformulate the following part and return only the improved text: {0}")
+        new(Language.De, ActionName.Reformulate, false, "Formuliere den folgenden Teil um und gib nur den verbesserten Text zurück\n\n{0}"),
+        new(Language.En, ActionName.Reformulate, false, "Reformulate the following part and return only the improved text\n\n{0}")
     ];
 
     private readonly CommandPrompt[] contextChangedMessageTemplates =
