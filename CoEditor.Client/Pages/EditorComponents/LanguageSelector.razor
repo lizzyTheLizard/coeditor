@@ -5,7 +5,7 @@
                  @bind-Value:after="() => LanguageChanged.InvokeAsync(Language)">
         @foreach (var language in Enum.GetValues<Language>())
         {
-            <option value="@language">@language</option>
+            <option value="@language">@language.GetDescription()</option>
         }
     </InputSelect>
 </div>

@@ -12,5 +12,9 @@ h1 {
 }
 
 .min-col-width {
-    min-width: 200px;
+    min-width: 12rem;
+}
+
+textarea.form-control {
+    min-height: 8rem;
 }

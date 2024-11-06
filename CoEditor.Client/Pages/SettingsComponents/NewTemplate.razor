@@ -1,20 +1,20 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
-<div class="row pt-3">
-    <h1>New Template</h1>
-</div>
 <div class="row">
+    <label for="newTemplateName" class="form-label">New Template (Name)</label>
     <InputText id="newTemplateName"
                class="@("form-control form-control-sm mb-1 " + (IsNameValid ? "is-valid" : "is-invalid"))"
                @bind-Value="_name"/>
 </div>
 <div class="row">
-    <InputTextArea class="@("form-control form-control-sm mb-1 " + (IsTextValid ? "is-valid" : "is-invalid"))"
+    <label for="newTemplateText" class="form-label">New Template (Text)</label>
+    <InputTextArea id="newTemplateText"
+                   class="@("form-control form-control-sm mb-1 " + (IsTextValid ? "is-valid" : "is-invalid"))"
                    @bind-Value="_text"/>
 </div>
 <div class="row justify-content-end">
     <div class="col-12 col-sm-4 col-md-2 p-0">
         <button class="btn btn-primary" disabled="@(!IsTextValid || !IsNameValid)" style="width: 100%;"
-                @onclick="AddTemplate">Add New Template
+                @onclick="AddTemplate">Add Template
         </button>
     </div>
 </div>

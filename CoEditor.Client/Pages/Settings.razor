@@ -29,9 +29,7 @@
 <BusyDialog Busy="@_busy"/>
 
 @code{
-
-    // TODO: Beautify the settings page
-    private Language _language = Language.En;
+    private Language _language = Language.De;
     private Template[] _templates = [];
     private string _profileText = "";
     private bool _busy = true;
@@ -63,10 +61,11 @@
     private async Task OnTemplateChanged(Template template)
     {
         _busy = true;
-        StateHasChanged();
-        await TemplateService.UpdateTemplate(template);
+        //Update the template before StateHasChanged, otherwise the old template will be displayed
         var tIndex = Array.FindIndex(_templates, t => t.Id == template.Id);
         _templates[tIndex] = template;
+        StateHasChanged();
+        await TemplateService.UpdateTemplate(template);
         _busy = false;
         StateHasChanged();
     }
@@ -84,6 +83,8 @@
     private async Task OnProfileChanged(string profileText)
     {
         _busy = true;
+        //Update the text before StateHasChanged, otherwise the old text will be displayed
+        _profileText = profileText;
         StateHasChanged();
         await ProfileService.UpdateProfile(_language, profileText);
         _busy = false;

@@ -8,7 +8,6 @@ using CoEditor.Integration.Identity;
 using CoEditor.Integration.Insights;
 using CoEditor.Rest;
 using Microsoft.AspNetCore.HttpOverrides;
-using _Imports = CoEditor.Client._Imports;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddServerInteractiveClient();
@@ -42,5 +41,5 @@ app.MapControllers();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(_Imports).Assembly);
+    .AddAdditionalAssemblies(typeof(ClientWebApplicationExtensions).Assembly);
 await app.RunAsync();

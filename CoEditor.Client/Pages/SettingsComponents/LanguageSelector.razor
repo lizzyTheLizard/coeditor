@@ -1,16 +1,17 @@
-<div class="row justify-content-end pb-0">
-    <div class="col-12 col-sm-6 col-md-2">
-        <InputSelect id="language" class="form-select form-select-sm"
-                     @bind-Value="Language"
-                     @bind-Value:after="() => LanguageChanged.InvokeAsync(Language)">
-            @foreach (var language in Enum.GetValues<Language>())
-            {
-                <option value="@language">@language</option>
-            }
-        </InputSelect>
-    </div>
-</div>
-
+<ul class="nav nav-tabs">
+@foreach (var language in Enum.GetValues<Language>())
+{
+    <li class="nav-item">
+        <a 
+            class="@((Language == language)? "nav-link active": "nav-link")" 
+            @onclick="() => SetLanguage(language)" @onclick:preventDefault
+            aria-current="page" href="#">
+            @language.GetDescription()
+        </a>
+    </li>
+}
+</ul>
+ 
 @code {
 
     [Parameter]
@@ -19,4 +20,9 @@
     [Parameter]
     public EventCallback<Language> LanguageChanged { get; set; }
 
+    private async Task SetLanguage(Language language)
+    {
+        Language = language;
+        await LanguageChanged.InvokeAsync(language);
+    }
 }
