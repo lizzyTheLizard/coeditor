@@ -1,4 +1,4 @@
-using CoEditor.Domain.Model;
+﻿using CoEditor.Domain.Model;
 
 namespace CoEditor.Domain.Api;
 

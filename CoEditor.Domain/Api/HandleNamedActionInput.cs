@@ -1,13 +1,13 @@
-using CoEditor.Domain.Model;
+﻿using CoEditor.Domain.Model;
 
 namespace CoEditor.Domain.Api;
 
 public enum ActionName
 {
-     Improve,
-     Expand,
-     Reformulate,
-     Summarize,
+    Improve,
+    Expand,
+    Reformulate,
+    Summarize,
 }
 
 public class HandleNamedActionInput : HandleActionInput

@@ -1,3 +1,3 @@
-namespace CoEditor.Domain.Dependencies;
+﻿namespace CoEditor.Domain.Dependencies;
 
 public record PromptResult(string? Response, long DurationInMs);

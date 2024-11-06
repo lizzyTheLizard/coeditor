@@ -47,7 +47,7 @@ internal static partial class UpdateTemplateLogMessages
 
     public static void TemplateCreated(this ILogger logger, Template template)
     {
-       logger.LogInformation(1203, "Created template {Id} of user {UserName} in {Language}", template.Id, template.UserName, template.Language);
-       logger.LogTrace("{Template}", template);
+        logger.LogInformation(1203, "Created template {Id} of user {UserName} in {Language}", template.Id, template.UserName, template.Language);
+        logger.LogTrace("{Template}", template);
     }
 }

@@ -1,4 +1,4 @@
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using CoEditor.Domain.Api;
 using CoEditor.Domain.Model;
 

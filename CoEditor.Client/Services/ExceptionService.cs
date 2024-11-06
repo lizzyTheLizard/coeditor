@@ -1,4 +1,4 @@
-namespace CoEditor.Client.Services;
+﻿namespace CoEditor.Client.Services;
 
 public class ExceptionService(ILogger<ExceptionService> logger)
 {

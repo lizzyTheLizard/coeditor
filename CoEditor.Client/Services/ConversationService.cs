@@ -1,4 +1,4 @@
-using System.Security.Authentication;
+﻿using System.Security.Authentication;
 using CoEditor.Domain.Api;
 using CoEditor.Domain.Model;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -16,7 +16,10 @@ public class ConversationService(
     {
         var input = new InitializeConversationInput
         {
-            Language = language, NewContext = context, NewText = string.Empty, ConversationGuid = Guid.NewGuid(),
+            Language = language,
+            NewContext = context,
+            NewText = string.Empty,
+            ConversationGuid = Guid.NewGuid(),
         };
         try
         {

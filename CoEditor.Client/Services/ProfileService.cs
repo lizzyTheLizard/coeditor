@@ -1,4 +1,4 @@
-namespace CoEditor.Client.Services;
+﻿namespace CoEditor.Client.Services;
 
 using CoEditor.Domain.Api;
 using CoEditor.Domain.Model;

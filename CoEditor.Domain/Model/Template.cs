@@ -38,7 +38,9 @@ public partial class Template
             var options = parts.Length > 2 ? parts[2].Split(",") : [];
             var parameter = new TemplateParameter
             {
-                Name = name, Type = Enum.Parse<TemplateParameterType>(type, true), Options = options,
+                Name = name,
+                Type = Enum.Parse<TemplateParameterType>(type, true),
+                Options = options,
             };
             parameters.Add(parameter);
         }

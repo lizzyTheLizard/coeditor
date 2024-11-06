@@ -32,7 +32,7 @@ internal class GetTemplatesUseCase(
     public async Task<Template[]> GetTemplatesAsync(string userName, Language language)
     {
         var userTemplates = await templateRepository.GetTemplatesAsync(userName, language);
-        Template[] templates = [.. GetSystemTemplates(userName, language), ..userTemplates];
+        Template[] templates = [.. GetSystemTemplates(userName, language), .. userTemplates];
         logger.TemplatesLoaded(templates, userName, language);
         return templates;
     }
@@ -77,7 +77,7 @@ internal static partial class GetTemplatesLogMessages
 
         foreach (var t in templates)
         {
-        logger.LogTrace("{Template}", t);
+            logger.LogTrace("{Template}", t);
         }
     }
 }

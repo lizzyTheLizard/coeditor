@@ -1,4 +1,4 @@
-using CoEditor.Domain.Api;
+﻿using CoEditor.Domain.Api;
 
 namespace CoEditor.Client.Pages.EditorComponents;
 

@@ -1,4 +1,4 @@
-namespace CoEditor.Client.Services;
+﻿namespace CoEditor.Client.Services;
 
 public record ExceptionSubscription(
     List<Func<Exception, Task>> Handlers,

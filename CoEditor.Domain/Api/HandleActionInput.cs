@@ -1,4 +1,4 @@
-namespace CoEditor.Domain.Api;
+﻿namespace CoEditor.Domain.Api;
 
 public class HandleActionInput
 {

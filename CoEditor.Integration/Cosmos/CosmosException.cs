@@ -1,4 +1,4 @@
-namespace CoEditor.Integration.Cosmos;
+﻿namespace CoEditor.Integration.Cosmos;
 
 public class CosmosException(string message) : Exception(message)
 {

@@ -1,4 +1,4 @@
-namespace CoEditor.Domain.Model;
+﻿namespace CoEditor.Domain.Model;
 
 public static class FieldLengths
 {

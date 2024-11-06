@@ -1,3 +1,3 @@
-namespace CoEditor.Domain.Dependencies;
+﻿namespace CoEditor.Domain.Dependencies;
 
 public record PromptMessage(string Prompt, PromptMessageType Type);

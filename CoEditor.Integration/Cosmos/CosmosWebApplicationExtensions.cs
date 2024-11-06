@@ -1,4 +1,4 @@
-using System.Configuration;
+﻿using System.Configuration;
 using CoEditor.Domain.Dependencies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
