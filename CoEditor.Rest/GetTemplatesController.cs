@@ -14,6 +14,7 @@ public class GetTemplatesController(IGetTemplatesApi getTemplatesApi) : Controll
 {
     [Route("Mine/{language}")]
     [HttpGet]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true, Duration = 0)]
     public async Task<ActionResult<IEnumerable<Template>>> GetTemplates(Language language)
     {
         var userName = User.Identity?.Name ?? throw new AuthenticationException("User not authenticated");
