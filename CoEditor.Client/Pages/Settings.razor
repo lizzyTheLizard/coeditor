@@ -10,15 +10,18 @@
         @bind-Language="_language"
         @bind-Language:after="OnLanguageChanged"/>
     <ProfileEditor
-        ProfileText="@_profileText"
-        ProfileChanged="OnProfileChanged"
+        @bind-ProfileText="_profileText"
+        SaveProfile="OnSaveProfile"
         Language="_language"/>
-    @foreach (var template in _templates)
+    @for(var i = 0 ; i < _templateTexts.Length; i++)
     {
+       var localVariable = i;
         <TemplateEditor
-            Template="template"
-            TemplateChanged="OnTemplateChanged"
-            TemplateDeleted="OnTemplateDeleted"/>
+            Id="_templates[localVariable].Id"
+            TemplateName="@_templates[localVariable].Name"
+            @bind-TemplateText="_templateTexts[localVariable]"
+            SaveTemplate="() => OnSaveTemplate(localVariable)"
+            DeleteTemplate="() => OnDeleteTemplate(localVariable)"/>
     }
     <NewTemplate
         Language="_language"
@@ -31,6 +34,7 @@
 @code{
     private Language _language = Language.De;
     private Template[] _templates = [];
+    private string[] _templateTexts = [];
     private string _profileText = "";
     private bool _busy = true;
 
@@ -44,30 +48,37 @@
         _templates = (await TemplateService.GetTemplatesAsync(_language))
             .Where(t => !t.DefaultTemplate)
             .ToArray();
+        _templateTexts = _templates.Select(t => t.Text).ToArray();
         _busy = false;
         StateHasChanged();
     }
 
-    private async Task OnTemplateDeleted(Template template)
+    private async Task OnDeleteTemplate(int i)
     {
         _busy = true;
         StateHasChanged();
-        await TemplateService.DeleteTemplate(template);
-        _templates = _templates.Where(t => t != template).ToArray();
+        await TemplateService.DeleteTemplate(_templates[i]);
+        _templates = _templates.Where((t, index) => index != i).ToArray();
+        _templateTexts = _templateTexts.Where((t, index) => index != i).ToArray();
         _busy = false;
         StateHasChanged();
     }
 
-    private async Task OnTemplateChanged(Template template)
+    private async Task OnSaveTemplate(int i)
     {
         _busy = true;
-        //Update the template before StateHasChanged, otherwise the old template will be displayed
-        var tIndex = Array.FindIndex(_templates, t => t.Id == template.Id);
-        _templates[tIndex] = template;
         StateHasChanged();
+        var template =  new Template()
+        {
+            Id = _templates[i].Id,
+            Name = _templates[i].Name,
+            Language = _language,
+            UserName = _templates[i].UserName,
+            DefaultTemplate = _templates[i].DefaultTemplate,
+            Text = _templateTexts[i]
+        };
         await TemplateService.UpdateTemplate(template);
         _busy = false;
-        StateHasChanged();
     }
 
     private async Task OnTemplateAdded(Template template)
@@ -76,19 +87,16 @@
         StateHasChanged();
         await TemplateService.CreateTemplate(template);
         _templates = [.._templates, template];
+        _templateTexts = [.._templateTexts, template.Text];
         _busy = false;
-        StateHasChanged();
     }
 
-    private async Task OnProfileChanged(string profileText)
+    private async Task OnSaveProfile()
     {
         _busy = true;
-        //Update the text before StateHasChanged, otherwise the old text will be displayed
-        _profileText = profileText;
         StateHasChanged();
-        await ProfileService.UpdateProfile(_language, profileText);
+        await ProfileService.UpdateProfile(_language, _profileText);
         _busy = false;
-        StateHasChanged();
     }
 
 }

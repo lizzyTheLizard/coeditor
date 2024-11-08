@@ -35,11 +35,12 @@
             throw new Exception($"Unknown parameter type {param.Type}");
     }
 }
+<div class="col-12 p-0"></div>
 @foreach (var param in _templateParameters)
 {
     @if (param.Type == TemplateParameterType.LongText)
     {
-        <div class="col-12">
+        <div class="col min-col-width">
             <label for="@param.Id" class="form-label">@param.Name</label>
             <InputTextArea id="@param.Id"
                            class="@("form-control form-control-sm mb-1 " + (param.Valid ? "is-valid" : "is-invalid"))"

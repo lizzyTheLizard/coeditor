@@ -18,3 +18,7 @@ h1 {
 textarea.form-control {
     min-height: 8rem;
 }
+
+body {
+    overflow: hidden;
+}

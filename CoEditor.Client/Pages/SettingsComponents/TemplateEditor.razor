@@ -1,59 +1,42 @@
 <div class="row">
-    <label for="@Template.Id" class="form-label">@Template.Name</label>
-    <InputTextArea id="@Template.Id"
+    <label for="@("template_" + Id)" class="form-label">@TemplateName</label>
+    <InputTextArea id="@("template_" + Id)"
                    class="@("form-control form-control-sm mb-1 " + (IsValid ? "is-valid" : "is-invalid"))"
-                   @bind-Value="_newText"/>
+                   @bind-Value="TemplateText"
+                   @bind-Value:after="() => TemplateTextChanged.InvokeAsync(TemplateText)"/>
 </div>
 <div class="row justify-content-end pb-4">
     <div class="col-12 col-sm-4 col-md-2 p-0 px-1">
         <button class="btn btn-primary" disabled="@(!IsValid)" style="width: 100%;"
-                @onclick="Save">Save
+                @onclick="() => SaveTemplate.InvokeAsync()">Save
         </button>
     </div>
     <div class="col-12 col-sm-4 col-md-2 p-0">
         <button class="btn btn-danger" style="width: 100%;"
-                @onclick="DeleteTemplate">Delete
+                @onclick="() => DeleteTemplate.InvokeAsync()">Delete
         </button>
     </div>
 </div>
 
 @code {
+    [Parameter]
+    public Guid Id { get; set; }
 
-    [Parameter][EditorRequired]
-    public Template Template { get; set; } = null!;
+    [Parameter]
+    public string TemplateName { get; set; } = "";
 
-    [Parameter][EditorRequired]
-    public EventCallback<Template> TemplateDeleted { get; set; }
+    [Parameter]
+    public string TemplateText { get; set; } = "";
 
-    [Parameter][EditorRequired]
-    public EventCallback<Template> TemplateChanged { get; set; }
+    [Parameter]
+    public EventCallback<string> TemplateTextChanged { get; set; }
 
-    public bool IsValid => !string.IsNullOrEmpty(_newText);
+    [Parameter]
+    public EventCallback DeleteTemplate { get; set; }
 
-    private string _newText = "";
+    [Parameter]
+    public EventCallback SaveTemplate { get; set; }
 
-    protected override void OnParametersSet()
-    {
-        _newText = Template.Text;
-    }
-
-    private async Task Save()
-    {
-        Template = new Template
-        {
-            Id = Template.Id,
-            UserName = Template.UserName,
-            DefaultTemplate = Template.DefaultTemplate,
-            Language = Template.Language,
-            Name = Template.Name,
-            Text = _newText
-        };
-        await TemplateChanged.InvokeAsync(Template);
-    }
-
-    private async Task DeleteTemplate()
-    {
-        await TemplateDeleted.InvokeAsync(Template);
-    }
+    public bool IsValid => !string.IsNullOrEmpty(TemplateText);
 
 }
