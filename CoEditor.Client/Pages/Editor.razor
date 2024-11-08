@@ -21,7 +21,9 @@
 </div>
 <TextEditor
     @bind-Text="_text"
-    ActionCalled="value => RunWithSpinner(() => ExecuteAction(value))"/>
+    ActionCalled="value => RunWithSpinner(() => ExecuteAction(value))"
+    ClearConversation="OnClearConversation"/>
+    />
 <DebugDialog Conversation="_conversation"></DebugDialog>
 <ErrorDialog/>
 <BusyDialog Busy="@_busy"/>
@@ -58,6 +60,13 @@
             if (_conversation == null) return;
             _text = _conversation.Text;
         }
+    }
+
+    private async Task OnClearConversation()
+    {
+        _conversation = null;
+        _text = null;
+        await RunWithSpinner(UpdateConversation);
     }
 
     private async Task ExecuteAction(ActionEvent actionEvent)

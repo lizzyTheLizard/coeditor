@@ -24,11 +24,12 @@
                       OnTriggered="OnUndo" Name="Undo"></ActionButton>
         <ActionButton Disabled="@(Text == null || !UndoService.CanRedo)"
                       OnTriggered="OnRedo" Name="Redo"></ActionButton>
+        <ActionButton Disabled="@(Text == null)"
+                      OnTriggered="() => ClearConversation.InvokeAsync()" Name="Clear"></ActionButton>
     </div>
 </div>
 
 @code {
-
     [Parameter]
     public string? Text { get; set; }
 
@@ -37,6 +38,9 @@
 
     [Parameter] [EditorRequired]
     public EventCallback<ActionEvent> ActionCalled { get; set; }
+
+    [Parameter] [EditorRequired]
+    public EventCallback ClearConversation { get; set; }
 
     private string? _focusToBeSet;
     private string? _oldText;
