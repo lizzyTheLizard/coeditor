@@ -16,7 +16,7 @@ public partial class Template
     public required string Name { get; init; }
 
     [StringLength(FieldLengths.ContextMaxLength)]
-    public required string Text { get; init; }
+    public required string Text { get; set; }
 
     public required bool DefaultTemplate { get; init; }
 

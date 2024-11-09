@@ -10,29 +10,28 @@ public class ProfileService(
     ExceptionService exceptionService,
     ILogger<ProfileService> logger)
 {
-    public async Task<string> GetProfileAsync(Language language)
+    public async Task<Profile?> GetProfileAsync(Language language)
     {
         try
         {
             var userName = await userService.GetUserNameAsync();
             var profile = await getProfileApi.GetProfileAsync(userName, language);
             logger.ProfileLoaded(profile);
-            return profile.Text;
+            return profile;
         }
         catch (Exception e)
         {
             logger.ProfileLoadingFailed(e, language);
             await exceptionService.HandleException(e);
-            return string.Empty;
+            return null;
         }
     }
 
-    public async Task UpdateProfile(Language language, string text)
+    public async Task UpdateProfile(Profile profile)
     {
-        var userName = await userService.GetUserNameAsync();
-        var profile = new Profile { Language = language, Text = text, UserName = userName };
         try
         {
+            var userName = await userService.GetUserNameAsync();
             await updateProfileApi.UpdateProfileAsync(userName, profile);
             logger.ProfileUpdated(profile);
         }

@@ -1,9 +1,8 @@
 <div class="row">
-    <label for="@("template_" + Id)" class="form-label">@TemplateName</label>
-    <InputTextArea id="@("template_" + Id)"
+    <label for="@("template_" + Template?.Id)" class="form-label">@Template?.Name</label>
+    <InputTextArea id="@("template_" + Template?.Id)"
                    class="@("form-control form-control-sm mb-1 " + (IsValid ? "is-valid" : "is-invalid"))"
-                   @bind-Value="TemplateText"
-                   @bind-Value:after="() => TemplateTextChanged.InvokeAsync(TemplateText)"/>
+                   @bind-Value="Template!.Text"/>
 </div>
 <div class="row justify-content-end pb-4">
     <div class="col-12 col-sm-4 col-md-2 p-0 px-1">
@@ -19,17 +18,8 @@
 </div>
 
 @code {
-    [Parameter]
-    public Guid Id { get; set; }
-
-    [Parameter]
-    public string TemplateName { get; set; } = "";
-
-    [Parameter]
-    public string TemplateText { get; set; } = "";
-
-    [Parameter]
-    public EventCallback<string> TemplateTextChanged { get; set; }
+    [Parameter, EditorRequired]
+    public Template? Template { get; set; }
 
     [Parameter]
     public EventCallback DeleteTemplate { get; set; }
@@ -37,6 +27,5 @@
     [Parameter]
     public EventCallback SaveTemplate { get; set; }
 
-    public bool IsValid => !string.IsNullOrEmpty(TemplateText);
-
+    public bool IsValid => !string.IsNullOrEmpty(Template?.Text);
 }

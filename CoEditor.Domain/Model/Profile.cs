@@ -8,7 +8,7 @@ public class Profile
     public required string UserName { get; init; }
 
     [StringLength(FieldLengths.ProfileMaxLength)]
-    public required string Text { get; init; }
+    public required string Text { get; set; }
 
     public required Language Language { get; init; }
 

@@ -14,18 +14,17 @@
 <div class="row justify-content-end">
     <div class="col-12 col-sm-4 col-md-2 p-0">
         <button class="btn btn-primary" disabled="@(!IsTextValid || !IsNameValid)" style="width: 100%;"
-                @onclick="AddTemplate">Add Template
+                @onclick="OnAddTemplate">Add Template
         </button>
     </div>
 </div>
 
 @code {
-
     [Parameter][EditorRequired]
     public Language Language { get; set; }
 
     [Parameter][EditorRequired]
-    public EventCallback<Template> TemplateAdded { get; set; }
+    public EventCallback<Template> AddTemplate { get; set; }
 
     private bool IsNameValid => !string.IsNullOrEmpty(_name);
 
@@ -33,8 +32,7 @@
 
     private string _name = "";
     private string _text = "";
-
-    private async Task AddTemplate()
+    private async Task OnAddTemplate()
     {
         var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userName = authenticationState.User.Identity?.Name ?? "";
@@ -47,7 +45,7 @@
             Text = _text,
             UserName = userName
         };
-        await TemplateAdded.InvokeAsync(newTemplate);
+        await AddTemplate.InvokeAsync(newTemplate);
         _name = "";
         _text = "";
     }

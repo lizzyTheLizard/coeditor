@@ -1,10 +1,8 @@
 <div class="row">
-    <label for="@("profile" + Language)" class="form-label">Profile</label>
-    <InputTextArea id="@("profile" + Language)"
+    <label for="@("profile_" + Profile?.Language)" class="form-label">Profile</label>
+    <InputTextArea id="@("profile_" + Profile?.Language)"
                    class="@("form-control form-control-sm mb-1 " + (IsValid ? "is-valid" : "is-invalid"))"
-                   @bind-Value="ProfileText"
-                   @bind-Value:after="() => ProfileTextChanged.InvokeAsync(ProfileText)"/>
-
+                   @bind-Value="Profile!.Text"/>
     <div class="invalid-feedback">Required</div>
 </div>
 <div class="row justify-content-end pb-4">
@@ -17,18 +15,11 @@
 </div>
 
 @code {
-
     [Parameter][EditorRequired]
-    public Language Language { get; set; }
-
-    [Parameter]
-    public string ProfileText { get; set; } = "";
-
-    [Parameter]
-    public EventCallback<string> ProfileTextChanged { get; set; }
+    public Profile? Profile { get; set; }
 
     [Parameter]
     public EventCallback SaveProfile { get; set; }
 
-    public bool IsValid => !string.IsNullOrEmpty(ProfileText);
+    public bool IsValid => !string.IsNullOrEmpty(Profile?.Text);
 }
