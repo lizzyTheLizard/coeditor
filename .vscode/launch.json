@@ -2,11 +2,23 @@
     "configurations": [
         {
             "name": "Server",
-            "type": "dotnet",
+            "type": "coreclr",
             "request": "launch",
-            "projectPath": "${workspaceFolder}\\CoEditor\\CoEditor.csproj",
-            "launchConfigurationId": "TargetFramework=;noBrowser"
-        },        
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "program": "dotnet",
+            "args": [
+                "watch",
+                "--project",
+                "CoEditor",
+                "--launch-profile",
+                "dev",
+                "--verbose" // Let's us confirm browser connects with hot reload capabilities
+            ],
+            "preLaunchTask": "build" // Ensure we don't watch an unbuilt site
+        },
         {
             "name": "Client",
             "type": "blazorwasm",
@@ -21,9 +33,5 @@
             "name": "Debug with Frontend",
             "configurations": [ "Server", "Client" ]
         }
-
-}
-
-    ],
     ]
 }
