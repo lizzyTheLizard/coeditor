@@ -2,7 +2,12 @@
 @implements IDisposable
 
 <div class="col">
-    <button class="btn btn-primary" disabled="@Disabled" @onclick="HandleOnClickAsync">@DisplayName</button>
+    <button class="btn btn-primary container" disabled="@Disabled" @onclick="HandleOnClickAsync">
+        <div class="row align-items-center">
+            <div class="col">@DisplayName</div>
+            <div class="col shortcut">(Alt + @ActualShortcut)</div>
+        </div>
+    </button>
 </div>
 
 @code{
@@ -25,11 +30,11 @@
     private ShortcutSubscription? _subscription;
 
     private string DisplayName => Name ?? ActionName.ToString() ?? "Undefined";
+    private char ActualShortcut => Shortcut?? DisplayName.FirstOrDefault();
 
     protected override void OnInitialized()
     {
-        var sc = Shortcut ?? DisplayName.FirstOrDefault();
-        _subscription = ShortcutService.RegisterShortcut(sc, HandleOnClickAsync);
+        _subscription = ShortcutService.RegisterShortcut(ActualShortcut, HandleOnClickAsync);
     }
 
     private Task HandleOnClickAsync()

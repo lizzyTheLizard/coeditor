@@ -20,9 +20,9 @@
                       ActionName="ActionName.Summarize"></ActionButton>
         <ActionButton Disabled="@(Text == null)" OnTriggered="OnActionButtonAsync"
                       ActionName="ActionName.Expand"></ActionButton>
-        <ActionButton Disabled="@(Text == null || !UndoService.CanUndo)"
+        <ActionButton Disabled="@(Text == null || !UndoService.CanUndo)" Shortcut="'Z'"
                       OnTriggered="OnUndo" Name="Undo"></ActionButton>
-        <ActionButton Disabled="@(Text == null || !UndoService.CanRedo)"
+        <ActionButton Disabled="@(Text == null || !UndoService.CanRedo)" Shortcut="'Y'"
                       OnTriggered="OnRedo" Name="Redo"></ActionButton>
         <ActionButton Disabled="@(Text == null)"
                       OnTriggered="() => ClearConversation.InvokeAsync()" Name="Clear"></ActionButton>
