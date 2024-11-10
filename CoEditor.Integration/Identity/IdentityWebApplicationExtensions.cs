@@ -8,7 +8,7 @@ namespace CoEditor.Integration.Identity;
 
 public static class IdentityWebApplicationExtensions
 {
-    public static void AddIServerIdentity(this IServiceCollection services, IConfiguration configuration)
+    public static void AddServerIdentity(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddMicrosoftIdentityWebAppAuthentication(configuration);
         services.AddControllersWithViews().AddMicrosoftIdentityUI();

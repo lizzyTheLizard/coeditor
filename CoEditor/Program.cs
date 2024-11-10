@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddServerInteractiveClient();
 builder.Services.AddDomain();
 builder.Services.AddDatabase(builder.Configuration);
-builder.Services.AddIServerIdentity(builder.Configuration);
+builder.Services.AddServerIdentity(builder.Configuration);
 builder.Services.AddAi(builder.Configuration);
 builder.Services.AddInsights(builder.Configuration, builder.Environment);
 builder.Services.AddRest();
