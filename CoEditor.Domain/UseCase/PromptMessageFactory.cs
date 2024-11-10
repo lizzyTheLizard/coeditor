@@ -72,7 +72,7 @@ internal class PromptMessageFactory
         return
         [
             new PromptMessage(systemChatMessage.Prompt, PromptMessageType.System),
-            new PromptMessage(profile.Text, PromptMessageType.User),
+            new PromptMessage(profile.Text, PromptMessageType.System),
             new PromptMessage(initialContextPrompt, PromptMessageType.User),
             new PromptMessage(initialCommand.Prompt, PromptMessageType.User)
         ];
