@@ -2,9 +2,9 @@
     <label for="@("profile_" + Profile?.Language)" class="form-label">Profile</label>
     @if (Profile == null)
     {
-        <InputTextArea id="@("profile_" + Profile?.Language)"
-                       class="@("form-control form-control-sm mb-1 " + (IsValid ? "is-valid" : "is-invalid"))"
-                       disabled="true"/>
+        <textarea id="@("profile_" + Profile?.Language)"
+                  class="form-control form-control-sm mb-1 is-valid"
+                  disabled="true" />
     }
     else
     {

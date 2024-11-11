@@ -81,11 +81,14 @@
 
     private async Task AfterTemplateChanged()
     {
-        await ContextChanged.InvokeAsync(null);
         if (Template != null)
         {
             _templateParameters = await TemplateService.GetTemplateParameters(Template);
             await AfterParameterChanged();
+        }
+        else
+        {
+            await ContextChanged.InvokeAsync(null);
         }
 
         _focusToBeSet = _templateParameters.FirstOrDefault()?.Id;

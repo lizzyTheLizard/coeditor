@@ -36,10 +36,14 @@
     private Conversation? _conversation;
     private bool _busy = true;
 
+<<<<<<< HEAD
     protected override Task OnInitializedAsync()
     {
         return RunWithSpinner(ReloadTemplates);
     }
+=======
+    protected override Task OnInitializedAsync() => ReloadTemplates();
+>>>>>>> 4259424 (fix minor FE stuff)
 
     private async Task ReloadTemplates()
     {
