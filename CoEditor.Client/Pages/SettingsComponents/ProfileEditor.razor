@@ -1,8 +1,16 @@
 <div class="row">
     <label for="@("profile_" + Profile?.Language)" class="form-label">Profile</label>
-    <InputTextArea id="@("profile_" + Profile?.Language)"
-                   class="@("form-control form-control-sm mb-1 " + (IsValid ? "is-valid" : "is-invalid"))"
-                   @bind-Value="Profile!.Text"/>
+    @if(Profile == null)
+    {
+        <InputTextArea id="@("profile_" + Profile?.Language)"
+                    class="@("form-control form-control-sm mb-1 " + (IsValid ? "is-valid" : "is-invalid"))"
+                    disabled="true" />
+    }
+    else {
+        <InputTextArea id="@("profile_" + Profile?.Language)"
+                    class="@("form-control form-control-sm mb-1 " + (IsValid ? "is-valid" : "is-invalid"))"
+                    @bind-Value="Profile!.Text"/>
+    }
     <div class="invalid-feedback">Required</div>
 </div>
 <div class="row justify-content-end pb-4">
@@ -15,11 +23,11 @@
 </div>
 
 @code {
-    [Parameter][EditorRequired]
+    [Parameter]
     public Profile? Profile { get; set; }
 
     [Parameter]
     public EventCallback SaveProfile { get; set; }
 
-    public bool IsValid => !string.IsNullOrEmpty(Profile?.Text);
+    private bool IsValid => !string.IsNullOrEmpty(Profile?.Text);
 }

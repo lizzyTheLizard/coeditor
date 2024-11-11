@@ -15,7 +15,7 @@
 
 @code {
 
-    [Parameter][EditorRequired]
+    [Parameter]
     public Template[] Templates { get; set; } = [];
 
     [Parameter]
@@ -31,5 +31,4 @@
         Template = Templates.FirstOrDefault(t => t.Id == _templateId);
         await TemplateChanged.InvokeAsync(Template);
     }
-
 }

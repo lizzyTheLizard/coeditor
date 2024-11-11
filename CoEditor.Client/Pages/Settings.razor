@@ -9,12 +9,9 @@
     <LanguageSelector
         @bind-Language="_language"
         @bind-Language:after="OnLanguageChanged"/>
-    @if(_profile is not null)
-    {
-        <ProfileEditor
-            Profile="_profile"
-            SaveProfile="OnSaveProfile"/>
-    }
+    <ProfileEditor
+        Profile="_profile"
+        SaveProfile="OnSaveProfile"/>
     @for(var i = 0 ; i < _templates.Length; i++)
     {
         var template = _templates[i];

@@ -1,4 +1,5 @@
-@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject UserService UserService
+
 <div class="row">
     <label for="newTemplateName" class="form-label">New Template (Name)</label>
     <InputText id="newTemplateName"
@@ -20,10 +21,10 @@
 </div>
 
 @code {
-    [Parameter][EditorRequired]
+    [Parameter]
     public Language Language { get; set; }
 
-    [Parameter][EditorRequired]
+    [Parameter]
     public EventCallback<Template> AddTemplate { get; set; }
 
     private bool IsNameValid => !string.IsNullOrEmpty(_name);
@@ -32,10 +33,10 @@
 
     private string _name = "";
     private string _text = "";
+
     private async Task OnAddTemplate()
     {
-        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userName = authenticationState.User.Identity?.Name ?? "";
+        var userName = await UserService.GetUserNameAsync();
         var newTemplate = new Template
         {
             DefaultTemplate = false,
@@ -49,5 +50,4 @@
         _name = "";
         _text = "";
     }
-
 }

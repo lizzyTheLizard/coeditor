@@ -36,10 +36,10 @@
     [Parameter]
     public EventCallback<string> TextChanged { get; set; }
 
-    [Parameter] [EditorRequired]
+    [Parameter]
     public EventCallback<ActionEvent> ActionCalled { get; set; }
 
-    [Parameter] [EditorRequired]
+    [Parameter]
     public EventCallback ClearConversation { get; set; }
 
     private string? _focusToBeSet;

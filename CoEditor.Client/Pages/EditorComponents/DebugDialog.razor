@@ -41,7 +41,7 @@
 
 @code{
 
-    [Parameter][EditorRequired]
+    [Parameter]
     public Conversation? Conversation { get; set; }
 
     private IDisposable? _subscription;
@@ -65,5 +65,4 @@
         _subscription?.Dispose();
         _subscription = null;
     }
-
 }
