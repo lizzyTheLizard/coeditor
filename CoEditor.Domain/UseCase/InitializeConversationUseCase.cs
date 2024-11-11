@@ -14,7 +14,16 @@ internal class InitializeConversationUseCase(
 {
     public async Task<Conversation> InitializeConversationAsync(string userName, InitializeConversationInput input)
     {
-        var conversation = Conversation.InitialConversation(userName, input);
+        var conversation = new Conversation
+        {
+            Id = input.ConversationGuid,
+            UserName = userName,
+            StartedAt = DateTime.Now,
+            Language = input.Language,
+            Text = input.NewText,
+            Context = input.NewContext,
+            Messages = [],
+        };
         await conversationRepository.EnsureNotExistingAsync(conversation.Id);
         var profile = await getProfileApi.GetProfileAsync(userName, input.Language);
         var messages = promptMessageFactory.GenerateInitialMessages(conversation, profile);

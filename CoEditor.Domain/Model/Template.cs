@@ -22,7 +22,7 @@ public partial class Template
 
     public override string ToString()
     {
-        return $"{base.ToString()}: Id={Id}, Name={Name}, Text={Text}";
+        return $"{base.ToString()}: Id={Id}, Language={Language}, UserName={UserName}, Name={Name}, Text={Text}, DefaultTemplate={DefaultTemplate}";
     }
 
     public TemplateParameter[] GetTemplateParameters()

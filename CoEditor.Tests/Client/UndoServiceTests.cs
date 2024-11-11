@@ -1,7 +1,57 @@
-﻿namespace CoEditor.Client.Tests;
+﻿using CoEditor.Client.Services;
+using Microsoft.Extensions.Logging;
+using Moq;
 
-#pragma warning disable S2094 // Test to be implemented
-internal class UndoServiceTests
+namespace CoEditor.Tests.Client;
+
+public class UndoServiceTests
 {
-    // TODO: Write tests for UndoService
+    [Fact]
+    public void Undo()
+    {
+        var service = new UndoService(Mock.Of<ILogger<UndoService>>());
+        service.Reset("Initial Text");
+        Assert.False(service.CanUndo);
+
+        service.Register("New Text");
+        Assert.True(service.CanUndo);
+
+        var oldtext = service.Undo();
+        Assert.False(service.CanUndo);
+        Assert.Equal("Initial Text", oldtext);
+    }
+
+    [Fact]
+    public void Redo()
+    {
+        var service = new UndoService(Mock.Of<ILogger<UndoService>>());
+        service.Reset("Initial Text");
+        Assert.False(service.CanRedo);
+
+        service.Register("New Text");
+        Assert.False(service.CanRedo);
+
+        service.Undo();
+        Assert.True(service.CanRedo);
+
+        var oldtext = service.Redo();
+        Assert.False(service.CanRedo);
+        Assert.Equal("New Text", oldtext);
+    }
+
+    [Fact]
+    public void Reset()
+    {
+        var service = new UndoService(Mock.Of<ILogger<UndoService>>());
+        service.Reset("Initial Text");
+        service.Register("New Text");
+        service.Register("New Text2");
+        service.Undo();
+        Assert.True(service.CanRedo);
+        Assert.True(service.CanUndo);
+
+        service.Reset("Initial Text 2");
+        Assert.False(service.CanUndo);
+        Assert.False(service.CanRedo);
+    }
 }

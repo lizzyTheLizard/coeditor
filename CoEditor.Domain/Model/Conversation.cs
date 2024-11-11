@@ -23,20 +23,6 @@ public class Conversation
 
     public required ConversationMessage[] Messages { get; init; }
 
-    public static Conversation InitialConversation(string userName, InitializeConversationInput input)
-    {
-        return new Conversation
-        {
-            Id = input.ConversationGuid,
-            UserName = userName,
-            StartedAt = DateTime.Now,
-            Language = input.Language,
-            Text = input.NewText,
-            Context = input.NewContext,
-            Messages = [],
-        };
-    }
-
     public PromptMessage[] ToPromptMessages()
     {
         var result = new List<PromptMessage>();
