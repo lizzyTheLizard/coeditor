@@ -13,19 +13,26 @@
 <div class="container-fluid p-0">
     <div class="row g-1">
         <ActionButton Disabled="@(Text == null)" OnTriggered="OnActionButtonAsync"
-                      ActionName="ActionName.Reformulate"></ActionButton>
+                      ActionName="ActionName.Reformulate">
+        </ActionButton>
         <ActionButton Disabled="@(Text == null)" OnTriggered="OnActionButtonAsync"
-                      ActionName="ActionName.Improve"></ActionButton>
+                      ActionName="ActionName.Improve">
+        </ActionButton>
         <ActionButton Disabled="@(Text == null)" OnTriggered="OnActionButtonAsync"
-                      ActionName="ActionName.Summarize"></ActionButton>
+                      ActionName="ActionName.Summarize">
+        </ActionButton>
         <ActionButton Disabled="@(Text == null)" OnTriggered="OnActionButtonAsync"
-                      ActionName="ActionName.Expand"></ActionButton>
+                      ActionName="ActionName.Expand">
+        </ActionButton>
         <ActionButton Disabled="@(Text == null || !UndoService.CanUndo)" Shortcut="'Z'"
-                      OnTriggered="OnUndo" Name="Undo"></ActionButton>
+                      OnTriggered="OnUndo" Name="Undo">
+        </ActionButton>
         <ActionButton Disabled="@(Text == null || !UndoService.CanRedo)" Shortcut="'Y'"
-                      OnTriggered="OnRedo" Name="Redo"></ActionButton>
+                      OnTriggered="OnRedo" Name="Redo">
+        </ActionButton>
         <ActionButton Disabled="@(Text == null)"
-                      OnTriggered="() => ClearConversation.InvokeAsync()" Name="Clear"></ActionButton>
+                      OnTriggered="() => ClearConversation.InvokeAsync()" Name="Clear">
+        </ActionButton>
     </div>
 </div>
 

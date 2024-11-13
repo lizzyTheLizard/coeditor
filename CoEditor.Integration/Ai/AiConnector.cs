@@ -64,22 +64,13 @@ internal static class AiConnectorLogMessages
 {
     public static void PromptStarted(this ILogger logger, PromptMessage[] newMessages)
     {
-        if (!logger.IsEnabled(LogLevel.Debug))
-        {
-            return;
-        }
+        if (!logger.IsEnabled(LogLevel.Debug)) return;
 
         var promptSize = newMessages.Select(m => m.Prompt.Length).Sum();
         logger.LogInformation(4101, "Start prompting AI with a prompt size of {PromptSize}", promptSize);
-        if (!logger.IsEnabled(LogLevel.Trace))
-        {
-            return;
-        }
+        if (!logger.IsEnabled(LogLevel.Trace)) return;
 
-        foreach (var message in newMessages)
-        {
-            logger.LogTrace(4101, "{Actor}: {Message}", message.Type, message.Prompt);
-        }
+        foreach (var message in newMessages) logger.LogTrace(4101, "{Actor}: {Message}", message.Type, message.Prompt);
     }
 
     public static void PromptFinished(this ILogger logger, string response, long elapsedMs)

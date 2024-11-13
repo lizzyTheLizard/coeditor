@@ -21,8 +21,7 @@
     }
     <NewTemplate
         Language="_language"
-        AddTemplate="OnAddTemplate"
-    />
+        AddTemplate="OnAddTemplate"/>
 </div>
 <ErrorDialog/>
 <BusyDialog Busy="@_busy"/>
@@ -33,7 +32,10 @@
     private Profile? _profile;
     private bool _busy = true;
 
-    protected override Task OnInitializedAsync() => OnLanguageChanged();
+    protected override Task OnInitializedAsync()
+    {
+        return OnLanguageChanged();
+    }
 
     private async Task OnLanguageChanged()
     {
@@ -79,5 +81,4 @@
         await ProfileService.UpdateProfile(_profile!);
         _busy = false;
     }
-
 }

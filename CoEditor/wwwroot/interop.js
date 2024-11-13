@@ -30,10 +30,10 @@ window.setFocus = function (inputId) {
 window.addKeyboardListener = function (dotNetHelper) {
     window.document.addEventListener('keydown', async function (e) {
         if (!e) return;
-        if(!e.altKey) return;
-        if(e.ctrlKey) return;
+        if (!e.altKey) return;
+        if (e.ctrlKey) return;
         let handled = await dotNetHelper.invokeMethodAsync('HandleKeyboardEventAsync', e.key[0]);
-        if(handled) e.preventDefault();
+        if (handled) e.preventDefault();
     });
 };
 

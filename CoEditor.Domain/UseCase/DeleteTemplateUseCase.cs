@@ -20,9 +20,7 @@ internal class DeleteTemplateUseCase(
         }
 
         if (template.UserName != userName)
-        {
             throw new AuthenticationException($"Wrong user {userName} for template {templateId}");
-        }
 
         await templateRepository.DeleteTemplateAsync(templateId);
         logger.TemplateDeleted(template);
@@ -34,7 +32,8 @@ internal static partial class DeleteTemplateLogMessages
 {
     public static void TemplateDeleted(this ILogger logger, Template template)
     {
-        logger.LogInformation(1201, "Deleted template {Id} of user {UserName} in {Language}", template.Id, template.UserName, template.Language);
+        logger.LogInformation(1201, "Deleted template {Id} of user {UserName} in {Language}", template.Id,
+            template.UserName, template.Language);
         logger.LogTrace("{Template}", template);
     }
 

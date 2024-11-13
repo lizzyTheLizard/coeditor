@@ -12,11 +12,7 @@ public class UndoService(ILogger<UndoService> logger)
 
     public void Register(string update)
     {
-        if (update == _current)
-        {
-            return;
-        }
-
+        if (update == _current) return;
         _undo.Push(_current);
         _current = update;
         _redo.Clear();

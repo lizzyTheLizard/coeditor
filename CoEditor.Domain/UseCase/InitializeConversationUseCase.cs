@@ -40,7 +40,12 @@ internal static partial class InitializeConversationLogMessages
 {
     public static void ConversationCreated(this ILogger logger, Conversation conversation)
     {
-        logger.LogInformation(1102, "User {UserName} has created conversation {Id}. It has {NbrMessages} messages", conversation.UserName, conversation.Id, conversation.Messages.Length);
+        logger.LogInformation(
+            1102,
+            "User {UserName} has created conversation {Id}. It has {NbrMessages} messages",
+            conversation.UserName,
+            conversation.Id,
+            conversation.Messages.Length);
         logger.LogTrace("{Conversation}", conversation);
     }
 }

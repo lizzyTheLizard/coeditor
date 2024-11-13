@@ -1,19 +1,18 @@
 <ul class="nav nav-tabs">
-@foreach (var language in Enum.GetValues<Language>())
-{
-    <li class="nav-item">
-        <a 
-            class="@(Language == language? "nav-link active": "nav-link")" 
-            @onclick="() => SetLanguage(language)" @onclick:preventDefault
-            aria-current="page" href="#">
-            @language.GetDescription()
-        </a>
-    </li>
-}
+    @foreach (var language in Enum.GetValues<Language>())
+    {
+        <li class="nav-item">
+            <a
+                class="@(Language == language ? "nav-link active" : "nav-link")"
+                @onclick="() => SetLanguage(language)" @onclick:preventDefault
+                aria-current="page" href="#">
+                @language.GetDescription()
+            </a>
+        </li>
+    }
 </ul>
- 
-@code {
 
+@code {
     [Parameter]
     public Language Language { get; set; }
 

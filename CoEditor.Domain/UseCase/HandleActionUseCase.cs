@@ -20,10 +20,7 @@ internal class HandleActionUseCase(
         var newMessages = promptMessageFactory.GenerateActionMessages(conversation, input, prompt);
         var result = await aiConnector.PromptAsync([.. existingMessages, .. newMessages]);
         var updatedConversation = conversation.Update(input).Update(newMessages, result);
-        if (input.Selection != null)
-        {
-            updatedConversation = updatedConversation.Update(input.Selection, input.NewText);
-        }
+        if (input.Selection != null) updatedConversation = updatedConversation.Update(input.Selection, input.NewText);
 
         await conversationRepository.UpdateAsync(updatedConversation);
         logger.ConversationUpdated(input.Action, updatedConversation);
@@ -46,9 +43,7 @@ internal class HandleActionUseCase(
     {
         var conversation = await conversationRepository.GetAsync(conversationGuid);
         if (conversation.UserName != userName)
-        {
             throw new AuthenticationException($"Wrong user {userName} for conversation {conversationGuid}");
-        }
 
         logger.ConversationLoaded(conversation);
         return conversation;

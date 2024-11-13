@@ -17,11 +17,9 @@
 </Router>
 
 @code {
-
     protected override async Task OnAfterRenderAsync(bool first)
     {
         var objRef = DotNetObjectReference.Create(ShortcutService);
         await JsRuntime.InvokeVoidAsync("addKeyboardListener", objRef);
     }
-
 }

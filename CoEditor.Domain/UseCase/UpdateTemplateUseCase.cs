@@ -12,11 +12,7 @@ internal class UpdateTemplateUseCase(
 {
     public async Task<Template> UpdateTemplateAsync(string userName, Template tmpl)
     {
-        if (tmpl.UserName != userName)
-        {
-            throw new ArgumentException("Wrong user name in body");
-        }
-
+        if (tmpl.UserName != userName) throw new ArgumentException("Wrong user name in body");
         var originalTemplate = await templateRepository.FindTemplateAsync(tmpl.Id);
         if (originalTemplate == null)
         {
@@ -26,10 +22,7 @@ internal class UpdateTemplateUseCase(
         }
 
         if (originalTemplate.UserName != userName)
-        {
             throw new AuthenticationException($"Wrong user {userName} for template {tmpl.Id}");
-        }
-
         var updateResult = await templateRepository.UpdateTemplateAsync(tmpl);
         logger.TemplateUpdated(tmpl);
         return updateResult;
@@ -41,13 +34,23 @@ internal static class UpdateTemplateLogMessages
 {
     public static void TemplateUpdated(this ILogger logger, Template template)
     {
-        logger.LogInformation(1204, "Updated template {Id} of user {UserName} in {Language}", template.Id, template.UserName, template.Language);
+        logger.LogInformation(
+            1204,
+            "Updated template {Id} of user {UserName} in {Language}",
+            template.Id,
+            template.UserName,
+            template.Language);
         logger.LogTrace("{Template}", template);
     }
 
     public static void TemplateCreated(this ILogger logger, Template template)
     {
-        logger.LogInformation(1203, "Created template {Id} of user {UserName} in {Language}", template.Id, template.UserName, template.Language);
+        logger.LogInformation(
+            1203,
+            "Created template {Id} of user {UserName} in {Language}",
+            template.Id,
+            template.UserName,
+            template.Language);
         logger.LogTrace("{Template}", template);
     }
 }

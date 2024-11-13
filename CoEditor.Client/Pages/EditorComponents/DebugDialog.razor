@@ -40,7 +40,6 @@
 </div>
 
 @code{
-
     [Parameter]
     public Conversation? Conversation { get; set; }
 
@@ -58,7 +57,10 @@
         await JsRuntime.InvokeVoidAsync("showModal", modalId);
     }
 
-    private string GetClassesForType(ConversationMessageType type) => type == ConversationMessageType.System ? "list-group-item list-group-item-primary" : "list-group-item";
+    private string GetClassesForType(ConversationMessageType type)
+    {
+        return type == ConversationMessageType.System ? "list-group-item list-group-item-primary" : "list-group-item";
+    }
 
     public void Dispose()
     {

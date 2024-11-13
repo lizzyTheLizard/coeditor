@@ -19,11 +19,7 @@ public class ShortcutService(ILogger<ShortcutService> logger)
         }
 
         logger.KeyPress(key, true);
-        foreach (var action in actions)
-        {
-            await action.Invoke();
-        }
-
+        foreach (var action in actions) await action.Invoke();
         return true;
     }
 
@@ -31,7 +27,6 @@ public class ShortcutService(ILogger<ShortcutService> logger)
     {
         var registrationKey = char.ToUpper(key, CultureInfo.InvariantCulture);
         if (!_shortcuts.ContainsKey(registrationKey)) _shortcuts[registrationKey] = [];
-
         _shortcuts[registrationKey].Add(handler);
         logger.ShortcutRegistered(registrationKey);
         return new ShortcutSubscription(_shortcuts, registrationKey, handler, logger);

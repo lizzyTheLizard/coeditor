@@ -29,10 +29,7 @@ internal class ConversationRepository(CosmosDbContext dbContext)
             .Where(t => t.Id == conversationGuid)
             .Include(conversationDocument => conversationDocument.Messages)
             .SingleOrDefaultAsync();
-        if (conversation == null)
-        {
-            return;
-        }
+        if (conversation == null) return;
 
         throw CosmosException.AlreadyPresentException(typeof(Conversation), conversationGuid);
     }

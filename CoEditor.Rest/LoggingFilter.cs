@@ -47,7 +47,11 @@ internal static partial class LoggingFilterLogMessages
 
     public static void IncomingRequest(this ILogger logger, HttpContext httpContext, Type controller)
     {
-        logger.LogDebug("Incoming API-Request {Method} {Url} for {Controller}", httpContext.Request.Method, httpContext.Request.Path, controller.Name);
+        logger.LogDebug(
+            "Incoming API-Request {Method} {Url} for {Controller}",
+            httpContext.Request.Method,
+            httpContext.Request.Path,
+            controller.Name);
     }
 
     [LoggerMessage(Level = LogLevel.Warning, EventId = 3001, Message = "Unauthenticated REST request")]

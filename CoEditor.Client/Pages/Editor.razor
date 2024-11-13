@@ -36,7 +36,10 @@
     private Conversation? _conversation;
     private bool _busy = true;
 
-    protected override Task OnInitializedAsync() => RunWithSpinner(ReloadTemplates);
+    protected override Task OnInitializedAsync()
+    {
+        return RunWithSpinner(ReloadTemplates);
+    }
 
     private async Task ReloadTemplates()
     {
@@ -92,5 +95,4 @@
         await action.Invoke();
         _busy = false;
     }
-
 }

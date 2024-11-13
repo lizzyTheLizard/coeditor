@@ -33,9 +33,7 @@ public class Conversation
                 : PromptMessageType.User;
             result.Add(new PromptMessage(conversationMessage.Prompt, type));
             if (conversationMessage.Response != null)
-            {
                 result.Add(new PromptMessage(conversationMessage.Response, PromptMessageType.Assistant));
-            }
         }
 
         return [.. result];

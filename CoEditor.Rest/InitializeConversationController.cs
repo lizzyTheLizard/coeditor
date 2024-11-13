@@ -18,10 +18,7 @@ public class InitializeConversationController(IInitializeConversationApi initial
         [FromBody] InitializeConversationInput input)
     {
         var userName = User.Identity?.Name;
-        if (string.IsNullOrEmpty(userName))
-        {
-            throw new AuthenticationException();
-        }
+        if (string.IsNullOrEmpty(userName)) throw new AuthenticationException();
 
         return await initializeConversationApi.InitializeConversationAsync(userName, input);
     }

@@ -11,11 +11,7 @@ internal class UpdateProfileUseCase(
 {
     public async Task<Profile> UpdateProfileAsync(string userName, Profile profile)
     {
-        if (profile.UserName != userName)
-        {
-            throw new ArgumentException("Wrong user name in body");
-        }
-
+        if (profile.UserName != userName) throw new ArgumentException("Wrong user name in body");
         var originalProfile = await profileRepository.FindProfileAsync(userName, profile.Language);
         if (originalProfile == null)
         {
@@ -35,13 +31,21 @@ internal static class UpdateProfileLogMessages
 {
     public static void ProfileCreated(this ILogger logger, Profile profile)
     {
-        logger.LogInformation(1301, "Created profile of user {UserName} in {Language}", profile.UserName, profile.Language);
+        logger.LogInformation(
+            1301,
+            "Created profile of user {UserName} in {Language}",
+            profile.UserName,
+            profile.Language);
         logger.LogTrace("{Profile}", profile);
     }
 
     public static void ProfileUpdated(this ILogger logger, Profile profile)
     {
-        logger.LogInformation(1302, "Updated profile of user {UserName} in {Language}", profile.UserName, profile.Language);
+        logger.LogInformation(
+            1302,
+            "Updated profile of user {UserName} in {Language}",
+            profile.UserName,
+            profile.Language);
         logger.LogTrace("{Profile}", profile);
     }
 }

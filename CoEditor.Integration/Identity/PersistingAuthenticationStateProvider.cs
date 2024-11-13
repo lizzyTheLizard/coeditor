@@ -31,16 +31,8 @@ internal sealed class PersistingAuthenticationStateProvider : ServerAuthenticati
     {
         var authenticationState = await GetAuthenticationStateAsync();
         var identity = authenticationState.User.Identity;
-        if (identity == null)
-        {
-            return;
-        }
-
-        if (!identity.IsAuthenticated)
-        {
-            return;
-        }
-
+        if (identity == null) return;
+        if (!identity.IsAuthenticated) return;
         var userName = identity.Name;
         if (userName == null)
         {

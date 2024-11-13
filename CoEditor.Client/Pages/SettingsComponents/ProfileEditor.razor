@@ -1,15 +1,16 @@
 <div class="row">
     <label for="@("profile_" + Profile?.Language)" class="form-label">Profile</label>
-    @if(Profile == null)
+    @if (Profile == null)
     {
         <InputTextArea id="@("profile_" + Profile?.Language)"
-                    class="@("form-control form-control-sm mb-1 " + (IsValid ? "is-valid" : "is-invalid"))"
-                    disabled="true" />
+                       class="@("form-control form-control-sm mb-1 " + (IsValid ? "is-valid" : "is-invalid"))"
+                       disabled="true"/>
     }
-    else {
+    else
+    {
         <InputTextArea id="@("profile_" + Profile?.Language)"
-                    class="@("form-control form-control-sm mb-1 " + (IsValid ? "is-valid" : "is-invalid"))"
-                    @bind-Value="Profile!.Text"/>
+                       class="@("form-control form-control-sm mb-1 " + (IsValid ? "is-valid" : "is-invalid"))"
+                       @bind-Value="Profile!.Text"/>
     }
     <div class="invalid-feedback">Required</div>
 </div>
@@ -17,7 +18,8 @@
     <div class="col-12 col-sm-4 col-md-2 p-0">
         <button class="btn btn-primary" disabled="@(!IsValid)"
                 style="width: 100%;"
-                @onclick="() => SaveProfile.InvokeAsync()">Save
+                @onclick="() => SaveProfile.InvokeAsync()">
+            Save
         </button>
     </div>
 </div>

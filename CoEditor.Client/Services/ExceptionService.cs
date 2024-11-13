@@ -13,11 +13,7 @@ public class ExceptionService(ILogger<ExceptionService> logger)
 
     public async Task HandleException(Exception exception)
     {
-        foreach (var handler in _handlers)
-        {
-            await handler(exception);
-        }
-
+        foreach (var handler in _handlers) await handler(exception);
         logger.ExceptionHandled(exception.Message);
     }
 }

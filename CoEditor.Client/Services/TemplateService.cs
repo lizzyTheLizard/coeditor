@@ -92,16 +92,12 @@ internal static partial class TemplateServiceLogMessages
 {
     public static void TemplatesLoaded(this ILogger logger, Language language, Template[] templates)
     {
-        logger.LogDebug("Loaded {NbrTemplates} templates ({Language}) for the current user ", templates.Length, language);
-        if (!logger.IsEnabled(LogLevel.Trace))
-        {
-            return;
-        }
-
-        foreach (var template in templates)
-        {
-            logger.LogTrace("{Template}", template);
-        }
+        logger.LogDebug(
+            "Loaded {NbrTemplates} templates ({Language}) for the current user ",
+            templates.Length,
+            language);
+        if (!logger.IsEnabled(LogLevel.Trace)) return;
+        foreach (var template in templates) logger.LogTrace("{Template}", template);
     }
 
     [LoggerMessage(LogLevel.Warning, EventId = 2101, Message = "Could not load templates")]

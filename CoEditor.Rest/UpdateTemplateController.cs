@@ -17,11 +17,7 @@ public class UpdateTemplateController(IUpdateTemplateApi updateTemplateApi) : Co
     public async Task<ActionResult<Template>> UpdateTemplate(string id, [FromBody] Template template)
     {
         var guid = Guid.Parse(id);
-        if (guid != template.Id)
-        {
-            throw new ArgumentException("ID in path and body must be the same");
-        }
-
+        if (guid != template.Id) throw new ArgumentException("ID in path and body must be the same");
         var userName = User.Identity?.Name ?? throw new AuthenticationException("User not authenticated");
         return await updateTemplateApi.UpdateTemplateAsync(userName, template);
     }

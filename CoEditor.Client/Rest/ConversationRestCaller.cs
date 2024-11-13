@@ -11,9 +11,7 @@ public class ConversationRestCaller(HttpClient httpClient) : IInitializeConversa
         const string url = "api/Conversation/Action";
         var response = await httpClient.PostAsJsonAsync(url, input);
         if (!response.IsSuccessStatusCode)
-        {
             throw new ServiceCallFailedException(HttpMethod.Post, url, response.StatusCode);
-        }
 
         return await response.Content.ReadFromJsonAsync<Conversation>() ??
                throw new ServiceCallFailedException(HttpMethod.Post, url);
@@ -24,9 +22,7 @@ public class ConversationRestCaller(HttpClient httpClient) : IInitializeConversa
         const string url = "api/Conversation/CustomAction";
         var response = await httpClient.PostAsJsonAsync(url, input);
         if (!response.IsSuccessStatusCode)
-        {
             throw new ServiceCallFailedException(HttpMethod.Post, url, response.StatusCode);
-        }
 
         return await response.Content.ReadFromJsonAsync<Conversation>() ??
                throw new ServiceCallFailedException(HttpMethod.Post, url);
@@ -37,9 +33,7 @@ public class ConversationRestCaller(HttpClient httpClient) : IInitializeConversa
         const string url = "api/Conversation/Initialize";
         var response = await httpClient.PostAsJsonAsync(url, input);
         if (!response.IsSuccessStatusCode)
-        {
             throw new ServiceCallFailedException(HttpMethod.Post, url, response.StatusCode);
-        }
 
         return await response.Content.ReadFromJsonAsync<Conversation>() ??
                throw new ServiceCallFailedException(HttpMethod.Post, url);

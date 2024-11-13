@@ -4,7 +4,6 @@ using CoEditor.Domain;
 using CoEditor.Integration.Ai;
 using CoEditor.Integration.Cosmos;
 using CoEditor.Integration.Identity;
-
 using CoEditor.Integration.Insights;
 using CoEditor.Rest;
 using Microsoft.AspNetCore.HttpOverrides;

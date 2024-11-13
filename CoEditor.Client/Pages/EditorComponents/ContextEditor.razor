@@ -51,7 +51,6 @@
 }
 
 @code {
-
     [Parameter]
     public Template? Template { get; set; }
 
@@ -104,5 +103,4 @@
         var context = Template!.CalculateText(_templateParameters);
         await ContextChanged.InvokeAsync(context);
     }
-
 }

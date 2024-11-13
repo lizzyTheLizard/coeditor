@@ -35,7 +35,8 @@ public class ConversationTests
             Language = Language.En,
             Text = "Initial Text",
             Context = "Initial Context",
-            Messages = [
+            Messages =
+            [
                 new ConversationMessage
                 {
                     PromptedAt = DateTime.Now,

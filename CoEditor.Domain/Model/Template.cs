@@ -22,7 +22,8 @@ public partial class Template
 
     public override string ToString()
     {
-        return $"{base.ToString()}: Id={Id}, Language={Language}, UserName={UserName}, Name={Name}, Text={Text}, DefaultTemplate={DefaultTemplate}";
+        return
+            $"{base.ToString()}: Id={Id}, Language={Language}, UserName={UserName}, Name={Name}, Text={Text}, DefaultTemplate={DefaultTemplate}";
     }
 
     public TemplateParameter[] GetTemplateParameters()
@@ -55,7 +56,8 @@ public partial class Template
             var value = match.Groups["value"].Value;
             var parts = value.Split(':');
             var name = parts[0];
-            var parameter = Array.Find(templateParameters, p => p.Name == name) ?? throw new ArgumentOutOfRangeException(name);
+            var parameter = Array.Find(templateParameters, p => p.Name == name) ??
+                            throw new ArgumentOutOfRangeException(name);
             return parameter.Value;
         });
     }

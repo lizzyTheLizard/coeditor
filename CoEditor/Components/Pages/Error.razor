@@ -12,7 +12,8 @@
 }
 
 @code {
-    [CascadingParameter] private HttpContext? HttpContext { get; set; }
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
 
     private string? RequestId { get; set; }
     private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
@@ -21,5 +22,4 @@
     {
         RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
     }
-
 }

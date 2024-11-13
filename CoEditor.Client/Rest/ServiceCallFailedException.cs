@@ -5,8 +5,7 @@ namespace CoEditor.Client.Rest;
 public class ServiceCallFailedException : Exception
 {
     public ServiceCallFailedException(HttpMethod method, string url, HttpStatusCode statusCode)
-        : base(
-        $"{method} {url} failed: {statusCode}")
+        : base($"{method} {url} failed: {statusCode}")
     {
     }
 

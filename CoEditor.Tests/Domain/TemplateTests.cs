@@ -80,9 +80,12 @@ public class TemplateTests
         };
         var text = conversation.CalculateText(
         [
-            new TemplateParameter { Name = "name", Type = TemplateParameterType.Text, Value = "TestValue", Options = [] },
-            new TemplateParameter { Name = "long", Type = TemplateParameterType.LongText, Value = "TestLongValue", Options = [] },
-            new TemplateParameter { Name = "select", Type = TemplateParameterType.Select, Value = "option2", Options = [] },
+            new TemplateParameter
+                { Name = "name", Type = TemplateParameterType.Text, Value = "TestValue", Options = [] },
+            new TemplateParameter
+                { Name = "long", Type = TemplateParameterType.LongText, Value = "TestLongValue", Options = [] },
+            new TemplateParameter
+                { Name = "select", Type = TemplateParameterType.Select, Value = "option2", Options = [] },
         ]);
         Assert.Equal("TestValue TestLongValue option2", text);
     }

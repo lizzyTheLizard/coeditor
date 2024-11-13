@@ -13,11 +13,7 @@ internal class PersistentAuthenticationStateProvider(
 
     public override Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        if (_authenticationState != null)
-        {
-            return Task.FromResult(_authenticationState);
-        }
-
+        if (_authenticationState != null) return Task.FromResult(_authenticationState);
         var identity = GetIdentity();
         var principal = new ClaimsPrincipal(identity);
         _authenticationState = new AuthenticationState(principal);
