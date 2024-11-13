@@ -60,7 +60,7 @@ internal class AiConnector(IOptions<AzureOpenAiConfiguration> optionsProvider, I
 }
 
 #pragma warning disable SA1402, SA1204 // LogMessages are only used in this file
-internal static partial class AiConnectorLogMessages
+internal static class AiConnectorLogMessages
 {
     public static void PromptStarted(this ILogger logger, PromptMessage[] newMessages)
     {

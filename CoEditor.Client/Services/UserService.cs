@@ -12,6 +12,4 @@ public class UserService(AuthenticationStateProvider authenticationStateProvider
 }
 
 #pragma warning disable SA1402 // Error is only used in this file
-public sealed class NotAllowedException(string message) : Exception(message)
-{
-}
+public sealed class NotAllowedException(string message) : Exception(message);

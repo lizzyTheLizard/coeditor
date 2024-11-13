@@ -12,7 +12,7 @@ internal class PromptMessageFactory
         { Language.De, new CultureInfo("de-De") }, { Language.En, new CultureInfo("en-US") },
     };
 
-    private readonly CommandPrompt[] commandPrompts =
+    private readonly CommandPrompt[] _commandPrompts =
     [
         new(Language.De, ActionName.Improve, true, "Verbessere den ganzen Text. Korriegiere Rechtschreibfehler und verbessere die Grammatik im ganzen Text. Korrigiere Stilfehler aber ändere nicht die Bedeutung."),
         new(Language.En, ActionName.Improve, true, "Improve the entire text. Correct spelling mistakes and enhance the grammar throughout the text. Correct stylistic errors but do not change the meaning."),
@@ -29,52 +29,52 @@ internal class PromptMessageFactory
         new(Language.De, ActionName.Reformulate, true, "Formuliere den gesammten Text um"),
         new(Language.En, ActionName.Reformulate, true, "Reformulate the whole text"),
         new(Language.De, ActionName.Reformulate, false, "Formuliere den folgenden Teil um und gib nur den verbesserten Text zurück\n\n{0}"),
-        new(Language.En, ActionName.Reformulate, false, "Reformulate the following part and return only the improved text\n\n{0}")
+        new(Language.En, ActionName.Reformulate, false, "Reformulate the following part and return only the improved text\n\n{0}"),
     ];
 
-    private readonly CommandPrompt[] contextChangedMessageTemplates =
+    private readonly CommandPrompt[] _contextChangedMessageTemplates =
     [
         new(Language.De, "Der Kontext hat sich geändert. {0}"),
-        new(Language.En, "The context has changed. {0}")
+        new(Language.En, "The context has changed. {0}"),
     ];
 
-    private readonly CommandPrompt[] initialCommandTemplates =
+    private readonly CommandPrompt[] _initialCommandTemplates =
     [
         new(Language.De, "Mache einen neuen Vorschlag"),
-        new(Language.En, "Create an initial proposal")
+        new(Language.En, "Create an initial proposal"),
     ];
 
-    private readonly CommandPrompt[] initialContextMessageTemplates =
+    private readonly CommandPrompt[] _initialContextMessageTemplates =
     [
         new(Language.De, "{0}"),
-        new(Language.En, "{0}")
+        new(Language.En, "{0}"),
     ];
 
-    private readonly CommandPrompt[] systemChatMessageTemplates =
+    private readonly CommandPrompt[] _systemChatMessageTemplates =
     [
         new(Language.De, "Du bist ein hilfreicher Assistent, der mich beim Schreiben von kurzen Texten unterstützt. Ich schreibe einen Text und du ergänzt ihn für mich auf verschiedene Arten. Gib immer nur die Antwort zurück, aber niemals Zusatzinformationen oder Erklärungen"),
-        new(Language.En, "You are a helpful assistant who supports me in writing short texts. I write the text and ask you help me in different ways. Always return the text, but never any additional informations. Do not include any explanation")
+        new(Language.En, "You are a helpful assistant who supports me in writing short texts. I write the text and ask you help me in different ways. Always return the text, but never any additional informations. Do not include any explanation"),
     ];
 
-    private readonly CommandPrompt[] textChangedMessageTemplates =
+    private readonly CommandPrompt[] _textChangedMessageTemplates =
     [
         new(Language.De, "Ich habe den Text in folgendes abgeändert: {0}"),
-        new(Language.En, "I have changed the text to the following: {0}")
+        new(Language.En, "I have changed the text to the following: {0}"),
     ];
 
     public PromptMessage[] GenerateInitialMessages(Conversation conversation, Profile profile)
     {
         var formatProvider = _formatProviders[conversation.Language];
-        var systemChatMessage = systemChatMessageTemplates.First(p => p.Language == conversation.Language);
-        var initialContextMessage = initialContextMessageTemplates.First(p => p.Language == conversation.Language);
+        var systemChatMessage = _systemChatMessageTemplates.First(p => p.Language == conversation.Language);
+        var initialContextMessage = _initialContextMessageTemplates.First(p => p.Language == conversation.Language);
         var initialContextPrompt = string.Format(formatProvider, initialContextMessage.Prompt, conversation.Context);
-        var initialCommand = initialCommandTemplates.First(p => p.Language == conversation.Language);
+        var initialCommand = _initialCommandTemplates.First(p => p.Language == conversation.Language);
         return
         [
             new PromptMessage(systemChatMessage.Prompt, PromptMessageType.System),
             new PromptMessage(profile.Text, PromptMessageType.System),
             new PromptMessage(initialContextPrompt, PromptMessageType.User),
-            new PromptMessage(initialCommand.Prompt, PromptMessageType.User)
+            new PromptMessage(initialCommand.Prompt, PromptMessageType.User),
         ];
     }
 
@@ -84,14 +84,14 @@ internal class PromptMessageFactory
         var formatProvider = _formatProviders[conversation.Language];
         if (conversation.Context != input.NewContext)
         {
-            var contextChangedMessage = contextChangedMessageTemplates.First(p => p.Language == conversation.Language);
+            var contextChangedMessage = _contextChangedMessageTemplates.First(p => p.Language == conversation.Language);
             var contextChangedPrompt = string.Format(formatProvider, contextChangedMessage.Prompt, input.NewContext);
             result.Add(new PromptMessage(contextChangedPrompt, PromptMessageType.User));
         }
 
         if (conversation.Text != input.NewText)
         {
-            var textChangedMessage = textChangedMessageTemplates.First(p => p.Language == conversation.Language);
+            var textChangedMessage = _textChangedMessageTemplates.First(p => p.Language == conversation.Language);
             var textChangedPrompt = string.Format(formatProvider, textChangedMessage.Prompt, input.NewText);
             result.Add(new PromptMessage(textChangedPrompt, PromptMessageType.User));
         }
@@ -103,7 +103,7 @@ internal class PromptMessageFactory
     public string GetCommandPrompt(HandleNamedActionInput input)
     {
         var formatProvider = _formatProviders[input.Language];
-        var prompt = commandPrompts
+        var prompt = _commandPrompts
             .Where(p => p.Language == input.Language)
             .Where(p => p.Name == input.Action)
             .First(p => p.HasFullText == (input.Selection == null));

@@ -30,10 +30,7 @@ public class ShortcutService(ILogger<ShortcutService> logger)
     public ShortcutSubscription RegisterShortcut(char key, Func<Task> handler)
     {
         var registrationKey = char.ToUpper(key, CultureInfo.InvariantCulture);
-        if (!_shortcuts.ContainsKey(registrationKey))
-        {
-            _shortcuts[registrationKey] = [];
-        }
+        if (!_shortcuts.ContainsKey(registrationKey)) _shortcuts[registrationKey] = [];
 
         _shortcuts[registrationKey].Add(handler);
         logger.ShortcutRegistered(registrationKey);

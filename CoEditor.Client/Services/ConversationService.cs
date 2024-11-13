@@ -1,7 +1,5 @@
-﻿using System.Security.Authentication;
-using CoEditor.Domain.Api;
+﻿using CoEditor.Domain.Api;
 using CoEditor.Domain.Model;
-using Microsoft.AspNetCore.Components.Authorization;
 
 namespace CoEditor.Client.Services;
 

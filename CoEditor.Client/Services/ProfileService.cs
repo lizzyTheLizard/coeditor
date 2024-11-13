@@ -63,7 +63,7 @@ internal static partial class ProfileServiceLogMessages
 
     public static void ProfileUpdateFailed(this ILogger logger, Exception e, Profile profile)
     {
-        logger.LogWarning(2403, "Updated profile for language {Language} failed", profile.Language);
+        logger.LogWarning(2403, e, "Updated profile for language {Language} failed", profile.Language);
         logger.LogTrace("{Profile}", profile);
     }
 }

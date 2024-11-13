@@ -1,8 +1,0 @@
-{
-    "explorer.fileNesting.enabled": true,
-    "explorer.fileNesting.expand": false,
-    "explorer.fileNesting.patterns": {
-        "*.razor": "${capture}.razor.css",
-        "appsettings.json": "appsettings.Development.json"
-    }
-}

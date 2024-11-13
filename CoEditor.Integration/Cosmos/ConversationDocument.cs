@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using CoEditor.Domain.Model;
+﻿using CoEditor.Domain.Model;
 
 namespace CoEditor.Integration.Cosmos;
 

@@ -37,7 +37,7 @@ internal class UpdateTemplateUseCase(
 }
 
 #pragma warning disable SA1402,SA1204 // LogMessages are only used in this file
-internal static partial class UpdateTemplateLogMessages
+internal static class UpdateTemplateLogMessages
 {
     public static void TemplateUpdated(this ILogger logger, Template template)
     {

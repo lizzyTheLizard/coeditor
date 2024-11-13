@@ -28,3 +28,5 @@ dotnet_diagnostic.SA1601.severity = None
 dotnet_diagnostic.SA1602.severity = None
 # SA1633FileMustHaveHeader
 dotnet_diagnostic.SA1633.severity = None
+# SA1503BracesMustNotBeOmitted
+dotnet_diagnostic.SA1503.severity = None

@@ -41,19 +41,17 @@ public class TemplateService(
         }
     }
 
-    public async Task<Template?> CreateTemplate(Template template)
+    public async Task CreateTemplate(Template template)
     {
         try
         {
             await updateTemplateApi.UpdateTemplateAsync(template.UserName, template);
             logger.TemplateCreated(template);
-            return template;
         }
         catch (Exception e)
         {
             logger.TemplateCreationFailed(e);
             await exceptionService.HandleException(e);
-            return null;
         }
     }
 
@@ -123,7 +121,7 @@ internal static partial class TemplateServiceLogMessages
 
     public static void TemplateUpdateFailed(this ILogger logger, Exception e, Template template)
     {
-        logger.LogWarning(2104, "Could not update template {Id}.", template.Id);
+        logger.LogWarning(2104, e, "Could not update template {Id}.", template.Id);
         logger.LogTrace("{Template}", template);
     }
 

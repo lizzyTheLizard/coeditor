@@ -34,13 +34,11 @@
             var input = Configuration.GetValue<string?>("RenderMode") ?? "Auto";
             return input switch
             {
-                "Auto" => RenderMode.InteractiveAuto,
-                "Server" => RenderMode.InteractiveServer,
-                "WebAssembly" => RenderMode.InteractiveWebAssembly,
+                "Auto" => InteractiveAuto,
+                "Server" => InteractiveServer,
+                "WebAssembly" => InteractiveWebAssembly,
                 _ => throw new ConfigurationErrorsException("Invalid render mode " + input),
             };
         }
     }
-
-
 }

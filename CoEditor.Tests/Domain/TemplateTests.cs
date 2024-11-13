@@ -7,7 +7,7 @@ public class TemplateTests
     [Fact]
     public void ToString_ContainsEverything()
     {
-        var conversation = new Template()
+        var conversation = new Template
         {
             Id = Guid.NewGuid(),
             UserName = "TestUser",
@@ -28,7 +28,7 @@ public class TemplateTests
     [Fact]
     public void GetTemplateParameters_Empty()
     {
-        var conversation = new Template()
+        var conversation = new Template
         {
             Id = Guid.NewGuid(),
             UserName = "TestUser",
@@ -44,7 +44,7 @@ public class TemplateTests
     [Fact]
     public void GetTemplateParameters_NonEmpty()
     {
-        var conversation = new Template()
+        var conversation = new Template
         {
             Id = Guid.NewGuid(),
             UserName = "TestUser",
@@ -69,7 +69,7 @@ public class TemplateTests
     [Fact]
     public void CalculateText()
     {
-        var conversation = new Template()
+        var conversation = new Template
         {
             Id = Guid.NewGuid(),
             UserName = "TestUser",

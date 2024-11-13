@@ -65,7 +65,7 @@ internal class GetTemplatesUseCase(
 internal record SystemTemplate(Guid Id, string Name, string Text);
 
 #pragma warning disable SA1402,SA1204 // LogMessages are only used in this file
-internal static partial class GetTemplatesLogMessages
+internal static class GetTemplatesLogMessages
 {
     public static void TemplatesLoaded(this ILogger logger, Template[] templates, string userName, Language language)
     {

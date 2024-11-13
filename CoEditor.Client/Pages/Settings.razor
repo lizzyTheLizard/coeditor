@@ -12,9 +12,8 @@
     <ProfileEditor
         Profile="_profile"
         SaveProfile="OnSaveProfile"/>
-    @for(var i = 0 ; i < _templates.Length; i++)
+    @foreach (var template in _templates)
     {
-        var template = _templates[i];
         <TemplateEditor
             Template="template"
             SaveTemplate="() => OnSaveTemplate(template)"
@@ -52,7 +51,7 @@
         _busy = true;
         StateHasChanged();
         await TemplateService.DeleteTemplate(template);
-        _templates = _templates.Where((t) => t.Id != template.Id).ToArray();
+        _templates = _templates.Where(t => t.Id != template.Id).ToArray();
         _busy = false;
     }
 

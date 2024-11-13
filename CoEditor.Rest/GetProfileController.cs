@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Security.Authentication;
+﻿using System.Security.Authentication;
 using CoEditor.Domain.Api;
 using CoEditor.Domain.Model;
 using Microsoft.AspNetCore.Authorization;

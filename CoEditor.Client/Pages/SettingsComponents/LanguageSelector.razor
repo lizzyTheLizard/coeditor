@@ -3,7 +3,7 @@
 {
     <li class="nav-item">
         <a 
-            class="@((Language == language)? "nav-link active": "nav-link")" 
+            class="@(Language == language? "nav-link active": "nav-link")" 
             @onclick="() => SetLanguage(language)" @onclick:preventDefault
             aria-current="page" href="#">
             @language.GetDescription()

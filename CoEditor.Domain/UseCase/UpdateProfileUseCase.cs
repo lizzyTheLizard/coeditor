@@ -31,7 +31,7 @@ internal class UpdateProfileUseCase(
 }
 
 #pragma warning disable SA1402,SA1204 // LogMessages are only used in this file
-internal static partial class UpdateProfileLogMessages
+internal static class UpdateProfileLogMessages
 {
     public static void ProfileCreated(this ILogger logger, Profile profile)
     {

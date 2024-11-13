@@ -77,7 +77,7 @@
             Selection = actionEvent.Selection,
             Language = _conversation.Language,
             NewContext = _context!,
-            NewText = _text!
+            NewText = _text!,
         };
         var updatedConversation = await ConversationService.ApplyActionAsync(input);
         if (updatedConversation == null) return;

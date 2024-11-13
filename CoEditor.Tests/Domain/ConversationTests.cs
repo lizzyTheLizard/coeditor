@@ -1,4 +1,5 @@
-﻿using CoEditor.Domain.Api;
+﻿using System.Globalization;
+using CoEditor.Domain.Api;
 using CoEditor.Domain.Dependencies;
 using CoEditor.Domain.Model;
 
@@ -9,7 +10,7 @@ public class ConversationTests
     [Fact]
     public void ToPromptMessages_Empty()
     {
-        var conversation = new Conversation()
+        var conversation = new Conversation
         {
             Id = Guid.NewGuid(),
             UserName = "TestUser",
@@ -26,7 +27,7 @@ public class ConversationTests
     [Fact]
     public void ToPromptMessages_NonEmpty()
     {
-        var conversation = new Conversation()
+        var conversation = new Conversation
         {
             Id = Guid.NewGuid(),
             UserName = "TestUser",
@@ -35,14 +36,14 @@ public class ConversationTests
             Text = "Initial Text",
             Context = "Initial Context",
             Messages = [
-                new ConversationMessage()
+                new ConversationMessage
                 {
                     PromptedAt = DateTime.Now,
                     Type = ConversationMessageType.System,
                     Prompt = "System Prompt",
                     Response = "System Response",
                 },
-                new ConversationMessage()
+                new ConversationMessage
                 {
                     PromptedAt = DateTime.Now,
                     Type = ConversationMessageType.User,
@@ -66,7 +67,7 @@ public class ConversationTests
     [Fact]
     public void ToString_ContainsEverything()
     {
-        var conversation = new Conversation()
+        var conversation = new Conversation
         {
             Id = Guid.NewGuid(),
             UserName = "TestUser",
@@ -79,7 +80,7 @@ public class ConversationTests
         var str = conversation.ToString();
         Assert.Contains(conversation.Id.ToString(), str);
         Assert.Contains(conversation.UserName, str);
-        Assert.Contains(conversation.StartedAt.ToString(), str);
+        Assert.Contains(conversation.StartedAt.ToString(CultureInfo.InvariantCulture), str);
         Assert.Contains(conversation.Language.ToString(), str);
         Assert.Contains(conversation.Text, str);
         Assert.Contains(conversation.Context, str);
@@ -88,7 +89,7 @@ public class ConversationTests
     [Fact]
     public void Update()
     {
-        var conversation = new Conversation()
+        var conversation = new Conversation
         {
             Id = Guid.NewGuid(),
             UserName = "TestUser",
@@ -98,7 +99,7 @@ public class ConversationTests
             Context = "Initial Context",
             Messages = [],
         };
-        var updated = conversation.Update(new HandleActionInput()
+        var updated = conversation.Update(new HandleActionInput
         {
             ConversationGuid = conversation.Id,
             NewText = "new text",
@@ -116,7 +117,7 @@ public class ConversationTests
     [Fact]
     public void UpdateMessages()
     {
-        var conversation = new Conversation()
+        var conversation = new Conversation
         {
             Id = Guid.NewGuid(),
             UserName = "TestUser",
