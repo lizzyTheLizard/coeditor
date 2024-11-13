@@ -81,7 +81,7 @@ public class ConversationTests
         var str = conversation.ToString();
         Assert.Contains(conversation.Id.ToString(), str);
         Assert.Contains(conversation.UserName, str);
-        Assert.Contains(conversation.StartedAt.ToString(CultureInfo.InvariantCulture), str);
+        Assert.Contains(conversation.StartedAt.ToString(CultureInfo.CurrentCulture), str);
         Assert.Contains(conversation.Language.ToString(), str);
         Assert.Contains(conversation.Text, str);
         Assert.Contains(conversation.Context, str);
