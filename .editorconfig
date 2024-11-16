@@ -23,8 +23,12 @@ dotnet_diagnostic.SA1134.severity = None
 dotnet_diagnostic.SA1200.severity = None
 # SA1309FieldNamesMustNotBeginWithUnderscore
 dotnet_diagnostic.SA1309.severity = None
+# SA1413UseTrailingCommasInMultiLineInitializers
+dotnet_diagnostic.SA1413.severity = None
 # SA1503BracesMustNotBeOmitted
 dotnet_diagnostic.SA1503.severity = None
+# SA1519BracesMustNotBeOmittedFromMultiLineChildStatement
+dotnet_diagnostic.SA1519.severity = None
 # SA1600ElementsMustBeDocumented
 dotnet_diagnostic.SA1600.severity = None
 # SA1601PartialElementsMustBeDocumented

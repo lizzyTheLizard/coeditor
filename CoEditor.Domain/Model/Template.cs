@@ -41,7 +41,7 @@ public partial class Template
             {
                 Name = name,
                 Type = Enum.Parse<TemplateParameterType>(type, true),
-                Options = options,
+                Options = options
             };
             parameters.Add(parameter);
         }

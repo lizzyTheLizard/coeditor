@@ -7,7 +7,7 @@ public enum ActionName
     Improve,
     Expand,
     Reformulate,
-    Summarize,
+    Summarize
 }
 
 public class HandleNamedActionInput : HandleActionInput

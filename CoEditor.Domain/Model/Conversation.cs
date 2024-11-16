@@ -49,7 +49,7 @@ public class Conversation
             Language = Language,
             Text = input.NewText,
             Context = input.NewContext,
-            Messages = Messages,
+            Messages = Messages
         };
     }
 
@@ -63,7 +63,7 @@ public class Conversation
             Language = Language,
             Text = promptResult.Response ?? Text,
             Context = Context,
-            Messages = [.. Messages, .. ConvertNewMessages(newMessages, promptResult)],
+            Messages = [.. Messages, .. ConvertNewMessages(newMessages, promptResult)]
         };
     }
 
@@ -78,7 +78,7 @@ public class Conversation
             Language = Language,
             Text = text,
             Context = Context,
-            Messages = Messages,
+            Messages = Messages
         };
     }
 
@@ -104,7 +104,7 @@ public class Conversation
                 Prompt = message.Prompt,
                 Type = type,
                 Response = isLast ? promptResult.Response : null,
-                DurationInMs = isLast ? promptResult.DurationInMs : null,
+                DurationInMs = isLast ? promptResult.DurationInMs : null
             };
             result.Add(conversationMessage);
         }

@@ -17,7 +17,7 @@ public class ConversationService(
             Language = language,
             NewContext = context,
             NewText = string.Empty,
-            ConversationGuid = Guid.NewGuid(),
+            ConversationGuid = Guid.NewGuid()
         };
         try
         {

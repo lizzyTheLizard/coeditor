@@ -4,7 +4,7 @@ public enum PromptMessageType
 {
     User,
     System,
-    Assistant,
+    Assistant
 }
 
 public interface IAiConnector

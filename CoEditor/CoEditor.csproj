@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Properties\launchSettings.json" />
-      <None Remove="Properties\ServiceDependencies\coeditor-gutschi-site - Web Deploy\profile.arm.json" />
+        <None Remove="Properties\launchSettings.json"/>
+        <None Remove="Properties\ServiceDependencies\coeditor-gutschi-site - Web Deploy\profile.arm.json"/>
     </ItemGroup>
 </Project>

@@ -17,7 +17,7 @@ internal class GetProfileUseCase(IProfileRepository profileRepository, ILogger<G
         {
             Language.En,
             "I am a new user and there is no information stored about me. Just use default settings."
-        },
+        }
     };
 
     public async Task<Profile> GetProfileAsync(string userName, Language language)

@@ -34,16 +34,13 @@
     private string? _context;
     private string? _text;
     private Conversation? _conversation;
+
     private bool _busy = true;
 
-<<<<<<< HEAD
     protected override Task OnInitializedAsync()
     {
-        return RunWithSpinner(ReloadTemplates);
+        return ReloadTemplates();
     }
-=======
-    protected override Task OnInitializedAsync() => ReloadTemplates();
->>>>>>> 4259424 (fix minor FE stuff)
 
     private async Task ReloadTemplates()
     {
@@ -84,7 +81,7 @@
             Selection = actionEvent.Selection,
             Language = _conversation.Language,
             NewContext = _context!,
-            NewText = _text!,
+            NewText = _text!
         };
         var updatedConversation = await ConversationService.ApplyActionAsync(input);
         if (updatedConversation == null) return;

@@ -17,7 +17,7 @@ internal class ConversationRepository(CosmosDbContext dbContext)
             Language = conversation.Language,
             Text = conversation.Text,
             Context = conversation.Context,
-            Messages = [.. conversation.Messages],
+            Messages = [.. conversation.Messages]
         };
         dbContext.Add(document);
         await dbContext.SaveChangesAsync();
@@ -48,7 +48,7 @@ internal class ConversationRepository(CosmosDbContext dbContext)
             Language = conversation.Language,
             Text = conversation.Text,
             Context = conversation.Context,
-            Messages = [.. conversation.Messages],
+            Messages = [.. conversation.Messages]
         };
         return result;
     }

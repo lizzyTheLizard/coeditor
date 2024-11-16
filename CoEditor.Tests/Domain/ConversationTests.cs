@@ -18,7 +18,7 @@ public class ConversationTests
             Language = Language.En,
             Text = "Initial Text",
             Context = "Initial Context",
-            Messages = [],
+            Messages = []
         };
         var promptMessages = conversation.ToPromptMessages();
         Assert.Empty(promptMessages);
@@ -42,16 +42,16 @@ public class ConversationTests
                     PromptedAt = DateTime.Now,
                     Type = ConversationMessageType.System,
                     Prompt = "System Prompt",
-                    Response = "System Response",
+                    Response = "System Response"
                 },
                 new ConversationMessage
                 {
                     PromptedAt = DateTime.Now,
                     Type = ConversationMessageType.User,
                     Prompt = "User Prompt",
-                    Response = "User Response",
-                },
-            ],
+                    Response = "User Response"
+                }
+            ]
         };
         var promptMessages = conversation.ToPromptMessages();
         Assert.Equal(4, promptMessages.Length);
@@ -76,7 +76,7 @@ public class ConversationTests
             Language = Language.En,
             Text = "Initial Text",
             Context = "Initial Context",
-            Messages = [],
+            Messages = []
         };
         var str = conversation.ToString();
         Assert.Contains(conversation.Id.ToString(), str);
@@ -98,13 +98,13 @@ public class ConversationTests
             Language = Language.En,
             Text = "Initial Text",
             Context = "Initial Context",
-            Messages = [],
+            Messages = []
         };
         var updated = conversation.Update(new HandleActionInput
         {
             ConversationGuid = conversation.Id,
             NewText = "new text",
-            NewContext = "new context",
+            NewContext = "new context"
         });
         Assert.Equal(conversation.Id, updated.Id);
         Assert.Equal(conversation.UserName, updated.UserName);
@@ -126,12 +126,12 @@ public class ConversationTests
             Language = Language.En,
             Text = "Initial Text",
             Context = "Initial Context",
-            Messages = [],
+            Messages = []
         };
         var updated = conversation.Update(
             [
                 new PromptMessage("System Prompt", PromptMessageType.System),
-                new PromptMessage("User Prompt", PromptMessageType.User),
+                new PromptMessage("User Prompt", PromptMessageType.User)
             ],
             new PromptResult("Response", 17));
         var promptMessages = updated.ToPromptMessages();

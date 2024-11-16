@@ -1,5 +1,4 @@
 ﻿using CoEditor.Client.Services;
-using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace CoEditor.Tests.Client;

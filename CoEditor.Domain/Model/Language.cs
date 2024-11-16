@@ -4,8 +4,11 @@ namespace CoEditor.Domain.Model;
 
 public enum Language
 {
-    [Description("Deutsch")] De,
-    [Description("English")] En,
+    [Description("Deutsch")]
+    De,
+
+    [Description("English")]
+    En
 }
 
 #pragma warning disable SA1649 // Additional class as it is part of the enum

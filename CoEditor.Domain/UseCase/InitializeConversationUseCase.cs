@@ -22,7 +22,7 @@ internal class InitializeConversationUseCase(
             Language = input.Language,
             Text = input.NewText,
             Context = input.NewContext,
-            Messages = [],
+            Messages = []
         };
         await conversationRepository.EnsureNotExistingAsync(conversation.Id);
         var profile = await getProfileApi.GetProfileAsync(userName, input.Language);

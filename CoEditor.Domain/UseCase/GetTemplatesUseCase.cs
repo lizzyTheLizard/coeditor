@@ -43,7 +43,7 @@ internal class GetTemplatesUseCase(
         {
             Language.De => [DefaultDe, EmailDe],
             Language.En => [DefaultEn, EmailEn],
-            _ => throw new NotImplementedException(),
+            _ => throw new NotImplementedException()
         };
         return systemTemplates
             .Select(t => ToTemplate(t, userName, language))
@@ -59,7 +59,7 @@ internal class GetTemplatesUseCase(
             Text = t.Text,
             UserName = userName,
             Language = language,
-            DefaultTemplate = true,
+            DefaultTemplate = true
         };
     }
 }

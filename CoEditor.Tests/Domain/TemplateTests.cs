@@ -14,7 +14,7 @@ public class TemplateTests
             Language = Language.En,
             Name = "TestName",
             Text = "TestText",
-            DefaultTemplate = false,
+            DefaultTemplate = false
         };
         var str = conversation.ToString();
         Assert.Contains(conversation.Id.ToString(), str);
@@ -35,7 +35,7 @@ public class TemplateTests
             Language = Language.En,
             Name = "TestName",
             Text = "TestText",
-            DefaultTemplate = false,
+            DefaultTemplate = false
         };
         var parameters = conversation.GetTemplateParameters();
         Assert.Empty(parameters);
@@ -51,7 +51,7 @@ public class TemplateTests
             Language = Language.En,
             Name = "TestName",
             Text = "{name:text} {long:longtext} {select:select:option1,option2}",
-            DefaultTemplate = false,
+            DefaultTemplate = false
         };
         var parameters = conversation.GetTemplateParameters();
         Assert.Equal(3, parameters.Length);
@@ -76,7 +76,7 @@ public class TemplateTests
             Language = Language.En,
             Name = "TestName",
             Text = "{name:text} {long:longtext} {select:select:option1,option2}",
-            DefaultTemplate = false,
+            DefaultTemplate = false
         };
         var text = conversation.CalculateText(
         [
@@ -85,7 +85,7 @@ public class TemplateTests
             new TemplateParameter
                 { Name = "long", Type = TemplateParameterType.LongText, Value = "TestLongValue", Options = [] },
             new TemplateParameter
-                { Name = "select", Type = TemplateParameterType.Select, Value = "option2", Options = [] },
+                { Name = "select", Type = TemplateParameterType.Select, Value = "option2", Options = [] }
         ]);
         Assert.Equal("TestValue TestLongValue option2", text);
     }
