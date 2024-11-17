@@ -12,31 +12,24 @@ internal class HandleActionUseCase(
     IConversationRepository conversationRepository,
     ILogger<HandleActionUseCase> logger) : IHandleActionApi
 {
-    public async Task<Conversation> HandleActionAsync(string userName, HandleNamedActionInput input)
+    public async Task<Conversation> HandleActionAsync(string userName, HandleActionInput input)
     {
         var conversation = await GetExistingConversation(userName, input.ConversationGuid);
         var existingMessages = conversation.ToPromptMessages();
-        var prompt = promptMessageFactory.GetCommandPrompt(input);
-        var newMessages = promptMessageFactory.GenerateActionMessages(conversation, input, prompt);
+        var newMessages = promptMessageFactory.GenerateActionMessages(conversation, input);
         var result = await aiConnector.PromptAsync([.. existingMessages, .. newMessages]);
-        var updatedConversation = conversation.Update(input).Update(newMessages, result);
-        if (input.Selection != null) updatedConversation = updatedConversation.Update(input.Selection, input.NewText);
 
-        await conversationRepository.UpdateAsync(updatedConversation);
-        logger.ConversationUpdated(input.Action, updatedConversation);
-        return updatedConversation;
-    }
+        if (input is HandleNamedActionInput { Selection: not null } namedInput1)
+            conversation = conversation.Update(namedInput1.Selection, input.NewText);
+        else
+            conversation = conversation.Update(input).Update(newMessages, result);
+        await conversationRepository.UpdateAsync(conversation);
 
-    public async Task<Conversation> HandleActionAsync(string userName, HandleCustomActionInput input)
-    {
-        var conversation = await GetExistingConversation(userName, input.ConversationGuid);
-        var existingMessages = conversation.ToPromptMessages();
-        var newMessages = promptMessageFactory.GenerateActionMessages(conversation, input, input.Action);
-        var result = await aiConnector.PromptAsync([.. existingMessages, .. newMessages]);
-        var updatedConversation = conversation.Update(input).Update(newMessages, result);
-        await conversationRepository.UpdateAsync(updatedConversation);
-        logger.ConversationUpdated(null, updatedConversation);
-        return updatedConversation;
+        if (input is HandleNamedActionInput namedInput2)
+            logger.ConversationUpdated(namedInput2.Action, conversation);
+        else
+            logger.ConversationUpdated(null, conversation);
+        return conversation;
     }
 
     private async Task<Conversation> GetExistingConversation(string userName, Guid conversationGuid)

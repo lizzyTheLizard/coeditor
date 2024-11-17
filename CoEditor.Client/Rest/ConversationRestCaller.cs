@@ -6,21 +6,20 @@ namespace CoEditor.Client.Rest;
 
 public class ConversationRestCaller(HttpClient httpClient) : IInitializeConversationApi, IHandleActionApi
 {
-    public async Task<Conversation> HandleActionAsync(string userName, HandleNamedActionInput input)
+    public async Task<Conversation> HandleActionAsync(string userName, HandleActionInput input)
     {
-        const string url = "api/Conversation/Action";
-        var response = await httpClient.PostAsJsonAsync(url, input);
-        if (!response.IsSuccessStatusCode)
-            throw new ServiceCallFailedException(HttpMethod.Post, url, response.StatusCode);
-
-        return await response.Content.ReadFromJsonAsync<Conversation>() ??
-               throw new ServiceCallFailedException(HttpMethod.Post, url);
-    }
-
-    public async Task<Conversation> HandleActionAsync(string userName, HandleCustomActionInput input)
-    {
-        const string url = "api/Conversation/CustomAction";
-        var response = await httpClient.PostAsJsonAsync(url, input);
+        var url = input switch
+        {
+            HandleNamedActionInput => "api/Conversation/Action",
+            HandleCustomActionInput => "api/Conversation/CustomAction",
+            _ => throw new NotImplementedException($"Not implemented action type {input.GetType()}"),
+        };
+        var response = await (input switch
+        {
+            HandleNamedActionInput actionInput => httpClient.PostAsJsonAsync(url, actionInput),
+            HandleCustomActionInput actionInput => httpClient.PostAsJsonAsync(url, actionInput),
+            _ => throw new NotImplementedException($"Not implemented action type {input.GetType()}"),
+        });
         if (!response.IsSuccessStatusCode)
             throw new ServiceCallFailedException(HttpMethod.Post, url, response.StatusCode);
 
