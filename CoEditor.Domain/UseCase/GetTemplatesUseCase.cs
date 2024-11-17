@@ -9,25 +9,17 @@ internal class GetTemplatesUseCase(
     ITemplateRepository templateRepository,
     ILogger<GetTemplatesUseCase> logger) : IGetTemplatesApi
 {
-    private static readonly SystemTemplate DefaultEn = new(
-        Guid.Parse("8a93cccb-5cad-4bc7-97ae-78fc7f1da785"),
-        "Default",
-        "I want to write {Context:LongText}");
-
-    private static readonly SystemTemplate EmailEn = new(
-        Guid.Parse("c7dfe23f-250d-40a5-86c8-a3f6debe15f2"),
-        "E-Mail",
-        "I want to write an email to {Connection:select:Work Collegue,Friend, Customer} {Name:text}. I know him {Knowledge:select:Well,Barely}. The tone should be {Tone:select:Humble,Aggressive,Friendly}. The content of the mail considers {Context:longtext}");
-
-    private static readonly SystemTemplate DefaultDe = new(
-        Guid.Parse("fc93a8c5-faeb-4b7b-8064-7c79ba29d65e"),
-        "Text",
-        "Ich will folgendes schreiben: {Inhalt:LongText}");
-
-    private static readonly SystemTemplate EmailDe = new(
-        Guid.Parse("944dee80-cb27-41a0-bfea-37142805edef"),
-        "E-Mail",
-        "Ich will eine E-Mail an einen {Verbindung:select:Arbeitskollege, Freund, Kunde} namens {Name:text} schreiben. Ich kenne diese Person {Kenntnis:select:Gut, Kaum}. Der Ton des Mails soll {Ton:select:Bescheiden, Aggressiv, Freundlich} sein. Das Mail geht um folgendes: {Inhalt:longtext}");
+    private static readonly SystemTemplate[] SystemTemplates =
+    [
+        new("Ohne Kontext", string.Empty,
+            "Without Context", string.Empty),
+        new("Mit Kontext", "{Inhalt:longtext}",
+            "With Context", "{Context:longtext}"),
+        new("E-Mail",
+            "Ich will eine E-Mail an einen {Verbindung:select:Arbeitskollege, Freund, Kunde} namens {Name:text} schreiben. Ich kenne diese Person {Kenntnis:select:Gut, Kaum}. Der Ton des Mails soll {Ton:select:Bescheiden, Aggressiv, Freundlich} sein. Das Mail geht um folgendes:\n\n{Inhalt:longtext}",
+            "E-Mail",
+            "I want to write an email to {Connection:select:Work Collegue,Friend, Customer} {Name:text}. I know him {Knowledge:select:Well,Barely}. The tone should be {Tone:select:Humble,Aggressive,Friendly}. The content of the mail considers the followig:\n\n{Context:longtext}")
+    ];
 
     public async Task<Template[]> GetTemplatesAsync(string userName, Language language)
     {
@@ -39,33 +31,38 @@ internal class GetTemplatesUseCase(
 
     private static Template[] GetSystemTemplates(string userName, Language language)
     {
-        SystemTemplate[] systemTemplates = language switch
-        {
-            Language.De => [DefaultDe, EmailDe],
-            Language.En => [DefaultEn, EmailEn],
-            _ => throw new NotImplementedException()
-        };
-        return systemTemplates
-            .Select(t => ToTemplate(t, userName, language))
+        return SystemTemplates
+            .Select(t => t.ToTemplate(userName, language))
             .ToArray();
     }
+}
 
-    private static Template ToTemplate(SystemTemplate t, string userName, Language language)
+#pragma warning disable SA1402 // This is a purely internal class and should not be split into multiple files
+internal record SystemTemplate(string NameDe, string TextDe, string NameEn, string TextEn)
+{
+    public Template ToTemplate(string userName, Language language)
     {
         return new Template
         {
-            Id = t.Id,
-            Name = t.Name,
-            Text = t.Text,
+            Id = Guid.NewGuid(),
+            Name = language switch
+            {
+                Language.De => NameDe,
+                Language.En => NameEn,
+                _ => throw new ArgumentOutOfRangeException(nameof(language), language, null)
+            },
+            Text = language switch
+            {
+                Language.De => TextDe,
+                Language.En => TextEn,
+                _ => throw new ArgumentOutOfRangeException(nameof(language), language, null)
+            },
             UserName = userName,
             Language = language,
             DefaultTemplate = true
         };
     }
 }
-
-#pragma warning disable SA1402 // This is a purely internal class and should not be split into multiple files
-internal record SystemTemplate(Guid Id, string Name, string Text);
 
 #pragma warning disable SA1402,SA1204 // LogMessages are only used in this file
 internal static class GetTemplatesLogMessages

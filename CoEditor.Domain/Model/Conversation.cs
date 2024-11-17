@@ -53,7 +53,7 @@ public class Conversation
         };
     }
 
-    public Conversation Update(PromptMessage[] newMessages, PromptResult promptResult)
+    public Conversation Update(PromptMessage[] newMessages, PromptResult? promptResult)
     {
         return new Conversation
         {
@@ -61,7 +61,7 @@ public class Conversation
             UserName = UserName,
             StartedAt = StartedAt,
             Language = Language,
-            Text = promptResult.Response ?? Text,
+            Text = promptResult?.Response ?? Text,
             Context = Context,
             Messages = [.. Messages, .. ConvertNewMessages(newMessages, promptResult)]
         };
@@ -88,7 +88,7 @@ public class Conversation
             $"{base.ToString()}: Id={Id}, UserName={UserName}, StartedAt={StartedAt}, Language={Language}, TextLength={Text.Length}, ContextLegth={Context.Length}, NumberOfMessages={Messages.Length}, Text={Text}, Context={Context}, Messags=[{string.Join<ConversationMessage>(",", Messages)}]";
     }
 
-    private static List<ConversationMessage> ConvertNewMessages(PromptMessage[] newMessages, PromptResult promptResult)
+    private static List<ConversationMessage> ConvertNewMessages(PromptMessage[] newMessages, PromptResult? promptResult)
     {
         var result = new List<ConversationMessage>();
         for (var i = 0; i < newMessages.Length; i++)
@@ -103,8 +103,8 @@ public class Conversation
                 PromptedAt = DateTime.Now,
                 Prompt = message.Prompt,
                 Type = type,
-                Response = isLast ? promptResult.Response : null,
-                DurationInMs = isLast ? promptResult.DurationInMs : null
+                Response = isLast ? promptResult?.Response : null,
+                DurationInMs = isLast ? promptResult?.DurationInMs : null
             };
             result.Add(conversationMessage);
         }

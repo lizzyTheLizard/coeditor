@@ -27,7 +27,7 @@ internal class InitializeConversationUseCase(
         await conversationRepository.EnsureNotExistingAsync(conversation.Id);
         var profile = await getProfileApi.GetProfileAsync(userName, input.Language);
         var messages = promptMessageFactory.GenerateInitialMessages(conversation, profile);
-        var result = await aiConnector.PromptAsync(messages);
+        var result = input.NewContext == string.Empty ? null : await aiConnector.PromptAsync(messages);
         var updatedConversation = conversation.Update(messages, result);
         await conversationRepository.CreateAsync(updatedConversation);
         logger.ConversationCreated(updatedConversation);
