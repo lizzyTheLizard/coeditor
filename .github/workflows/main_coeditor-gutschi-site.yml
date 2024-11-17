@@ -24,6 +24,9 @@ jobs:
       - name: Build with dotnet
         run: dotnet build --configuration Release
       - name: Test
+        env:
+            ConnectionStrings__cosmos: ${{ secrets.ConnectionStrings__cosmos }}
+            AzureOpenAI__ApiKey: ${{ secrets.AzureOpenAI__ApiKey }}
         run: dotnet test
       - name: Publish
         run: dotnet publish CoEditor -c Release -o ./Output
