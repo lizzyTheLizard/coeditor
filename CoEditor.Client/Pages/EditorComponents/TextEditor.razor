@@ -44,12 +44,13 @@
         <div class="col p-1" style="flex: 0.1 0 4rem;">
             <button class="btn btn-primary container p-0"
                     style="height: 2rem;"
-                    disabled="@(string.IsNullOrEmpty(_customAction))" 
+                    disabled="@(string.IsNullOrEmpty(_customAction))"
                     @onclick="ExecuteCustomAction">Execute
             </button>
         </div>
     </div>
 </div>
+
 @code {
     [Parameter]
     public string? Text { get; set; }
@@ -114,7 +115,7 @@
         await ActionCalled.InvokeAsync(actionEvent);
         _customAction = "";
     }
-    
+
     private async Task<Selection?> GetSelectionAsync()
     {
         const string textareaId = "editorTextarea";

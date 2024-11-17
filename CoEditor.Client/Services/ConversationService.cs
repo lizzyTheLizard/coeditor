@@ -64,15 +64,18 @@ internal static partial class ConversationServiceLogMessages
     [LoggerMessage(LogLevel.Warning, EventId = 2202, Message = "Could not start conversation")]
     public static partial void ConversationStartFailed(this ILogger logger, Exception e);
 
-    public static void ConversationActionApplied(this ILogger logger, HandleActionInput input, Conversation conversation)
+    public static void ConversationActionApplied(this ILogger logger, HandleActionInput input,
+        Conversation conversation)
     {
         switch (input)
         {
             case HandleNamedActionInput named:
-                logger.LogInformation(2204, "Action {Action} on conversation {Id} applied", named.Action, conversation.Id);
+                logger.LogInformation(2204, "Action {Action} on conversation {Id} applied", named.Action,
+                    conversation.Id);
                 break;
             case HandleCustomActionInput custom:
-                logger.LogInformation(2204, "Custom Action on conversation {Id} applied: {Action}", conversation.Id, custom.Action);
+                logger.LogInformation(2204, "Custom Action on conversation {Id} applied: {Action}", conversation.Id,
+                    custom.Action);
                 break;
         }
 

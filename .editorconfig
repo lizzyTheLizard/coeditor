@@ -41,4 +41,4 @@ dotnet_diagnostic.SA1602.severity = None
 dotnet_diagnostic.SA1633.severity = None
 # SA1117ParametersMustBeOnSameLineOrSeparateLines
 dotnet_diagnostic.SA1117.severity = None
-resharper_entity_framework_model_validation_unlimited_string_length_highlighting=none
+resharper_entity_framework_model_validation_unlimited_string_length_highlighting = none

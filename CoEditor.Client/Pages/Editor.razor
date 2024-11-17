@@ -76,7 +76,8 @@
     {
         HandleActionInput input = actionEvent switch
         {
-            {ActionName: not null} => new HandleNamedActionInput {
+            { ActionName: not null } => new HandleNamedActionInput
+            {
                 ConversationGuid = _conversation!.Id,
                 Action = actionEvent.ActionName ?? throw new InvalidOperationException("ActionName is null"),
                 Selection = actionEvent.Selection,
@@ -84,7 +85,8 @@
                 NewContext = _context!,
                 NewText = _text!
             },
-            {CustomAction: not null} => new HandleCustomActionInput {
+            { CustomAction: not null } => new HandleCustomActionInput
+            {
                 ConversationGuid = _conversation!.Id,
                 Action = actionEvent.CustomAction,
                 NewContext = _context!,
@@ -97,7 +99,7 @@
         _conversation = updatedConversation;
         _text = updatedConversation.Text;
     }
-    
+
     private async Task RunWithSpinner(Func<Task> action)
     {
         _busy = true;
