@@ -32,9 +32,13 @@
     private Profile? _profile;
     private bool _busy = true;
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        return OnLanguageChanged();
+        if (firstRender)
+        {
+            await OnLanguageChanged();
+        }
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task OnLanguageChanged()
@@ -46,6 +50,7 @@
             .Where(t => !t.DefaultTemplate)
             .ToArray();
         _busy = false;
+        StateHasChanged();
     }
 
     private async Task OnDeleteTemplate(Template template)

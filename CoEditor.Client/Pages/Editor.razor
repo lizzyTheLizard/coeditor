@@ -37,9 +37,13 @@
 
     private bool _busy = true;
 
-    protected override Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        return ReloadTemplates();
+        if (firstRender)
+        {
+            await RunWithSpinner(ReloadTemplates);
+        }
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private async Task ReloadTemplates()
@@ -106,5 +110,6 @@
         StateHasChanged();
         await action.Invoke();
         _busy = false;
+        StateHasChanged();
     }
 }
