@@ -11,6 +11,8 @@ insert_final_newline = true
 
 # StyleCorp Custom Rules
 [*.cs]
+# CA1848: Use the LoggerMessage delegates
+dotnet_diagnostic.CA1848.severity = None
 # SA0001XmlCommentAnalysisDisabled
 dotnet_diagnostic.SA0001.severity = None
 # SA1101PrefixLocalCallsWithThis
@@ -39,3 +41,4 @@ dotnet_diagnostic.SA1602.severity = None
 dotnet_diagnostic.SA1633.severity = None
 # SA1117ParametersMustBeOnSameLineOrSeparateLines
 dotnet_diagnostic.SA1117.severity = None
+resharper_entity_framework_model_validation_unlimited_string_length_highlighting=none

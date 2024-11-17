@@ -66,10 +66,12 @@ internal class PromptMessageFactory
             result.Add(_contextChangedMessage.GetPrompt(conversation.Language, input.NewContext));
         if (conversation.Text != input.NewText)
             result.Add(_textChangedMessage.GetPrompt(conversation.Language, input.NewText));
-        if (input is HandleCustomActionInput handleCustomActionInput)
-            result.Add(new PromptMessage(handleCustomActionInput.Action, PromptMessageType.User));
-        if (input is HandleNamedActionInput namedActionInput)
-            result.Add(GetPromptMessage(namedActionInput));
+        result.Add(input switch
+        {
+            HandleNamedActionInput actionInput => GetPromptMessage(actionInput),
+            HandleCustomActionInput actionInput => new PromptMessage(actionInput.Action, PromptMessageType.User),
+            _ => throw new InvalidOperationException($"Action type {input.GetType()} not supported")
+        });
         return result.ToArray();
     }
 
