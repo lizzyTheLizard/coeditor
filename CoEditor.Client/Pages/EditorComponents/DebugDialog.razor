@@ -2,6 +2,8 @@
 @inject ShortcutService ShortcutService
 @inject ILogger<DebugDialog> Logger
 @implements IDisposable
+@using System.Web
+@using System.Text.RegularExpressions;
 
 <div class="modal" id="debugModal">
     <div class="modal-dialog modal-dialog-scrollable modal-lg modal-fullscreen-md-down">
@@ -21,10 +23,14 @@
                     <ul class="list-group">
                         @foreach (var message in Conversation?.Messages ?? [])
                         {
-                            <li class="@GetClassesForType(message.Type)">@message.Prompt</li>
+                            <li class="@GetClassesForType(message.Type)">
+                                @((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(@message.Prompt), "\r?\n|\r", "<br />"))
+                            </li>
                             if (message.Response != null)
                             {
-                                <li class="list-group-item list-group-item-secondary text-end">@message.Response</li>
+                                <li class="list-group-item list-group-item-secondary text-end">
+                                    @((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(@message.Response), "\r?\n|\r", "<br />"))
+                                </li>
                             }
                         }
                     </ul>
