@@ -42,7 +42,7 @@ internal class AiConnector(IOptions<AzureOpenAiConfiguration> optionsProvider, I
                     chatMessages.Add(new AssistantChatMessage(message.Prompt));
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException($"Unknown message type: {message.Type}");
+                    throw new ArgumentOutOfRangeException(nameof(messages), message, null);
             }
 
         return chatMessages;

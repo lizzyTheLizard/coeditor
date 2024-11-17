@@ -12,7 +12,7 @@ internal class UpdateTemplateUseCase(
 {
     public async Task<Template> UpdateTemplateAsync(string userName, Template tmpl)
     {
-        if (tmpl.UserName != userName) throw new ArgumentException("Wrong user name in body");
+        if (tmpl.UserName != userName) throw new ArgumentException("Wrong user name in body", nameof(userName));
         var originalTemplate = await templateRepository.FindTemplateAsync(tmpl.Id);
         if (originalTemplate == null)
         {

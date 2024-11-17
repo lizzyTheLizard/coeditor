@@ -102,7 +102,7 @@ internal record MessageType(string FormatDe, string FormatEn)
         {
             Language.En => new PromptMessage(string.Format(new CultureInfo("en-US"), FormatEn, args), _type),
             Language.De => new PromptMessage(string.Format(new CultureInfo("de-De"), FormatDe, args), _type),
-            _ => throw new NotImplementedException($"Language {language} not supported")
+            _ => throw new InvalidOperationException($"Language {language} not supported")
         };
     }
 }

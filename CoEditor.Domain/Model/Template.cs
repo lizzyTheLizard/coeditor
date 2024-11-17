@@ -56,9 +56,8 @@ public partial class Template
             var value = match.Groups["value"].Value;
             var parts = value.Split(':');
             var name = parts[0];
-            var parameter = Array.Find(templateParameters, p => p.Name == name) ??
-                            throw new ArgumentOutOfRangeException(name);
-            return parameter.Value;
+            var parameter = Array.Find(templateParameters, p => p.Name == name);
+            return parameter?.Value ?? string.Empty;
         });
     }
 

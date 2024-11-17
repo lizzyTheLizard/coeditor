@@ -32,7 +32,7 @@
             </div>
             break;
         default:
-            throw new Exception($"Unknown parameter type {param.Type}");
+            throw new InvalidOperationException($"Unknown parameter type {param.Type}");
     }
 }
 <div class="col-12 p-0"></div>

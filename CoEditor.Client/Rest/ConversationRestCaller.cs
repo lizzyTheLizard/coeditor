@@ -12,13 +12,13 @@ public class ConversationRestCaller(HttpClient httpClient) : IInitializeConversa
         {
             HandleNamedActionInput => "api/Conversation/Action",
             HandleCustomActionInput => "api/Conversation/CustomAction",
-            _ => throw new NotImplementedException($"Not implemented action type {input.GetType()}"),
+            _ => throw new InvalidOperationException($"Not implemented action type {input.GetType()}"),
         };
         var response = await (input switch
         {
             HandleNamedActionInput actionInput => httpClient.PostAsJsonAsync(url, actionInput),
             HandleCustomActionInput actionInput => httpClient.PostAsJsonAsync(url, actionInput),
-            _ => throw new NotImplementedException($"Not implemented action type {input.GetType()}"),
+            _ => throw new InvalidOperationException($"Not implemented action type {input.GetType()}"),
         });
         if (!response.IsSuccessStatusCode)
             throw new ServiceCallFailedException(HttpMethod.Post, url, response.StatusCode);
