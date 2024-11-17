@@ -34,8 +34,22 @@
                       OnTriggered="() => ClearConversation.InvokeAsync()" Name="Clear">
         </ActionButton>
     </div>
+    <div class="row g-1 align-items-end">
+        <div class="col min-col-width">
+            <label for="customAction" class="form-label">Custom Action</label>
+            <InputText id="customAction"
+                       class="form-control form-control-sm mb-1"
+                       @bind-Value="_customAction"/>
+        </div>
+        <div class="col p-1" style="flex: 0.1 0 4rem;">
+            <button class="btn btn-primary container p-0"
+                    style="height: 2rem;"
+                    disabled="@(string.IsNullOrEmpty(_customAction))" 
+                    @onclick="ExecuteCustomAction">Execute
+            </button>
+        </div>
+    </div>
 </div>
-
 @code {
     [Parameter]
     public string? Text { get; set; }
@@ -51,6 +65,7 @@
 
     private string? _focusToBeSet;
     private string? _oldText;
+    private string _customAction = "";
 
     protected override void OnParametersSet()
     {
@@ -77,7 +92,7 @@
     private async Task OnActionButtonAsync(ActionName actionName)
     {
         var selection = await GetSelectionAsync();
-        var actionEvent = new ActionEvent(actionName, selection);
+        var actionEvent = new ActionEvent(null, actionName, selection);
         await ActionCalled.InvokeAsync(actionEvent);
     }
 
@@ -93,6 +108,13 @@
         await TextChanged.InvokeAsync(Text);
     }
 
+    private async Task ExecuteCustomAction()
+    {
+        var actionEvent = new ActionEvent(_customAction, null, null);
+        await ActionCalled.InvokeAsync(actionEvent);
+        _customAction = "";
+    }
+    
     private async Task<Selection?> GetSelectionAsync()
     {
         const string textareaId = "editorTextarea";

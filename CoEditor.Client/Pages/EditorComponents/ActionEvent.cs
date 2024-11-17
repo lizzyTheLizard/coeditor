@@ -2,4 +2,4 @@
 
 namespace CoEditor.Client.Pages.EditorComponents;
 
-public record ActionEvent(ActionName ActionName, Selection? Selection);
+public record ActionEvent(string? CustomAction, ActionName? ActionName, Selection? Selection);

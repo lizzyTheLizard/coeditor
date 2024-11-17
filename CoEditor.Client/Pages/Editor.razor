@@ -74,21 +74,30 @@
 
     private async Task ExecuteAction(ActionEvent actionEvent)
     {
-        var input = new HandleNamedActionInput
+        HandleActionInput input = actionEvent switch
         {
-            ConversationGuid = _conversation!.Id,
-            Action = actionEvent.ActionName,
-            Selection = actionEvent.Selection,
-            Language = _conversation.Language,
-            NewContext = _context!,
-            NewText = _text!
+            {ActionName: not null} => new HandleNamedActionInput {
+                ConversationGuid = _conversation!.Id,
+                Action = actionEvent.ActionName ?? throw new InvalidOperationException("ActionName is null"),
+                Selection = actionEvent.Selection,
+                Language = _conversation.Language,
+                NewContext = _context!,
+                NewText = _text!
+            },
+            {CustomAction: not null} => new HandleCustomActionInput {
+                ConversationGuid = _conversation!.Id,
+                Action = actionEvent.CustomAction,
+                NewContext = _context!,
+                NewText = _text!
+            },
+            _ => throw new ArgumentOutOfRangeException(nameof(actionEvent))
         };
         var updatedConversation = await ConversationService.ApplyActionAsync(input);
         if (updatedConversation == null) return;
         _conversation = updatedConversation;
         _text = updatedConversation.Text;
     }
-
+    
     private async Task RunWithSpinner(Func<Task> action)
     {
         _busy = true;
