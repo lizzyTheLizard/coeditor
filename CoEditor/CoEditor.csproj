@@ -21,5 +21,10 @@
     <ItemGroup>
         <None Remove="Properties\launchSettings.json"/>
         <None Remove="Properties\ServiceDependencies\coeditor-gutschi-site - Web Deploy\profile.arm.json"/>
+        <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
     </ItemGroup>
+    
+    <PropertyGroup>
+        <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+    </PropertyGroup>
 </Project>

@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="app.css"/>
     <link rel="stylesheet" href="CoEditor.styles.css"/>
     <link rel="icon" type="image/png" href="favicon.png"/>
+    <link rel="manifest" href="manifest.webmanifest"/>
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png"/>
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png"/>
     <HeadOutlet @rendermode="ComponentRenderMode"/>
 </head>
 
@@ -21,6 +24,7 @@
 <script src="_framework/blazor.web.js"></script>
 <script src="bootstrap/bootstrap.bundle.min.js"></script>
 <script src="interop.js"></script>
+<script>navigator.serviceWorker.register('service-worker.js');</script>
 </body>
 
 </html>
