@@ -5,11 +5,11 @@
 <div class="d-flex flex-column flex-grow-1 pb-1" xmlns="http://www.w3.org/1999/html">
     <label for="editorTextarea" class="form-label">Editor</label>
     <textarea id="editorTextarea"
-                   disabled="@(Text == null)"
-                   class="form-control flex-grow-1"
-                   @bind="Text"
-                   @bind:event="oninput"
-                   @onchange="() => TextChanged.InvokeAsync(Text)"></textarea>
+              disabled="@(Text == null)"
+              class="form-control flex-grow-1"
+              @bind="Text"
+              @bind:event="oninput"
+              @onchange="() => TextChanged.InvokeAsync(Text)"></textarea>
 </div>
 <div class="container-fluid p-0">
     <div class="row g-1">
@@ -39,9 +39,9 @@
         <div class="col min-col-width">
             <label for="customAction" class="form-label">Custom Action</label>
             <input id="customAction"
-                       class="form-control form-control-sm mb-1"
-                       @bind:event="oninput"
-                       @bind="_customAction"/>
+                   class="form-control form-control-sm mb-1"
+                   @bind:event="oninput"
+                   @bind="_customAction"/>
         </div>
         <div class="col p-1" style="flex: 0.1 0 4rem;">
             <button class="btn btn-primary container p-0"

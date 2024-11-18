@@ -2,24 +2,41 @@
 @inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-md bg-body-tertiary">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">CoEditor</a>
         <span style="flex-grow: 1"></span>
         <AuthorizeView>
             <Authorized>
-                <NavLink class="nav-link px-3" href="about" Match="NavLinkMatch.All">
-                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> About
-                </NavLink>
-                <NavLink class="nav-link px-3" href="editor" Match="NavLinkMatch.All">
-                    <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Editor
-                </NavLink>
-                <NavLink class="nav-link px-3" href="settings" Match="NavLinkMatch.All">
-                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Settings
-                </NavLink>
-                <NavLink class="nav-link ps-3" href="/MicrosoftIdentity/Account/SignOut">
-                    <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
-                </NavLink>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarAuthorized" aria-controls="navbarAuthorized" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarAuthorized">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="editor" Match="NavLinkMatch.All">
+                                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Editor
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="settings" Match="NavLinkMatch.All">
+                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Settings
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="about" Match="NavLinkMatch.All">
+                                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> About
+                            </NavLink>
+                        </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="/MicrosoftIdentity/Account/SignOut">
+                                <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
+                            </NavLink>
+                        </li>
+                    </ul>
+                </div>
             </Authorized>
             <NotAuthorized>
                 <NavLink class="nav-link ps-3" href="/MicrosoftIdentity/Account/SignIn">

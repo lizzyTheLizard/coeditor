@@ -6,3 +6,7 @@
 .navbar ::deep a.active {
     text-decoration: underline;
 }
+
+.navbar-collapse {
+    flex-grow: 0;
+}
