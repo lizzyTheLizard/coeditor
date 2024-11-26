@@ -2,5 +2,5 @@
 
 public interface IDeleteTemplateApi
 {
-    Task DeleteTemplateAsync(string userName, Guid templateId);
+    Task DeleteTemplateAsync(Guid templateId);
 }

@@ -4,5 +4,5 @@ namespace CoEditor.Domain.Api;
 
 public interface IUpdateProfileApi
 {
-    Task<Profile> UpdateProfileAsync(string userName, Profile profile);
+    Task<Profile> UpdateProfileAsync(Profile profile);
 }

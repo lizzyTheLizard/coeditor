@@ -23,7 +23,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\CoEditor.Domain\CoEditor.Domain.csproj"/>
-        <ProjectReference Include="..\CoEditor.Client\CoEditor.Client.csproj"/>
         <ProjectReference Include="..\CoEditor\CoEditor.csproj"/>
     </ItemGroup>
 </Project>

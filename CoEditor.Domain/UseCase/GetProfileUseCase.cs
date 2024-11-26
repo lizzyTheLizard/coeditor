@@ -5,7 +5,10 @@ using Microsoft.Extensions.Logging;
 
 namespace CoEditor.Domain.UseCase;
 
-internal class GetProfileUseCase(IProfileRepository profileRepository, ILogger<GetProfileUseCase> logger)
+internal class GetProfileUseCase(
+    IProfileRepository profileRepository,
+    IUserService userService,
+    ILogger<GetProfileUseCase> logger)
     : IGetProfileApi
 {
     private readonly Dictionary<Language, string> _defaultProfileText = new()
@@ -20,8 +23,9 @@ internal class GetProfileUseCase(IProfileRepository profileRepository, ILogger<G
         }
     };
 
-    public async Task<Profile> GetProfileAsync(string userName, Language language)
+    public async Task<Profile> GetProfileAsync(Language language)
     {
+        var userName = await userService.GetUserNameAsync();
         var userProfile = await profileRepository.FindProfileAsync(userName, language);
         var profile = userProfile ??
                       new Profile { Language = language, UserName = userName, Text = _defaultProfileText[language] };

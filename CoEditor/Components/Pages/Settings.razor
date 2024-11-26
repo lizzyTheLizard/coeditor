@@ -1,0 +1,121 @@
+﻿@page "/settings"
+@using CoEditor.Components.Settings
+@attribute [Authorize]
+@inject ExceptionService ExceptionService
+@inject BusyService BusyService
+@inject IGetProfileApi GetProfile
+@inject IUpdateTemplateApi UpdateTemplate
+@inject IUpdateProfileApi UpdateProfile
+@inject IDeleteTemplateApi DeleteTemplate
+@inject IGetTemplatesApi GetTemplates
+
+<PageTitle>Settings</PageTitle>
+<div class="container-fluid">
+    <LanguageSelector
+        @bind-Language="_language"
+        @bind-Language:after="OnLanguageChanged"/>
+    <ProfileEditor
+        Profile="_profile"
+        SaveProfile="OnSaveProfile"/>
+    @foreach (var template in _templates)
+    {
+        <TemplateEditor
+            Template="template"
+            SaveTemplate="() => OnSaveTemplate(template)"
+            DeleteTemplate="() => OnDeleteTemplate(template)"/>
+    }
+    <NewTemplate
+        Language="_language"
+        AddTemplate="OnAddTemplate"/>
+</div>
+
+@code{
+    private Language _language = Language.De;
+    private Template[] _templates = [];
+    private Profile? _profile;
+
+    protected override Task OnInitializedAsync() => Reload();
+
+    private Task OnLanguageChanged() => BusyService.RunWithSpinner(Reload);
+
+    private Task OnDeleteTemplate(Template template) => BusyService.RunWithSpinner(() => DeleteTemplateAsync(template));
+
+    private Task OnSaveTemplate(Template template) => BusyService.RunWithSpinner(() => UpdateTemplateAsync(template));
+
+    private Task OnAddTemplate(Template template) => BusyService.RunWithSpinner(() => UpdateTemplateAsync(template));
+
+    private Task OnSaveProfile() => BusyService.RunWithSpinner(UpdateProfileAsync);
+
+    private async Task UpdateProfileAsync()
+    {
+        try
+        {
+            await UpdateProfile.UpdateProfileAsync(_profile!);
+        }
+        catch (Exception e)
+        {
+            await ExceptionService.HandleException(e, 2403,
+                "Could not update profile for language {0}",
+                _language);
+        }
+    }
+
+    private async Task UpdateTemplateAsync(Template template)
+    {
+        try
+        {
+            await UpdateTemplate.UpdateTemplateAsync(template);
+            if (_templates.Any(t => t.Id == template.Id)) return;
+            _templates = [.._templates, template];
+        }
+        catch (Exception e)
+        {
+            await ExceptionService.HandleException(e, 2107,
+                "Could not create template");
+        }
+    }
+
+    private async Task DeleteTemplateAsync(Template template)
+    {
+        try
+        {
+            await DeleteTemplate.DeleteTemplateAsync(template.Id);
+            _templates = _templates.Where(t => t.Id != template.Id).ToArray();
+        }
+        catch (Exception e)
+        {
+            await ExceptionService.HandleException(e, 2106,
+                "Could not delete template {0}",
+                template.Id);
+        }
+    }
+
+    private async Task Reload()
+    {
+        try
+        {
+            _profile = await GetProfile.GetProfileAsync(_language);
+        }
+        catch (Exception e)
+        {
+            await ExceptionService.HandleException(e, 2401,
+                "Could not load profile for language {0}",
+                _language);
+            _profile = null;
+        }
+
+        try
+        {
+            _templates = (await GetTemplates.GetTemplatesAsync(_language))
+                .Where(t => !t.DefaultTemplate)
+                .ToArray();
+        }
+        catch (Exception e)
+        {
+            await ExceptionService.HandleException(e, 2106,
+                "Could not load templates for language {0}",
+                _language);
+            _templates = [];
+        }
+    }
+}

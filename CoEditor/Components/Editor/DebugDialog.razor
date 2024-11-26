@@ -1,0 +1,76 @@
+@inject IJSRuntime JsRuntime
+@inject ShortcutService ShortcutService
+@inject ILogger<DebugDialog> Logger
+@using System.Text.RegularExpressions
+@using System.Web
+@implements IDisposable
+
+<div class="modal" id="debugModal">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg modal-fullscreen-md-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Debug Conversation @Conversation?.Id</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                @if (Conversation == null)
+                {
+                    <p>No conversation running</p>
+                }
+                else
+                {
+                    <ul class="list-group">
+                        @foreach (var message in Conversation?.Messages ?? [])
+                        {
+                            <li class="@GetClassesForType(message.Type)">
+                                @((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(message.Prompt), "\r?\n|\r", "<br />"))
+                            </li>
+                            if (message.Response != null)
+                            {
+                                <li class="list-group-item list-group-item-secondary text-end">
+                                    @((MarkupString)Regex.Replace(HttpUtility.HtmlEncode(message.Response), "\r?\n|\r", "<br />"))
+                                </li>
+                            }
+                        }
+                    </ul>
+                }
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code{
+    [Parameter]
+    public Conversation? Conversation { get; set; }
+
+    private IDisposable? _subscription;
+
+    protected override void OnInitialized()
+    {
+        _subscription = ShortcutService.RegisterShortcut('Q', OpenDebugWindow);
+    }
+
+    private async Task OpenDebugWindow()
+    {
+        Logger.LogInformation("Open debug window, conversation is {c}", Conversation?.Id);
+        const string modalId = "debugModal";
+        await JsRuntime.InvokeVoidAsync("showModal", modalId);
+    }
+
+    private string GetClassesForType(ConversationMessageType type) =>
+        type == ConversationMessageType.System
+            ? "list-group-item list-group-item-primary"
+            : "list-group-item";
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+        _subscription = null;
+    }
+}

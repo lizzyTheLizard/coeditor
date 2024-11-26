@@ -4,5 +4,5 @@ namespace CoEditor.Domain.Api;
 
 public interface IGetProfileApi
 {
-    Task<Profile> GetProfileAsync(string userName, Language language);
+    Task<Profile> GetProfileAsync(Language language);
 }

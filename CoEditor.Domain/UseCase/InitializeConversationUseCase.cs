@@ -10,10 +10,12 @@ internal class InitializeConversationUseCase(
     PromptMessageFactory promptMessageFactory,
     IConversationRepository conversationRepository,
     IGetProfileApi getProfileApi,
+    IUserService userService,
     ILogger<InitializeConversationUseCase> logger) : IInitializeConversationApi
 {
-    public async Task<Conversation> InitializeConversationAsync(string userName, InitializeConversationInput input)
+    public async Task<Conversation> InitializeConversationAsync(InitializeConversationInput input)
     {
+        var userName = await userService.GetUserNameAsync();
         var conversation = new Conversation
         {
             Id = input.ConversationGuid,
@@ -25,10 +27,12 @@ internal class InitializeConversationUseCase(
             Messages = []
         };
         await conversationRepository.EnsureNotExistingAsync(conversation.Id);
-        var profile = await getProfileApi.GetProfileAsync(userName, input.Language);
+        var profile = await getProfileApi.GetProfileAsync(input.Language);
         var messages = promptMessageFactory.GenerateInitialMessages(conversation, profile);
         var result = input.NewContext == string.Empty ? null : await aiConnector.PromptAsync(messages);
-        var updatedConversation = conversation.Update(messages, result);
+        var updatedConversation = conversation
+            .UpdateTextAndContext(result?.Response ?? string.Empty, input.NewContext)
+            .UpdateMessages(messages, result);
         await conversationRepository.CreateAsync(updatedConversation);
         logger.ConversationCreated(updatedConversation);
         return updatedConversation;

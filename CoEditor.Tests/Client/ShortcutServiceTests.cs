@@ -1,5 +1,4 @@
-﻿using CoEditor.Client.Services;
-using Moq;
+﻿using CoEditor.Services;
 
 namespace CoEditor.Tests.Client;
 
@@ -8,7 +7,7 @@ public class ShortcutServiceTests
     [Fact]
     public async Task NotRegistered_NotHandled()
     {
-        var service = new ShortcutService(Mock.Of<ILogger<ShortcutService>>());
+        var service = new ShortcutService();
         var handled = await service.HandleKeyboardEventAsync('a');
         Assert.False(handled);
     }
@@ -16,7 +15,7 @@ public class ShortcutServiceTests
     [Fact]
     public async Task Unregistered_NotHandled()
     {
-        var service = new ShortcutService(Mock.Of<ILogger<ShortcutService>>());
+        var service = new ShortcutService();
         var executed = false;
         var sub = service.RegisterShortcut('a', () =>
         {
@@ -32,7 +31,7 @@ public class ShortcutServiceTests
     [Fact]
     public async Task Registered_Handled()
     {
-        var service = new ShortcutService(Mock.Of<ILogger<ShortcutService>>());
+        var service = new ShortcutService();
         var executed = false;
         var sub = service.RegisterShortcut('a', () =>
         {
@@ -48,7 +47,7 @@ public class ShortcutServiceTests
     [Fact]
     public async Task IgnoreCase()
     {
-        var service = new ShortcutService(Mock.Of<ILogger<ShortcutService>>());
+        var service = new ShortcutService();
         var executed = false;
         var sub = service.RegisterShortcut('a', () =>
         {
@@ -64,7 +63,7 @@ public class ShortcutServiceTests
     [Fact]
     public async Task ExecuteMultiples()
     {
-        var service = new ShortcutService(Mock.Of<ILogger<ShortcutService>>());
+        var service = new ShortcutService();
         var executed1 = false;
         var sub1 = service.RegisterShortcut('a', () =>
         {

@@ -1,0 +1,55 @@
+@using CoEditor.Domain.Dependencies
+@inject IUserService UserService
+
+<div class="row">
+    <label for="newTemplateName" class="form-label">New Template (Name)</label>
+    <InputText id="newTemplateName"
+               class="@("form-control form-control-sm mb-1 " + (IsNameValid ? "is-valid" : "is-invalid"))"
+               @bind-Value="_name"/>
+</div>
+<div class="row">
+    <label for="newTemplateText" class="form-label">New Template (Text)</label>
+    <InputTextArea id="newTemplateText"
+                   class="@("form-control form-control-sm mb-1 " + (IsTextValid ? "is-valid" : "is-invalid"))"
+                   @bind-Value="_text"/>
+</div>
+<div class="row justify-content-end">
+    <div class="col-12 col-sm-4 col-md-2 p-0">
+        <button class="btn btn-primary" disabled="@(!IsTextValid || !IsNameValid)" style="width: 100%;"
+                @onclick="OnAddTemplate">
+            Add Template
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Language Language { get; set; }
+
+    [Parameter]
+    public EventCallback<Template> AddTemplate { get; set; }
+
+    private bool IsNameValid => !string.IsNullOrEmpty(_name);
+
+    private bool IsTextValid => !string.IsNullOrEmpty(_text);
+
+    private string _name = "";
+    private string _text = "";
+
+    private async Task OnAddTemplate()
+    {
+        var userName = await UserService.GetUserNameAsync();
+        var newTemplate = new Template
+        {
+            DefaultTemplate = false,
+            Id = Guid.NewGuid(),
+            Language = Language,
+            Name = _name,
+            Text = _text,
+            UserName = userName
+        };
+        await AddTemplate.InvokeAsync(newTemplate);
+        _name = "";
+        _text = "";
+    }
+}

@@ -40,8 +40,8 @@ internal class PromptMessageFactory
         "{0}");
 
     private readonly MessageType _initialMessage = new(
-        "{0}\n\nMache einen Vorschlag für diesen Text",
-        "{0}\n\nCreate a proposal for this text");
+        "Mache einen Vorschlag für einen Text mit dem folgenden Kontext:\n\n{0}",
+        "Make a suggestion for a text with the following context:\n\n{0}");
 
     private readonly MessageType _systemMessage = new(PromptMessageType.System,
         "Du bist ein hilfreicher Assistent, der mich beim Schreiben von kurzen Texten unterstützt. Ich schreibe einen Text und du ergänzt ihn für mich auf verschiedene Arten. Gib immer nur die Antwort zurück, aber niemals Zusatzinformationen oder Erklärungen.Bitte berücksichte die folgenden Informationen über mich:\n\n{0}",

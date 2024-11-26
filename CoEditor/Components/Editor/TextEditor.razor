@@ -1,0 +1,135 @@
+﻿@inject UndoService UndoService
+@inject IJSRuntime JsRuntime
+
+<div class="d-flex flex-column flex-grow-1 pb-1" xmlns="http://www.w3.org/1999/html">
+    <label for="editorTextarea" class="form-label">Editor</label>
+    <textarea id="editorTextarea"
+              disabled="@(Text == null)"
+              class="form-control flex-grow-1"
+              @bind="Text"
+              @bind:event="oninput"
+              @onchange="() => TextChanged.InvokeAsync(Text)"></textarea>
+</div>
+<div class="container-fluid p-0">
+    <div class="row g-1">
+        <ActionButton Disabled="@(Text == null)" OnTriggered="OnActionButtonAsync"
+                      ActionName="ActionName.Reformulate">
+        </ActionButton>
+        <ActionButton Disabled="@(Text == null)" OnTriggered="OnActionButtonAsync"
+                      ActionName="ActionName.Improve">
+        </ActionButton>
+        <ActionButton Disabled="@(Text == null)" OnTriggered="OnActionButtonAsync"
+                      ActionName="ActionName.Summarize">
+        </ActionButton>
+        <ActionButton Disabled="@(Text == null)" OnTriggered="OnActionButtonAsync"
+                      ActionName="ActionName.Expand">
+        </ActionButton>
+        <ActionButton Disabled="@(Text == null || !UndoService.CanUndo)" Shortcut="'Z'"
+                      OnTriggered="OnUndo" Name="Undo">
+        </ActionButton>
+        <ActionButton Disabled="@(Text == null || !UndoService.CanRedo)" Shortcut="'Y'"
+                      OnTriggered="OnRedo" Name="Redo">
+        </ActionButton>
+        <ActionButton Disabled="@(Text == null)"
+                      OnTriggered="() => ClearConversation.InvokeAsync()" Name="Clear">
+        </ActionButton>
+    </div>
+    <div class="row g-1 align-items-end">
+        <div class="col min-col-width">
+            <label for="customAction" class="form-label">Custom Action</label>
+            <input id="customAction"
+                   class="form-control form-control-sm mb-1"
+                   @onkeydown="@(e => e.Key == "Enter" ? ExecuteCustomAction() : Task.CompletedTask)"
+                   @bind:event="oninput"
+                   @bind="_customAction"/>
+        </div>
+        <div class="col p-1" style="flex: 0.1 0 4rem;">
+            <button class="btn btn-primary container p-0"
+                    style="height: 2rem;"
+                    disabled="@(string.IsNullOrEmpty(_customAction))"
+                    @onclick="ExecuteCustomAction">Execute
+            </button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string? Text { get; set; }
+
+    [Parameter]
+    public EventCallback<string> TextChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<ActionEvent> ActionCalled { get; set; }
+
+    [Parameter]
+    public EventCallback ClearConversation { get; set; }
+
+    private string? _focusToBeSet;
+    private string? _oldText;
+    private string _customAction = "";
+
+    protected override void OnParametersSet()
+    {
+        // We are only interested in changes to the "Text" parameter
+        if (_oldText == Text) return;
+        if (_oldText == null && Text != null)
+        {
+            //This is a new conversation
+            UndoService.Reset(Text);
+            _focusToBeSet = "editorTextarea";
+        }
+
+        if (Text != null) UndoService.Register(Text);
+        _oldText = Text;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (_focusToBeSet == null) return;
+        await JsRuntime.InvokeVoidAsync("setFocus", _focusToBeSet);
+        _focusToBeSet = null;
+    }
+
+    private async Task OnActionButtonAsync(ActionName actionName)
+    {
+        await TextChanged.InvokeAsync(Text);
+        var selection = await GetSelectionAsync();
+        var actionEvent = new ActionEvent(null, actionName, selection);
+        await ActionCalled.InvokeAsync(actionEvent);
+    }
+
+    private async Task OnUndo()
+    {
+        Text = UndoService.Undo();
+        await TextChanged.InvokeAsync(Text);
+    }
+
+    private async Task OnRedo()
+    {
+        Text = UndoService.Redo();
+        await TextChanged.InvokeAsync(Text);
+    }
+
+    private async Task ExecuteCustomAction()
+    {
+        var actionEvent = new ActionEvent(_customAction, null, null);
+        await ActionCalled.InvokeAsync(actionEvent);
+        _customAction = "";
+    }
+
+    private async Task<Selection?> GetSelectionAsync()
+    {
+        if (Text == null) return null;
+        const string textareaId = "editorTextarea";
+        var selectionStart = await JsRuntime.InvokeAsync<int>("getSelectionStart", textareaId);
+        var selectionEnd = await JsRuntime.InvokeAsync<int>("getSelectionEnd", textareaId);
+        if (selectionStart == -1 || selectionEnd == -1 || selectionStart == selectionEnd) return null;
+        while (char.IsWhiteSpace(Text[selectionStart]) && selectionStart < selectionEnd)
+            selectionStart++;
+        while (char.IsWhiteSpace(Text[selectionEnd - 1]) && selectionEnd > selectionStart)
+            selectionEnd--;
+        return selectionStart == selectionEnd ? null : new Selection(selectionStart, selectionEnd);
+    }
+}

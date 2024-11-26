@@ -1,5 +1,4 @@
-﻿using CoEditor.Client.Services;
-using Moq;
+﻿using CoEditor.Services;
 
 namespace CoEditor.Tests.Client;
 
@@ -8,7 +7,7 @@ public class UndoServiceTests
     [Fact]
     public void Undo()
     {
-        var service = new UndoService(Mock.Of<ILogger<UndoService>>());
+        var service = new UndoService();
         service.Reset("Initial Text");
         Assert.False(service.CanUndo);
 
@@ -23,7 +22,7 @@ public class UndoServiceTests
     [Fact]
     public void Redo()
     {
-        var service = new UndoService(Mock.Of<ILogger<UndoService>>());
+        var service = new UndoService();
         service.Reset("Initial Text");
         Assert.False(service.CanRedo);
 
@@ -41,7 +40,7 @@ public class UndoServiceTests
     [Fact]
     public void Reset()
     {
-        var service = new UndoService(Mock.Of<ILogger<UndoService>>());
+        var service = new UndoService();
         service.Reset("Initial Text");
         service.Register("New Text");
         service.Register("New Text2");

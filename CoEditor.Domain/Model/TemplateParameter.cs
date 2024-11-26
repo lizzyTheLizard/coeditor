@@ -14,9 +14,6 @@ public class TemplateParameter
 
     public bool Valid => !string.IsNullOrEmpty(Value);
 
-    public override string ToString()
-    {
-        return
-            $"{base.ToString()}: Id={Id}, Name={Name}, Type={Type}, Options={string.Join(",", Options)}, Value={Value}, Valid={Valid}";
-    }
+    public override string ToString() =>
+        $"{base.ToString()}: Id={Id}, Name={Name}, Type={Type}, Options={string.Join(",", Options)}, Value={Value}, Valid={Valid}";
 }

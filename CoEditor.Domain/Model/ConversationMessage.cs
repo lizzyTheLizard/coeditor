@@ -16,9 +16,6 @@ public class ConversationMessage
 
     public long? DurationInMs { get; init; }
 
-    public override string ToString()
-    {
-        return
-            $"{base.ToString()} : Type={Type}, Prompt={Prompt}, PromptedAt={PromptedAt}, Response={Response}, DurationInMs={DurationInMs}";
-    }
+    public override string ToString() =>
+        $"{base.ToString()} : Type={Type}, Prompt={Prompt}, PromptedAt={PromptedAt}, Response={Response}, DurationInMs={DurationInMs}";
 }

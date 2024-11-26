@@ -8,10 +8,12 @@ namespace CoEditor.Domain.UseCase;
 
 internal class DeleteTemplateUseCase(
     ITemplateRepository templateRepository,
+    IUserService userService,
     ILogger<DeleteTemplateUseCase> logger) : IDeleteTemplateApi
 {
-    public async Task DeleteTemplateAsync(string userName, Guid templateId)
+    public async Task DeleteTemplateAsync(Guid templateId)
     {
+        var userName = await userService.GetUserNameAsync();
         var template = await templateRepository.FindTemplateAsync(templateId);
         if (template == null)
         {

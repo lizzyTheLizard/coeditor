@@ -1,4 +1,5 @@
-﻿using CoEditor.Domain.Api;
+﻿using System.Security.Authentication;
+using CoEditor.Domain.Api;
 using CoEditor.Domain.Dependencies;
 using CoEditor.Domain.Model;
 using Microsoft.Extensions.Logging;
@@ -7,11 +8,13 @@ namespace CoEditor.Domain.UseCase;
 
 internal class UpdateProfileUseCase(
     IProfileRepository profileRepository,
+    IUserService userService,
     ILogger<UpdateProfileUseCase> logger) : IUpdateProfileApi
 {
-    public async Task<Profile> UpdateProfileAsync(string userName, Profile profile)
+    public async Task<Profile> UpdateProfileAsync(Profile profile)
     {
-        if (profile.UserName != userName) throw new ArgumentException("Wrong user name in body", nameof(userName));
+        var userName = await userService.GetUserNameAsync();
+        if (profile.UserName != userName) throw new AuthenticationException("Wrong user name in profile");
         var originalProfile = await profileRepository.FindProfileAsync(userName, profile.Language);
         if (originalProfile == null)
         {

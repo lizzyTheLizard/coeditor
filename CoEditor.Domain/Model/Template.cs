@@ -20,11 +20,8 @@ public partial class Template
 
     public required bool DefaultTemplate { get; init; }
 
-    public override string ToString()
-    {
-        return
-            $"{base.ToString()}: Id={Id}, Language={Language}, UserName={UserName}, Name={Name}, Text={Text}, DefaultTemplate={DefaultTemplate}";
-    }
+    public override string ToString() =>
+        $"{base.ToString()}: Id={Id}, Language={Language}, UserName={UserName}, Name={Name}, Text={Text}, DefaultTemplate={DefaultTemplate}";
 
     public TemplateParameter[] GetTemplateParameters()
     {

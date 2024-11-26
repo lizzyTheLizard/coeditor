@@ -1,0 +1,146 @@
+﻿@page "/editor"
+@using CoEditor.Components.Editor
+@attribute [Authorize]
+@inject ExceptionService ExceptionService
+@inject BusyService BusyService
+@inject IGetTemplatesApi GetTemplates
+@inject IInitializeConversationApi InitializeConversation
+@inject IHandleActionApi HandleAction
+
+<PageTitle>Editor</PageTitle>
+<div class="container-fluid p-0">
+    <div class="row">
+        <LanguageSelector
+            @bind-Language="_language"
+            @bind-Language:after="OnLanguageChanged"/>
+        <TemplateSelector
+            Templates="@_templates"
+            @bind-Template="_template"/>
+        <ContextEditor
+            Template="@_template"
+            @bind-Context="_context"
+            @bind-Context:after="OnContextChanged"/>
+    </div>
+</div>
+<TextEditor
+    @bind-Text="_text"
+    ActionCalled="OnExecuteAction"
+    ClearConversation="OnClearConversation"/>
+<DebugDialog Conversation="_conversation"></DebugDialog>
+
+@code {
+    private Language _language = Language.De;
+    private Template[] _templates = [];
+    private Template? _template;
+    private string? _context;
+    private string? _text;
+    private Conversation? _conversation;
+
+    protected override Task OnInitializedAsync() => ReloadTemplates();
+
+    private Task OnLanguageChanged() => BusyService.RunWithSpinner(ReloadTemplates);
+
+    private Task OnContextChanged() => BusyService.RunWithSpinner(StartConversation);
+
+    private async Task OnClearConversation()
+    {
+        _conversation = null;
+        _text = null;
+        await BusyService.RunWithSpinner(StartConversation);
+    }
+
+    private Task OnExecuteAction(ActionEvent actionEvent) => BusyService.RunWithSpinner(() => ExecuteAction(actionEvent));
+
+    private async Task ReloadTemplates()
+    {
+        try
+        {
+            _templates = await GetTemplates.GetTemplatesAsync(_language);
+            _template = _templates.FirstOrDefault();
+        }
+        catch (Exception e)
+        {
+            await ExceptionService.HandleException(e, 2106,
+                "Could not load templates for language {0}",
+                _language);
+            _templates = [];
+            _template = null;
+        }
+    }
+
+    private async Task StartConversation()
+    {
+        //If no valid context, clear conversation
+        if (_context == null)
+        {
+            _conversation = null;
+            _text = null;
+            return;
+        }
+
+        // Running conversations are not restarted
+        if (_conversation != null) return;
+        // Otherwise Start a new conversation
+        var input = new InitializeConversationInput
+        {
+            Language = _language,
+            NewContext = _context,
+            NewText = string.Empty,
+            ConversationGuid = Guid.NewGuid()
+        };
+        try
+        {
+            _conversation = await InitializeConversation.InitializeConversationAsync(input);
+            _text = _conversation.Text;
+        }
+        catch (Exception e)
+        {
+            await ExceptionService.HandleException(e, 2202, "Could not initialize conversation");
+        }
+    }
+
+    private async Task ExecuteAction(ActionEvent actionEvent)
+    {
+        var input = GetInput(actionEvent);
+        try
+        {
+            _conversation = await HandleAction.HandleActionAsync(input);
+            _text = _conversation.Text;
+        }
+        catch (Exception e)
+        {
+            await ExceptionService.HandleException(e, 2205,
+                "Action {0} failed for language {1}",
+                actionEvent, _language);
+        }
+    }
+
+    private HandleActionInput GetInput(ActionEvent actionEvent)
+    {
+        if (actionEvent.ActionName is { } actionName)
+        {
+            return new HandleNamedActionInput
+            {
+                ConversationGuid = _conversation!.Id,
+                Action = actionName,
+                Selection = actionEvent.Selection,
+                Language = _conversation!.Language,
+                NewContext = _context!,
+                NewText = _text!
+            };
+        }
+
+        if (actionEvent.CustomAction is { } customAction)
+        {
+            return new HandleCustomActionInput
+            {
+                ConversationGuid = _conversation!.Id,
+                Action = customAction,
+                NewContext = _context!,
+                NewText = _text!
+            };
+        }
+
+        throw new ArgumentOutOfRangeException(nameof(actionEvent));
+    }
+}

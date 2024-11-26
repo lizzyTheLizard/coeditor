@@ -12,8 +12,5 @@ public class Profile
 
     public required Language Language { get; init; }
 
-    public override string ToString()
-    {
-        return $"{base.ToString()}: Text={Text}, Language={Language}";
-    }
+    public override string ToString() => $"{base.ToString()}: Text={Text}, Language={Language}";
 }

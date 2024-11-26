@@ -8,11 +8,13 @@ namespace CoEditor.Domain.UseCase;
 
 internal class UpdateTemplateUseCase(
     ITemplateRepository templateRepository,
+    IUserService userService,
     ILogger<UpdateTemplateUseCase> logger) : IUpdateTemplateApi
 {
-    public async Task<Template> UpdateTemplateAsync(string userName, Template tmpl)
+    public async Task<Template> UpdateTemplateAsync(Template tmpl)
     {
-        if (tmpl.UserName != userName) throw new ArgumentException("Wrong user name in body", nameof(userName));
+        var userName = await userService.GetUserNameAsync();
+        if (tmpl.UserName != userName) throw new AuthenticationException("Wrong user name in template");
         var originalTemplate = await templateRepository.FindTemplateAsync(tmpl.Id);
         if (originalTemplate == null)
         {

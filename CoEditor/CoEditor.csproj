@@ -8,23 +8,37 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\CoEditor.Client\CoEditor.Client.csproj"/>
         <ProjectReference Include="..\CoEditor.Domain\CoEditor.Domain.csproj"/>
         <ProjectReference Include="..\CoEditor.Integration\CoEditor.Integration.csproj"/>
-        <ProjectReference Include="..\CoEditor.Rest\CoEditor.Rest.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
         <None Remove="Properties\launchSettings.json"/>
-        <None Remove="Properties\ServiceDependencies\coeditor-gutschi-site - Web Deploy\profile.arm.json"/>
-        <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
     </ItemGroup>
-    
-    <PropertyGroup>
-        <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
-    </PropertyGroup>
+
+    <ItemGroup>
+        <AdditionalFiles Include="Components\App.razor"/>
+        <AdditionalFiles Include="Components\Editor\ActionButton.razor"/>
+        <AdditionalFiles Include="Components\Editor\ContextEditor.razor"/>
+        <AdditionalFiles Include="Components\Editor\DebugDialog.razor"/>
+        <AdditionalFiles Include="Components\Editor\LanguageSelector.razor"/>
+        <AdditionalFiles Include="Components\Editor\TemplateSelector.razor"/>
+        <AdditionalFiles Include="Components\Editor\TextEditor.razor"/>
+        <AdditionalFiles Include="Components\Layout\BusyDialog.razor"/>
+        <AdditionalFiles Include="Components\Layout\ErrorDialog.razor"/>
+        <AdditionalFiles Include="Components\Layout\MainLayout.razor"/>
+        <AdditionalFiles Include="Components\Layout\NavBar.razor"/>
+        <AdditionalFiles Include="Components\Pages\About.razor"/>
+        <AdditionalFiles Include="Components\Pages\Editor.razor"/>
+        <AdditionalFiles Include="Components\Pages\Home.razor"/>
+        <AdditionalFiles Include="Components\Pages\NotAllowed.razor"/>
+        <AdditionalFiles Include="Components\Pages\NotFound.razor"/>
+        <AdditionalFiles Include="Components\Pages\Settings.razor"/>
+        <AdditionalFiles Include="Components\Routes.razor"/>
+        <AdditionalFiles Include="Components\Settings\LanguageSelector.razor"/>
+        <AdditionalFiles Include="Components\Settings\NewTemplate.razor"/>
+        <AdditionalFiles Include="Components\Settings\ProfileEditor.razor"/>
+        <AdditionalFiles Include="Components\Settings\TemplateEditor.razor"/>
+        <AdditionalFiles Include="Components\_Imports.razor"/>
+    </ItemGroup>
 </Project>

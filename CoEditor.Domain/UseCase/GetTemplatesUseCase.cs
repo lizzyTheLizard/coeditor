@@ -7,6 +7,7 @@ namespace CoEditor.Domain.UseCase;
 
 internal class GetTemplatesUseCase(
     ITemplateRepository templateRepository,
+    IUserService userService,
     ILogger<GetTemplatesUseCase> logger) : IGetTemplatesApi
 {
     private static readonly SystemTemplate[] SystemTemplates =
@@ -21,8 +22,9 @@ internal class GetTemplatesUseCase(
             "I want to write an email to {Connection:select:Work Collegue,Friend, Customer} {Name:text}. I know him {Knowledge:select:Well,Barely}. The tone should be {Tone:select:Humble,Aggressive,Friendly}. The content of the mail considers the followig:\n\n{Context:longtext}")
     ];
 
-    public async Task<Template[]> GetTemplatesAsync(string userName, Language language)
+    public async Task<Template[]> GetTemplatesAsync(Language language)
     {
+        var userName = await userService.GetUserNameAsync();
         var userTemplates = await templateRepository.GetTemplatesAsync(userName, language);
         Template[] templates = [.. GetSystemTemplates(userName, language), .. userTemplates];
         logger.TemplatesLoaded(templates, userName, language);

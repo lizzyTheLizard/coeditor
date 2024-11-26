@@ -1,0 +1,46 @@
+@inject IJSRuntime JsRuntime
+@inject ExceptionService ExceptionService
+@implements IDisposable
+
+<div class="modal" id="errorModal">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg modal-fullscreen-md-down">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Error</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                @_exceptionMessage
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code{
+    private IDisposable? _subscription;
+    private string? _exceptionMessage;
+
+    protected override void OnInitialized()
+    {
+        _subscription = ExceptionService.RegisterExceptionHandler(OpenErrorWindow);
+    }
+
+    private async Task OpenErrorWindow(string message)
+    {
+        _exceptionMessage = message;
+        StateHasChanged();
+        const string modalId = "errorModal";
+        await JsRuntime.InvokeVoidAsync("showModal", modalId);
+    }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+        _subscription = null;
+    }
+}

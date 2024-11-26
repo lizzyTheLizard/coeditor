@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using CoEditor.Domain.Api;
 using CoEditor.Domain.Dependencies;
 
 namespace CoEditor.Domain.Model;
@@ -39,54 +38,30 @@ public class Conversation
         return [.. result];
     }
 
-    public Conversation Update(HandleActionInput input)
+    public Conversation UpdateTextAndContext(string newText, string newContext) => new()
     {
-        return new Conversation
-        {
-            Id = Id,
-            UserName = UserName,
-            StartedAt = StartedAt,
-            Language = Language,
-            Text = input.NewText,
-            Context = input.NewContext,
-            Messages = Messages
-        };
-    }
+        Id = Id,
+        UserName = UserName,
+        StartedAt = StartedAt,
+        Language = Language,
+        Text = newText,
+        Context = newContext,
+        Messages = Messages
+    };
 
-    public Conversation Update(PromptMessage[] newMessages, PromptResult? promptResult)
+    public Conversation UpdateMessages(PromptMessage[] newMessages, PromptResult? promptResult) => new()
     {
-        return new Conversation
-        {
-            Id = Id,
-            UserName = UserName,
-            StartedAt = StartedAt,
-            Language = Language,
-            Text = promptResult?.Response ?? Text,
-            Context = Context,
-            Messages = [.. Messages, .. ConvertNewMessages(newMessages, promptResult)]
-        };
-    }
+        Id = Id,
+        UserName = UserName,
+        StartedAt = StartedAt,
+        Language = Language,
+        Text = Text,
+        Context = Context,
+        Messages = [.. Messages, .. ConvertNewMessages(newMessages, promptResult)]
+    };
 
-    public Conversation Update(Selection selection, string newText)
-    {
-        var text = newText[..selection.Start] + Text + newText[selection.End..];
-        return new Conversation
-        {
-            Id = Id,
-            UserName = UserName,
-            StartedAt = StartedAt,
-            Language = Language,
-            Text = text,
-            Context = Context,
-            Messages = Messages
-        };
-    }
-
-    public override string ToString()
-    {
-        return
-            $"{base.ToString()}: Id={Id}, UserName={UserName}, StartedAt={StartedAt}, Language={Language}, TextLength={Text.Length}, ContextLegth={Context.Length}, NumberOfMessages={Messages.Length}, Text={Text}, Context={Context}, Messags=[{string.Join<ConversationMessage>(",", Messages)}]";
-    }
+    public override string ToString() =>
+        $"{base.ToString()}: Id={Id}, UserName={UserName}, StartedAt={StartedAt}, Language={Language}, TextLength={Text.Length}, ContextLegth={Context.Length}, NumberOfMessages={Messages.Length}, Text={Text}, Context={Context}, Messags=[{string.Join<ConversationMessage>(",", Messages)}]";
 
     private static List<ConversationMessage> ConvertNewMessages(PromptMessage[] newMessages, PromptResult? promptResult)
     {

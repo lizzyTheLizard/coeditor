@@ -4,5 +4,5 @@ namespace CoEditor.Domain.Api;
 
 public interface IInitializeConversationApi
 {
-    Task<Conversation> InitializeConversationAsync(string userName, InitializeConversationInput input);
+    Task<Conversation> InitializeConversationAsync(InitializeConversationInput input);
 }

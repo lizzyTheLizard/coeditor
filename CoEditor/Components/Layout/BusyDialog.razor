@@ -1,0 +1,27 @@
+@inject BusyService BusyService
+<div class="overlay" style="@(!_busy ? "display:none;" : "")">
+    <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+@code {
+    private IDisposable? _subscription;
+    private bool _busy = false;
+
+    protected override void OnInitialized()
+    {
+        _subscription = BusyService.RegisterBusyHandler(value =>
+        {
+            _busy = value;
+            StateHasChanged();
+            return Task.CompletedTask;
+        });
+    }
+
+    public void Dispose()
+    {
+        _subscription?.Dispose();
+        _subscription = null;
+    }
+}

@@ -10,26 +10,37 @@ internal class HandleActionUseCase(
     IAiConnector aiConnector,
     PromptMessageFactory promptMessageFactory,
     IConversationRepository conversationRepository,
+    IUserService userService,
     ILogger<HandleActionUseCase> logger) : IHandleActionApi
 {
-    public async Task<Conversation> HandleActionAsync(string userName, HandleActionInput input)
+    public async Task<Conversation> HandleActionAsync(HandleActionInput input)
     {
+        var userName = await userService.GetUserNameAsync();
         var conversation = await GetExistingConversation(userName, input.ConversationGuid);
         var existingMessages = conversation.ToPromptMessages();
         var newMessages = promptMessageFactory.GenerateActionMessages(conversation, input);
         var result = await aiConnector.PromptAsync([.. existingMessages, .. newMessages]);
-
-        if (input is HandleNamedActionInput { Selection: not null } namedInput1)
-            conversation = conversation.Update(namedInput1.Selection, input.NewText);
-        else
-            conversation = conversation.Update(input).Update(newMessages, result);
+        var newText = GetNewText(input, result);
+        conversation = conversation
+            .UpdateTextAndContext(newText, input.NewContext)
+            .UpdateMessages(newMessages, result);
         await conversationRepository.UpdateAsync(conversation);
 
-        if (input is HandleNamedActionInput namedInput2)
-            logger.ConversationUpdated(namedInput2.Action, conversation);
+        if (input is HandleNamedActionInput namedInput)
+            logger.ConversationUpdated(namedInput.Action, conversation);
         else
             logger.ConversationUpdated(null, conversation);
         return conversation;
+    }
+
+    private static string GetNewText(HandleActionInput input, PromptResult result)
+    {
+        if (result.Response is null)
+            return input.NewText;
+        if (input is not HandleNamedActionInput { Selection: not null } namedInput)
+            return result.Response;
+        return input.NewText[..namedInput.Selection.Start] + result.Response +
+               input.NewText[namedInput.Selection.End..];
     }
 
     private async Task<Conversation> GetExistingConversation(string userName, Guid conversationGuid)
