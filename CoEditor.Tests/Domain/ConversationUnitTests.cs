@@ -1,11 +1,10 @@
 ﻿using System.Globalization;
-using CoEditor.Domain.Api;
 using CoEditor.Domain.Dependencies;
 using CoEditor.Domain.Model;
 
 namespace CoEditor.Tests.Domain;
 
-public class ConversationTests
+public class ConversationUnitTests
 {
     [Fact]
     public void ToPromptMessages_Empty()
@@ -88,7 +87,7 @@ public class ConversationTests
     }
 
     [Fact]
-    public void Update()
+    public void UpdateTextAndContext()
     {
         var conversation = new Conversation
         {
@@ -100,12 +99,7 @@ public class ConversationTests
             Context = "Initial Context",
             Messages = []
         };
-        var updated = conversation.Update(new HandleActionInput
-        {
-            ConversationGuid = conversation.Id,
-            NewText = "new text",
-            NewContext = "new context"
-        });
+        var updated = conversation.UpdateTextAndContext("new text", "new context");
         Assert.Equal(conversation.Id, updated.Id);
         Assert.Equal(conversation.UserName, updated.UserName);
         Assert.Equal(conversation.StartedAt, updated.StartedAt);
@@ -128,7 +122,7 @@ public class ConversationTests
             Context = "Initial Context",
             Messages = []
         };
-        var updated = conversation.Update(
+        var updated = conversation.UpdateMessages(
             [
                 new PromptMessage("System Prompt", PromptMessageType.System),
                 new PromptMessage("User Prompt", PromptMessageType.User)

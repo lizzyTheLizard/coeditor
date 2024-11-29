@@ -2,7 +2,7 @@
 
 namespace CoEditor.Tests.Client;
 
-public class UndoServiceTests
+public class UndoServiceUnitTests
 {
     [Fact]
     public void Undo()

@@ -2,7 +2,7 @@
 
 namespace CoEditor.Tests.Domain;
 
-public class TemplateTests
+public class TemplateUnitTests
 {
     [Fact]
     public void ToString_ContainsEverything()

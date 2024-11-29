@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using JetBrains.Annotations;
 
 namespace CoEditor.Services;
 
@@ -12,6 +13,7 @@ public class ExceptionService(ILogger<ExceptionService> logger)
         return new ExceptionSubscription(handler, _handlers);
     }
 
+    [StringFormatMethod("messageTemplate")]
     public async Task HandleException(Exception exception, int eventId, string messageTemplate, params object[] args)
     {
         var message = string.Format(new CultureInfo("en-US"), messageTemplate, args);

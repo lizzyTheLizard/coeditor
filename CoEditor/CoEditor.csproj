@@ -8,37 +8,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CoEditor.Domain\CoEditor.Domain.csproj"/>
-        <ProjectReference Include="..\CoEditor.Integration\CoEditor.Integration.csproj"/>
+        <ProjectReference Include="..\CoEditor.Domain\CoEditor.Domain.csproj" />
+        <ProjectReference Include="..\CoEditor.Integration\CoEditor.Integration.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Properties\launchSettings.json"/>
+        <None Remove="Properties\launchSettings.json" />
     </ItemGroup>
-
+    
     <ItemGroup>
-        <AdditionalFiles Include="Components\App.razor"/>
-        <AdditionalFiles Include="Components\Editor\ActionButton.razor"/>
-        <AdditionalFiles Include="Components\Editor\ContextEditor.razor"/>
-        <AdditionalFiles Include="Components\Editor\DebugDialog.razor"/>
-        <AdditionalFiles Include="Components\Editor\LanguageSelector.razor"/>
-        <AdditionalFiles Include="Components\Editor\TemplateSelector.razor"/>
-        <AdditionalFiles Include="Components\Editor\TextEditor.razor"/>
-        <AdditionalFiles Include="Components\Layout\BusyDialog.razor"/>
-        <AdditionalFiles Include="Components\Layout\ErrorDialog.razor"/>
-        <AdditionalFiles Include="Components\Layout\MainLayout.razor"/>
-        <AdditionalFiles Include="Components\Layout\NavBar.razor"/>
-        <AdditionalFiles Include="Components\Pages\About.razor"/>
-        <AdditionalFiles Include="Components\Pages\Editor.razor"/>
-        <AdditionalFiles Include="Components\Pages\Home.razor"/>
-        <AdditionalFiles Include="Components\Pages\NotAllowed.razor"/>
-        <AdditionalFiles Include="Components\Pages\NotFound.razor"/>
-        <AdditionalFiles Include="Components\Pages\Settings.razor"/>
-        <AdditionalFiles Include="Components\Routes.razor"/>
-        <AdditionalFiles Include="Components\Settings\LanguageSelector.razor"/>
-        <AdditionalFiles Include="Components\Settings\NewTemplate.razor"/>
-        <AdditionalFiles Include="Components\Settings\ProfileEditor.razor"/>
-        <AdditionalFiles Include="Components\Settings\TemplateEditor.razor"/>
-        <AdditionalFiles Include="Components\_Imports.razor"/>
+      <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
     </ItemGroup>
 </Project>

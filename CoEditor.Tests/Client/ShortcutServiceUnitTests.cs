@@ -2,7 +2,7 @@
 
 namespace CoEditor.Tests.Client;
 
-public class ShortcutServiceTests
+public class ShortcutServiceUnitTests
 {
     [Fact]
     public async Task NotRegistered_NotHandled()
