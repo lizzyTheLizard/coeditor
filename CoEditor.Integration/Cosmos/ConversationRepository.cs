@@ -39,7 +39,7 @@ internal class ConversationRepository(CosmosDbContext dbContext)
         var conversation = await dbContext.Conversations
             .Where(t => t.Id == conversationGuid)
             .Include(conversationDocument => conversationDocument.Messages)
-            .SingleAsync() ?? throw CosmosException.NotFoundException(typeof(Conversation), conversationGuid);
+            .SingleOrDefaultAsync() ?? throw CosmosException.NotFoundException(typeof(Conversation), conversationGuid);
         var result = new Conversation
         {
             Id = conversation.Id,
@@ -62,6 +62,16 @@ internal class ConversationRepository(CosmosDbContext dbContext)
         existing.Context = conversation.Context;
         existing.Messages = [.. conversation.Messages];
         dbContext.Update(existing);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task DeleteAllConversationsAsync(string userName)
+    {
+        var existingDocuments = await dbContext.Conversations
+            .Where(t => t.UserName == userName)
+            .ToArrayAsync();
+        foreach (var existingDocument in existingDocuments)
+            dbContext.Remove(existingDocument);
         await dbContext.SaveChangesAsync();
     }
 }

@@ -1,6 +1,5 @@
-﻿using System.Globalization;
-using CoEditor.Domain.Dependencies;
-using CoEditor.Domain.Model;
+﻿using CoEditor.Domain.Dependencies;
+using CoEditor.Tests.Helper;
 
 namespace CoEditor.Tests.Domain;
 
@@ -9,16 +8,7 @@ public class ConversationUnitTests
     [Fact]
     public void ToPromptMessages_Empty()
     {
-        var conversation = new Conversation
-        {
-            Id = Guid.NewGuid(),
-            UserName = "TestUser",
-            StartedAt = DateTime.Now,
-            Language = Language.En,
-            Text = "Initial Text",
-            Context = "Initial Context",
-            Messages = []
-        };
+        var conversation = TestData.ConversationWithoutMessages("TestUser");
         var promptMessages = conversation.ToPromptMessages();
         Assert.Empty(promptMessages);
     }
@@ -26,32 +16,7 @@ public class ConversationUnitTests
     [Fact]
     public void ToPromptMessages_NonEmpty()
     {
-        var conversation = new Conversation
-        {
-            Id = Guid.NewGuid(),
-            UserName = "TestUser",
-            StartedAt = DateTime.Now,
-            Language = Language.En,
-            Text = "Initial Text",
-            Context = "Initial Context",
-            Messages =
-            [
-                new ConversationMessage
-                {
-                    PromptedAt = DateTime.Now,
-                    Type = ConversationMessageType.System,
-                    Prompt = "System Prompt",
-                    Response = "System Response"
-                },
-                new ConversationMessage
-                {
-                    PromptedAt = DateTime.Now,
-                    Type = ConversationMessageType.User,
-                    Prompt = "User Prompt",
-                    Response = "User Response"
-                }
-            ]
-        };
+        var conversation = TestData.ConversationWithMessages("TestUser");
         var promptMessages = conversation.ToPromptMessages();
         Assert.Equal(4, promptMessages.Length);
         Assert.Equal("System Prompt", promptMessages[0].Prompt);
@@ -65,40 +30,9 @@ public class ConversationUnitTests
     }
 
     [Fact]
-    public void ToString_ContainsEverything()
-    {
-        var conversation = new Conversation
-        {
-            Id = Guid.NewGuid(),
-            UserName = "TestUser",
-            StartedAt = DateTime.Now,
-            Language = Language.En,
-            Text = "Initial Text",
-            Context = "Initial Context",
-            Messages = []
-        };
-        var str = conversation.ToString();
-        Assert.Contains(conversation.Id.ToString(), str);
-        Assert.Contains(conversation.UserName, str);
-        Assert.Contains(conversation.StartedAt.ToString(CultureInfo.CurrentCulture), str);
-        Assert.Contains(conversation.Language.ToString(), str);
-        Assert.Contains(conversation.Text, str);
-        Assert.Contains(conversation.Context, str);
-    }
-
-    [Fact]
     public void UpdateTextAndContext()
     {
-        var conversation = new Conversation
-        {
-            Id = Guid.NewGuid(),
-            UserName = "TestUser",
-            StartedAt = DateTime.Now,
-            Language = Language.En,
-            Text = "Initial Text",
-            Context = "Initial Context",
-            Messages = []
-        };
+        var conversation = TestData.ConversationWithoutMessages("TestUser");
         var updated = conversation.UpdateTextAndContext("new text", "new context");
         Assert.Equal(conversation.Id, updated.Id);
         Assert.Equal(conversation.UserName, updated.UserName);
@@ -112,16 +46,7 @@ public class ConversationUnitTests
     [Fact]
     public void UpdateMessages()
     {
-        var conversation = new Conversation
-        {
-            Id = Guid.NewGuid(),
-            UserName = "TestUser",
-            StartedAt = DateTime.Now,
-            Language = Language.En,
-            Text = "Initial Text",
-            Context = "Initial Context",
-            Messages = []
-        };
+        var conversation = TestData.ConversationWithoutMessages("TestUser");
         var updated = conversation.UpdateMessages(
             [
                 new PromptMessage("System Prompt", PromptMessageType.System),

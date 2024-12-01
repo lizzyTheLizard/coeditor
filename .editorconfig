@@ -9,7 +9,6 @@ tab_width = 4
 end_of_line = crlf
 insert_final_newline = true
 
-# StyleCorp Custom Rules
 [*.cs]
 # CA1848: Use the LoggerMessage delegates
 dotnet_diagnostic.CA1848.severity = None
@@ -42,3 +41,10 @@ dotnet_diagnostic.SA1633.severity = None
 # SA1117ParametersMustBeOnSameLineOrSeparateLines
 dotnet_diagnostic.SA1117.severity = None
 resharper_entity_framework_model_validation_unlimited_string_length_highlighting = none
+
+
+#Special rules for test classes
+[*Tests.cs]
+# CA1707: Identifiers should not contain underscores
+dotnet_diagnostic.CA1707.severity = none
+

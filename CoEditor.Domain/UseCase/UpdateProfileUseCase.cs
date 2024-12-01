@@ -18,12 +18,12 @@ internal class UpdateProfileUseCase(
         var originalProfile = await profileRepository.FindProfileAsync(userName, profile.Language);
         if (originalProfile == null)
         {
-            var createResult = await profileRepository.CreateProfileAsync(userName, profile);
+            var createResult = await profileRepository.CreateProfileAsync(profile);
             logger.ProfileCreated(profile);
             return createResult;
         }
 
-        var updateResult = await profileRepository.UpdateProfileAsync(userName, profile);
+        var updateResult = await profileRepository.UpdateProfileAsync(profile);
         logger.ProfileUpdated(profile);
         return updateResult;
     }

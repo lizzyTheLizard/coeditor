@@ -11,4 +11,6 @@ public interface IConversationRepository
     Task UpdateAsync(Conversation conversation);
 
     Task EnsureNotExistingAsync(Guid conversationGuid);
+
+    Task DeleteAllConversationsAsync(string userName);
 }

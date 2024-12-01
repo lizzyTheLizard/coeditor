@@ -73,4 +73,14 @@ internal class TemplateRepository(CosmosDbContext dbContext) : ITemplateReposito
         await dbContext.SaveChangesAsync();
         return tmpl;
     }
+
+    public async Task DeleteAllTemplatesAsync(string userName)
+    {
+        var existingDocuments = await dbContext.Templates
+            .Where(t => t.UserName == userName)
+            .ToArrayAsync();
+        foreach (var existingDocument in existingDocuments)
+            dbContext.Remove(existingDocument);
+        await dbContext.SaveChangesAsync();
+    }
 }

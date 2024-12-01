@@ -13,4 +13,6 @@ public interface ITemplateRepository
     Task<Template> UpdateTemplateAsync(Template tmpl);
 
     Task<Template> CreateTemplateAsync(Template tmpl);
+
+    Task DeleteAllTemplatesAsync(string userName);
 }

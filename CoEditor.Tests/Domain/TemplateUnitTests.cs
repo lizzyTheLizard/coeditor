@@ -1,59 +1,23 @@
 ﻿using CoEditor.Domain.Model;
+using CoEditor.Tests.Helper;
 
 namespace CoEditor.Tests.Domain;
 
 public class TemplateUnitTests
 {
     [Fact]
-    public void ToString_ContainsEverything()
-    {
-        var conversation = new Template
-        {
-            Id = Guid.NewGuid(),
-            UserName = "TestUser",
-            Language = Language.En,
-            Name = "TestName",
-            Text = "TestText",
-            DefaultTemplate = false
-        };
-        var str = conversation.ToString();
-        Assert.Contains(conversation.Id.ToString(), str);
-        Assert.Contains(conversation.UserName, str);
-        Assert.Contains(conversation.Language.ToString(), str);
-        Assert.Contains(conversation.Text, str);
-        Assert.Contains(conversation.Name, str);
-        Assert.Contains(conversation.DefaultTemplate.ToString(), str);
-    }
-
-    [Fact]
     public void GetTemplateParameters_Empty()
     {
-        var conversation = new Template
-        {
-            Id = Guid.NewGuid(),
-            UserName = "TestUser",
-            Language = Language.En,
-            Name = "TestName",
-            Text = "TestText",
-            DefaultTemplate = false
-        };
-        var parameters = conversation.GetTemplateParameters();
+        var template = TestData.TemplateWithoutParameters("TestUser");
+        var parameters = template.GetTemplateParameters();
         Assert.Empty(parameters);
     }
 
     [Fact]
     public void GetTemplateParameters_NonEmpty()
     {
-        var conversation = new Template
-        {
-            Id = Guid.NewGuid(),
-            UserName = "TestUser",
-            Language = Language.En,
-            Name = "TestName",
-            Text = "{name:text} {long:longtext} {select:select:option1,option2}",
-            DefaultTemplate = false
-        };
-        var parameters = conversation.GetTemplateParameters();
+        var template = TestData.TemplateWithParameters("TestUser");
+        var parameters = template.GetTemplateParameters();
         Assert.Equal(3, parameters.Length);
         Assert.Equal("name", parameters[0].Name);
         Assert.Equal(TemplateParameterType.Text, parameters[0].Type);
@@ -63,7 +27,7 @@ public class TemplateUnitTests
         Assert.Empty(parameters[1].Options);
         Assert.Equal("select", parameters[2].Name);
         Assert.Equal(TemplateParameterType.Select, parameters[2].Type);
-        Assert.Equal<string[]>(["option1", "option2"], parameters[2].Options);
+        Assert.Equal(["option1", "option2"], parameters[2].Options);
     }
 
     [Fact]

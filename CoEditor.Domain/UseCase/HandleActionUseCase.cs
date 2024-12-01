@@ -38,8 +38,8 @@ internal class HandleActionUseCase(
         if (result.Response is null)
             return input.NewText;
         if (input is not HandleNamedActionInput { Selection: not null } namedInput)
-            return result.Response;
-        return input.NewText[..namedInput.Selection.Start] + result.Response +
+            return result.Response.Trim();
+        return input.NewText[..namedInput.Selection.Start] + result.Response.Trim() +
                input.NewText[namedInput.Selection.End..];
     }
 

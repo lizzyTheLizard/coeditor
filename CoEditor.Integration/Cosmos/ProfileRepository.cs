@@ -15,13 +15,13 @@ internal class ProfileRepository(CosmosDbContext dbContext) : IProfileRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<Profile> CreateProfileAsync(string userName, Profile profile)
+    public async Task<Profile> CreateProfileAsync(Profile profile)
     {
         var document = new ProfileDocument
         {
             Id = Guid.NewGuid(),
             Language = profile.Language,
-            UserName = userName,
+            UserName = profile.UserName,
             Text = profile.Text
         };
         dbContext.Add(document);
@@ -29,14 +29,24 @@ internal class ProfileRepository(CosmosDbContext dbContext) : IProfileRepository
         return profile;
     }
 
-    public async Task<Profile> UpdateProfileAsync(string userName, Profile profile)
+    public async Task<Profile> UpdateProfileAsync(Profile profile)
     {
         var existingDocument = await dbContext.Profiles
             .Where(t => t.Language == profile.Language)
-            .Where(t => t.UserName == userName)
+            .Where(t => t.UserName == profile.UserName)
             .FirstAsync();
         existingDocument.Text = profile.Text;
         await dbContext.SaveChangesAsync();
         return profile;
+    }
+
+    public async Task DeleteAllProfilesAsync(string userName)
+    {
+        var existingDocuments = await dbContext.Profiles
+            .Where(t => t.UserName == userName)
+            .ToArrayAsync();
+        foreach (var existingDocument in existingDocuments)
+            dbContext.Remove(existingDocument);
+        await dbContext.SaveChangesAsync();
     }
 }

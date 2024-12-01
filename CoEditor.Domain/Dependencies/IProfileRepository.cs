@@ -6,7 +6,9 @@ public interface IProfileRepository
 {
     Task<Profile?> FindProfileAsync(string userName, Language language);
 
-    Task<Profile> CreateProfileAsync(string userName, Profile profile);
+    Task<Profile> CreateProfileAsync(Profile profile);
 
-    Task<Profile> UpdateProfileAsync(string userName, Profile profile);
+    Task<Profile> UpdateProfileAsync(Profile profile);
+
+    Task DeleteAllProfilesAsync(string userName);
 }

@@ -8,15 +8,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CoEditor.Domain\CoEditor.Domain.csproj" />
-        <ProjectReference Include="..\CoEditor.Integration\CoEditor.Integration.csproj" />
+        <ProjectReference Include="..\CoEditor.Domain\CoEditor.Domain.csproj"/>
+        <ProjectReference Include="..\CoEditor.Integration\CoEditor.Integration.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Properties\launchSettings.json" />
+        <None Remove="Properties\launchSettings.json"/>
     </ItemGroup>
-    
+
     <ItemGroup>
-      <PackageReference Include="JetBrains.Annotations" Version="2024.3.0" />
+        <PackageReference Include="JetBrains.Annotations" Version="2024.3.0"/>
     </ItemGroup>
 </Project>
