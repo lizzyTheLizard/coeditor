@@ -118,7 +118,7 @@ public class HandleActionIntegrationTests : IntegrationTestBase
         {
             ConversationGuid = _existingConversation!.Id,
             NewContext = _existingConversation.Context,
-            NewText = "This is a wring text with other wring stuff",
+            NewText = "This is a wromg text with other wring stuff",
             Action = ActionName.Improve,
             Language = Language.En,
             Selection = new Selection(10, 15)

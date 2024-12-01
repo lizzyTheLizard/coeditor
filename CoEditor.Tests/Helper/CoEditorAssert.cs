@@ -12,7 +12,7 @@ public static class CoEditorAssert
         var existing = Array.Find(allTemplates, t => t.Id == element.Id);
         if (existing is null)
             throw FailException.ForFailure($"No template with ID {element.Id} found");
-        Assert.Equal(element, existing);
+        Equal(element, existing);
     }
 
     public static async Task Contains(Profile element, IProfileRepository repository)
@@ -21,7 +21,7 @@ public static class CoEditorAssert
         if (existing is null)
             throw FailException.ForFailure(
                 $"No profile for user {element.UserName} and Language {element.Language} found");
-        Assert.Equal(element, existing);
+        Equal(element, existing);
     }
 
     public static async Task DoesNotContain(Template element, ITemplateRepository repository)

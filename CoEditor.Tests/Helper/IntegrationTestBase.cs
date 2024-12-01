@@ -45,5 +45,6 @@ public class CustomWebApplicationFactory : WebApplicationFactory<App>
 file class MockUserService : IUserService
 {
     public string UserName { get; set; } = "TestUser";
+
     public Task<string> GetUserNameAsync() => Task.FromResult(UserName);
 }
