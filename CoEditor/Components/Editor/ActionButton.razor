@@ -4,7 +4,7 @@
 <div class="col">
     <button class="btn btn-primary container p-0" disabled="@Disabled" @onclick="HandleOnClickAsync">
         <div class="row align-items-center g-1">
-            <div class="col">@DisplayName</div>
+            <div class="col name">@DisplayName</div>
             <div class="col shortcut">(Alt + @ActualShortcut)</div>
         </div>
     </button>
@@ -28,7 +28,7 @@
 
     private IDisposable? _subscription;
 
-    private string DisplayName => Name ?? ActionName.ToString() ?? "Undefined";
+    private string DisplayName => Name ?? ActionName?.ToString() ?? "Undefined";
     private char ActualShortcut => Shortcut ?? DisplayName.FirstOrDefault();
 
     protected override void OnInitialized()
