@@ -1,4 +1,6 @@
 @inject BusyService BusyService
+@implements IDisposable
+
 <div class="overlay" style="@(!_busy ? "display:none;" : "")">
     <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>

@@ -81,9 +81,10 @@
 
     private async Task AfterTemplateChanged()
     {
+        Context = null;
+        await ContextChanged.InvokeAsync(Context);
         if (Template == null)
         {
-            await ContextChanged.InvokeAsync(null);
             return;
         }
 
@@ -103,13 +104,18 @@
     private async Task AfterParameterChanged()
     {
         var valid = _templateParameters.All(p => p.Valid);
-        if (!valid)
+        switch (valid)
         {
-            await ContextChanged.InvokeAsync(null);
-            return;
+            case false when Context == null:
+                return;
+            case false:
+                Context = null;
+                await ContextChanged.InvokeAsync(Context);
+                return;
+            default:
+                Context = Template!.CalculateText(_templateParameters);
+                await ContextChanged.InvokeAsync(Context);
+                return;
         }
-
-        var context = Template!.CalculateText(_templateParameters);
-        await ContextChanged.InvokeAsync(context);
     }
 }

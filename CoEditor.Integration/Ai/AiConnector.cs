@@ -30,6 +30,7 @@ internal class AiConnector(IOptions<AzureOpenAiConfiguration> optionsProvider, I
     {
         var chatMessages = new List<ChatMessage>();
         foreach (var message in messages)
+        {
             switch (message.Type)
             {
                 case PromptMessageType.System:
@@ -44,6 +45,7 @@ internal class AiConnector(IOptions<AzureOpenAiConfiguration> optionsProvider, I
                 default:
                     throw new ArgumentOutOfRangeException(nameof(messages), message, null);
             }
+        }
 
         return chatMessages;
     }

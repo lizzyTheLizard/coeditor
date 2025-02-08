@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using CoEditor.Components;
 using CoEditor.Domain.Dependencies;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -9,7 +10,7 @@ public class IntegrationTestBase : IClassFixture<CustomWebApplicationFactory>, I
 {
     private readonly IServiceScope _scope;
 
-    public IntegrationTestBase(CustomWebApplicationFactory factory, ITestOutputHelper outputHelper)
+    protected IntegrationTestBase(CustomWebApplicationFactory factory, ITestOutputHelper outputHelper)
     {
         UserName = outputHelper.GetTestName();
         _scope = factory.Services.CreateScope();
@@ -33,6 +34,7 @@ public class IntegrationTestBase : IClassFixture<CustomWebApplicationFactory>, I
 }
 
 #pragma warning disable SA1402
+[SuppressMessage("ReSharper", "ClassNeverInstantiated.Global", Justification = "Only used in annotations")]
 public class CustomWebApplicationFactory : WebApplicationFactory<App>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
