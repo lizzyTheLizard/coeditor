@@ -15,11 +15,7 @@ internal class GetTemplatesUseCase(
         new("Ohne Kontext", string.Empty,
             "Without Context", string.Empty),
         new("Mit Kontext", "{Inhalt:longtext}",
-            "With Context", "{Context:longtext}"),
-        new("E-Mail",
-            "Ich will eine E-Mail an einen {Verbindung:select:Arbeitskollege, Freund, Kunde} namens {Name:text} schreiben. Ich kenne diese Person {Kenntnis:select:Gut, Kaum}. Der Ton des Mails soll {Ton:select:Bescheiden, Aggressiv, Freundlich} sein. Das Mail geht um folgendes:\n\n{Inhalt:longtext}",
-            "E-Mail",
-            "I want to write an email to {Connection:select:Work Collegue,Friend, Customer} {Name:text}. I know him {Knowledge:select:Well,Barely}. The tone should be {Tone:select:Humble,Aggressive,Friendly}. The content of the mail considers the followig:\n\n{Context:longtext}")
+            "With Context", "{Context:longtext}")
     ];
 
     public async Task<Template[]> GetTemplatesAsync(Language language)
