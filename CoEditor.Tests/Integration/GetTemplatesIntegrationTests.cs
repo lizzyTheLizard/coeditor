@@ -29,8 +29,8 @@ public class GetTemplatesIntegrationTests : IntegrationTestBase
     {
         var templates = await _target.GetTemplatesAsync(Language.De);
 
-        Assert.Equal(3, templates.Length);
-        for (var i = 0; i < 3; i++)
+        Assert.Equal(2, templates.Length);
+        for (var i = 0; i < 2; i++)
         {
             Assert.Equal(Language.De, templates[i].Language);
             Assert.Equal(UserName, templates[i].UserName);
@@ -48,7 +48,7 @@ public class GetTemplatesIntegrationTests : IntegrationTestBase
 
         var existingTemplate = await _target.GetTemplatesAsync(Language.En);
 
-        Assert.Equal(4, existingTemplate.Length);
-        CoEditorAssert.Equal(template, existingTemplate[3]);
+        Assert.Equal(3, existingTemplate.Length);
+        CoEditorAssert.Equal(template, existingTemplate[2]);
     }
 }
